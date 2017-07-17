@@ -9,13 +9,204 @@
 <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
 </head>
 <body>
+  <ons-navigator id="myNavigator">
+  <ons-page>
+
+    <ons-tabbar position="auto">
+      <ons-tab page="tab1.html" active icon="ion-home" label="NBA"></ons-tab>
+      <ons-tab icon="ion-chatboxes" label="Forum" badge="3" page="tab2.html"></ons-tab>
+      <ons-fab position="bottom center">
+        <ons-icon icon="md-plus"></ons-icon>
+      </ons-fab>      <ons-tab icon="ion-search" label="Search" page="tab4.html"></ons-tab>
+      <ons-tab icon="ion-person" label="User" page="tab5.html"></ons-tab>
+
+    </ons-tabbar>
+  </ons-page>
+</ons-navigator>
+
+<ons-template id="tab1.html">
   <ons-page>
     <ons-toolbar>
-      <div class=”center”>Toolbar</div>
+      <div class="center">Recommend</div>
     </ons-toolbar>
 
-    <!-- Your page content here. -->
-
+    <p style="text-align: center;">
+      This is the first page.
+    </p>
   </ons-page>
+</ons-template>
+
+<ons-template id="tab2.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Forum</div>
+    </ons-toolbar>
+
+    <ons-list>
+      <ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+      <div class="left">
+        <img class="list-item__thumbnail" src="img/reckets.gif">
+      </div>
+      <div class="center">
+        <span class="list-item__title">Houston Rockets</span><span class="list-item__subtitle">4397 members</span>
+      </div>
+    </ons-list-item>
+
+    <ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+    <div class="left">
+      <img class="list-item__thumbnail" src="img/warriors.png">
+    </div>
+    <div class="center">
+      <span class="list-item__title">Golden State Warrios</span><span class="list-item__subtitle">3890 members</span>
+    </div>
+  </ons-list-item>
+
+  <ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+  <div class="left">
+    <img class="list-item__thumbnail" src="img/lakers.png">
+  </div>
+  <div class="center">
+    <span class="list-item__title">Los Angeles Lakers</span><span class="list-item__subtitle">3217 members</span>
+  </div>
+</ons-list-item>
+
+<ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+<div class="left">
+  <img class="list-item__thumbnail" src="img/san.png">
+</div>
+<div class="center">
+  <span class="list-item__title">San Antonio Spurs</span><span class="list-item__subtitle">1237 members</span>
+</div>
+</ons-list-item>
+
+<ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+<div class="left">
+  <img class="list-item__thumbnail" src="img/clippers.png">
+</div>
+<div class="center">
+  <span class="list-item__title">Los Angeles Clippers</span><span class="list-item__subtitle">2317 members</span>
+</div>
+</ons-list-item>
+
+<ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+<div class="left">
+  <img class="list-item__thumbnail" src="img/thunder.png">
+</div>
+<div class="center">
+  <span class="list-item__title">Oklahoma City Thunder</span><span class="list-item__subtitle">1987 members</span>
+</div>
+</ons-list-item>
+
+<ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+<div class="left">
+  <img class="list-item__thumbnail" src="img/memphis.gif">
+</div>
+<div class="center">
+  <span class="list-item__title">Memphis Grizzlies</span><span class="list-item__subtitle">1897 members</span>
+</div>
+</ons-list-item>
+
+<ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+<div class="left">
+  <img class="list-item__thumbnail" src="img/wolves.png">
+</div>
+<div class="center">
+  <span class="list-item__title">Minnesota Timberwolves</span><span class="list-item__subtitle">2764 members</span>
+</div>
+</ons-list-item>
+
+<ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+<div class="left">
+  <img class="list-item__thumbnail" src="img/denver.gif">
+</div>
+<div class="center">
+  <span class="list-item__title">Denver Nuggets</span><span class="list-item__subtitle">1583 members</span>
+</div>
+</ons-list-item>
+
+<ons-list-item onclick="myNavigator.pushPage('pageNav1.html')">
+<div class="left">
+  <img class="list-item__thumbnail" src="img/dallas.png">
+</div>
+<div class="center">
+  <span class="list-item__title">Dallas Mavericks</span><span class="list-item__subtitle">3817 members</span>
+</div>
+</ons-list-item>
+       </ons-list>
+  </ons-page>
+</ons-template>
+
+<ons-template id="tab3.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Start a new thread</div>
+    </ons-toolbar>
+
+    <p style="text-align: center;">
+      This is the third page.
+    </p>
+  </ons-page>
+</ons-template>
+
+<ons-template id="tab4.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">Search</div>
+    </ons-toolbar>
+
+    <p style="text-align: center;">
+      This is the third page.
+    </p>
+  </ons-page>
+</ons-template>
+
+<ons-template id="tab5.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center">User</div>
+    </ons-toolbar>
+
+    <p style="text-align: center;">
+      This is the third page.
+    </p>
+  </ons-page>
+</ons-template>
+
+<ons-template id="pageNav1.html">
+  <ons-page id="pageNav1">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>Back</ons-back-button>
+      </div>
+      <div class="center"></div>
+    </ons-toolbar>
+
+    <div style="text-align: center">
+      <h1>Custom Page</h1>
+      <p>
+        <ons-input modifier="underbar" placeholder="Title" float></ons-input>
+      </p>
+      <ons-button onclick="customPush()">
+        Push Page
+      </ons-button>
+      <ons-button onclick="myNavigator.popPage()">
+        Pop Page
+      </ons-button>
+    </div>
+  </ons-page>
+</ons-template>
+
+<ons-template id="cards.html">
+  <ons-page>
+    <h2>Cards</h2>
+    <ons-list-title>Card List</ons-list-title>
+    <ons-list>
+      <ons-list-item onclick="customPush2(event)">Card One</ons-list-item>
+      <ons-list-item onclick="customPush2(event)">Card Two</ons-list-item>
+      <ons-list-item onclick="customPush2(event)">Card Three</ons-list-item>
+    </ons-list>
+  </ons-page>
+</ons-template>
+
 </body>
 </html>
