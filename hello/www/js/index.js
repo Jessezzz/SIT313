@@ -50,24 +50,24 @@ app.initialize();
 /****************************************
 JS below are from onsen UI
 ****************************************/
-document.addEventListener('init', function (event) {
-  if (event.target.id === 'topic_page1') {
-    var title = event.target.data && event.target.data.title ? event.target.data.title : 'Houston Rocket';
-    event.target.querySelector('ons-toolbar div.center').textContent = title;
-  }
-  // if (event.target.id === 'user_following') {
-  //   var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
-  //   event.target.querySelector('ons-toolbar div.center').textContent = title;
-  // }
-  // if (event.target.id === 'user_followers') {
-  //   var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
-  //   event.target.querySelector('ons-toolbar div.center').textContent = title;
-  // }
-  // if (event.target.id === 'user_followingtopic') {
-  //   var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
-  //   event.target.querySelector('ons-toolbar div.center').textContent = title;
-  // }
-});
+// document.addEventListener('init', function (event) {
+//   if (event.target.id === 'pageNav1') {
+//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Houston Rocket';
+//     event.target.querySelector('ons-toolbar div.center').textContent = title;
+//   }
+//   if (event.target.id === 'user_following') {
+//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
+//     event.target.querySelector('ons-toolbar div.center').textContent = title;
+//   }
+//   if (event.target.id === 'user_followers') {
+//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
+//     event.target.querySelector('ons-toolbar div.center').textContent = title;
+//   }
+//   if (event.target.id === 'user_followingtopic') {
+//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
+//     event.target.querySelector('ons-toolbar div.center').textContent = title;
+//   }
+// });
 
 
 /****************************************
@@ -200,21 +200,22 @@ var topics = [
 //  FUNCTIONS
 //****************************************
 
-function topicsTOtopic(node,topicid){
+function topicslistTOtopic(node,topicid){
   node.on("click",function(){
-    myNavigator.pushPage('topic_page.html');
+    myNavigator.pushPage('pageNav1.html');
+    // showTopic(topicid);
   });
 };
 
 /*
-This function shows all forum topics
+This function shows forum topics list
 In project 1, we are using static data.
 This function shows all topics that are in the "topics" variable.
 */
-function showTopics(){
+function showTopicsList(){
 
   for(index in topics){
-    var listitem = $("<ons-list-item></ons-list-item>");
+    var listitem = $("<ons-list-item ></ons-list-item>");
     var listitemLeft = $("<div class='left'></div>");
     listitemLeft.append("<img class='list-item__thumbnail' src='"+topics[index].topicPic +"'>");
     var listitemCenter = $("<div class='center'></div>");
@@ -229,12 +230,40 @@ function showTopics(){
     listitem.append(listitemCenter);
     listitem.append(listitemRight);
 
+console.log($("#topic_banner").text());
+
     $("#onslist").append(listitem);
 
-    topicsTOtopic(listitem,topics[index].topicId);
+    topicslistTOtopic(listitem,topics[index].topicId);
   }
 }
 
+/*
+This function shows one topic
+In project 1, we are using static data.
+This function shows all topics that are in the "topics" variable.
+*/
+function showTopic(topicID){
+
+    // console.log("into function");
+    // console.log($("#topic_banner").text());
+
+    var topicBannerContent = $("<div id='ban_con'></div>");
+    topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
+    var topicBannerWords = $("<div id='ban_words'></div>");
+    topicBannerContent.append(topicBannerWords);
+    topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
+    var lab = $("<div class='lab'></div>");
+    topicBannerWords.append(lab);
+    lab.append("<span style='font-weight:normal;'>Subscriber</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
+    lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].postNum+"")
+    var section = $("<section style='margin-top: 10px;margin-left:20px;'></section>");
+    section.append("<ons-button id='onsbutton' style='padding:0 8px;margin-left:4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+    topicBannerContent.append(section);
+    $("#topic_banner").append(topicBannerContent);
+
+    showPostAbstracts(topicID);
+};
 
 
 /*
@@ -242,31 +271,27 @@ This function shows all forum post abstracts
 In project 1, we are using static data.
 This function shows all post abstracts that are in the "topics" variable.
 */
-function showPostAbstracts(){
+function showPostAbstracts(topicID){
   var article = $("<div id='articles'></div>");
 
-  for(index in topics[0].posts){
+  for(index in topics[topicID-1].posts){
     var postAbstract = $("<div class='contents'></div>");
 
     var mainContent = $("<div class='bod'></div>");
-    mainContent.append("<div class='title'>"+ topics[0].posts[index].postTitle +"</div>");
-    mainContent.append("<div class='pics'><img src="+ topics[0].posts[index].postPic + "></div>");
+    mainContent.append("<div class='title'>"+ topics[topicID-1].posts[index].postTitle +"</div>");
+    mainContent.append("<div class='pics'><img src="+ topics[topicID-1].posts[index].postPic + "></div>");
 
     var footContent = $("<div class='footer'></div>");
-    footContent.append("<a>"+ topics[0].posts[index].postAuthor +"&nbsp;</a>");
-    footContent.append("<span>"+ topics[0].topicTitle +"</span>");
+    footContent.append("<a>"+ topics[topicID-1].posts[index].postAuthor +"&nbsp;</a>");
+    footContent.append("<span>"+ topics[topicID-1].topicTitle +"</span>");
     // footContent.append("<div id='counts'></div>");
     // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
     // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
-
     postAbstract.append(mainContent);
     postAbstract.append(footContent);
-
     article.append(postAbstract);
-
     // createOnClick(postAbstract,topics[0].posts[index].postId);
   }
-
   $("#postabstrcts").append(article);
 };
 
@@ -292,6 +317,7 @@ This function shows all posts that are in the "topics" variable.
 //  WEB APPLICATION LOAD
 //****************************************
 $(document).ready(function(){
-  showPostAbstracts();
-  showTopics();
+  // showPostAbstracts();
+  showTopicsList();
+  showTopic(3);
 });
