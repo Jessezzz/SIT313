@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+  <link rel="stylesheet" href="css/onsen-css-components.min.css">
+  <link rel="stylesheet" href="css/onsenui.css">
+
+  <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="cordova.js"></script>
+  <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/index2.js"></script>
+
+  <script src="js/onsenui.min.js"></script>
+</head>
+<body>
+  <!-- Here starts the main structure - Navigator and Tabbar -->
+  <ons-navigator id="myNavigator">
+    <ons-page>
+      <ons-tabbar position="auto">
+        <ons-tab page="tab1.html" active icon="ion-home" label="NBA"></ons-tab>
+        <ons-tab icon="ion-chatboxes" label="Forum" page="tab2.html"></ons-tab>
+        <ons-tab icon="ion-person" label="User" page="tab3.html"></ons-tab>
+        <!-- <ons-tab icon="ion-person" label="User" page="tab4.html"></ons-tab> -->
+      </ons-tabbar>
+    </ons-page>
+  </ons-navigator>
+
+  <!-- Here starts the first tab page called NBA -->
+  <template id="tab1.html">
+    <ons-page id="tab1">
+
+      <ons-toolbar>
+        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Recommend</div>
+      </ons-toolbar>
+
+      <!-- Here starts search bar of the first tab page  -->
+      <div class="search-bar" onclick="myNavigator.pushPage('search.html')">
+        <input type="search" class="search-input" style="width: 96%; margin: 50px auto 6px 6px;" placeholder="Search">
+      </div>
+
+      <!-- Here starts post abstracts of the first tab page  -->
+      <div id="allpostabstrcts">
+      </div>
+
+    </ons-page>
+  </template>
+
+  <!-- Here starts the search page when cilck the search bar of the first page -->
+  <template id="search.html">
+    <ons-page id="search">
+      <ons-toolbar style="background-color:#3A9FED">
+        <div class="right" style="margin-right:5px;">
+          <ons-back-button style="color:white;">Cancel</ons-back-button>
+        </div>
+
+        <div class="left">
+          <div class="search-bar" style="width:83%;background-color:#3A9FED" onclick="">
+            <input type="search" class="search-input" style="background-color: white;width: 96%; margin: 50px 0 3px 6px;" placeholder="Search">
+          </div>
+        </div>
+      </ons-toolbar>
+    </div>
+  </ons-page>
+</template>
+
+<!-- Here starts a post page -->
+<template id="postpage.html">
+  <ons-page id="response">
+    <ons-toolbar id="postToolbar" style="background-color:#3A9FED;color:white;">
+      <div class="left" >
+        <ons-back-button style="color:white;"></ons-back-button>
+      </div>
+      <!-- <div class="center" onclick="myNavigator.pushPage('pageNav1.html')" style="color:white;">Houston rocket</div> -->
+    </ons-toolbar>
+
+
+
+    <div id="response_page">
+      <div id="response_title">
+        <span >Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says<br/>
+          <div id="countss"><ons-icon icon="ion-eye"></ons-icon>&nbsp;<span>159</span>&nbsp;&nbsp;&nbsp;<ons-icon icon="ion-chatbox-working"></ons-icon>&nbsp;<span>293</span>
+          </div>
+        </div>
+
+        <div id="response_writer">
+          <div id="response_pic"><img src="img/head.jpg"></div>
+          <div id="response_user"><span style="color:#0060AA;">Time Machine1996</span>
+            <br/><span style="font-size:4px;">07-09 15:31</span>
+            <!-- <ons-button id="onsbutton" value="Author" style="margin:0;padding:0;width:30px;height:12px;font-size:10px;color:white;background-color:#399DEA;"></ons-button> -->
+          </div>
+          <div id="response_follow">
+            <ons-button id="onsbutton" onclick="" style="font-size:15px;color:#0060AA;background-color:white;"> &nbsp;&nbsp;+follow&nbsp;&nbsp; </ons-button>
+          </div>
+        </div>
+
+        <div id="main_post">
+          <img src="img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg">
+          <p>Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.</p>
+          <p>MORE: Inspirational journey keeps Jonathon Simmons humble and hungry</p>
+          <p>Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.</p>
+          <p>Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.</p>
+          <p>So far, Anthony has agreed to trades to two places: Houston and Cleveland. The Cavaliers cannot afford Anthony in a trade, and the Rockets and Knicks reportedly have to use four teams involved to make a trade happen.</p>
+        </div>
+
+
+        <div id="comments">
+          <div id="response_writer">
+            <div id="response_pic"><img src="img/lakers.png"></div>
+            <div id="response_user"><span style="color:#0060AA;">abvj12812</span>
+              <br/><span style="font-size:4px;">07-09 19:21</span>
+              <!-- <ons-button id="onsbutton" value="Author" style="margin:0;padding:0;width:30px;height:12px;font-size:10px;color:white;background-color:#399DEA;"></ons-button> -->
+            </div>
+          </div>
+          <p>Inspirational journey keeps Jonathon Simmons humble and hungry</p></div>
+
+          <div id="comments">
+            <div id="response_writer">
+              <div id="response_pic"><img src="img/dallas.png"></div>
+              <div id="response_user"><span style="color:#0060AA;">Fakesrs</span>
+                <br/><span style="font-size:4px;">07-09 21:45</span>
+                <!-- <ons-button id="onsbutton" value="Author" style="margin:0;padding:0;width:30px;height:12px;font-size:10px;color:white;background-color:#399DEA;"></ons-button> -->
+              </div>
+            </div>
+            <p>It may be hard to picture Anthony on the West Coast, but McCollum can see it now. </p>
+          </div>
+        </div>
+      </ons-page>
+    </template>
+
+    <!-- Here starts the second tab page called Fourm -->
+    <template id="tab2.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Forum</div>
+        </ons-toolbar>
+
+        <!-- Here starts Fourm topics -->
+        <ons-list id="onslist">
+        </ons-list>
+      </ons-page>
+
+    </template>
+
+    <!-- Here starts the main page of a topic -->
+    <template id="pageNav1.html" >
+      <ons-page id="pageNav1" >
+        <script type="text/javascript" src="js/index2.js"></script>
+
+        <ons-toolbar  style="background-color:#3A9FED;color:#ECFDFD">
+          <div class="left">
+            <ons-back-button style="color:white"></ons-back-button>
+          </div>
+          <div class="center" style="background-color:#3A9FED;color:#ECFDFD"></div>
+        </ons-toolbar>
+
+
+        <ons-fab  position="bottom center" style="background-color:#3A9FED;">
+          <ons-icon style="margin-left:3px;" icon="ion-compose"></ons-icon>
+        </ons-fab>
+
+
+        <div id="topic_banner" >
+        </div>
+
+        <div id="postabstrcts">
+
+        </div>
+
+
+      </ons-page>
+    </template>
+
+
+
+
+    <!-- Same to pageNav1.html -->
+
+    <!-- <template id="tab4.html">
+    <ons-page >
+    <ons-toolbar  style="background-color:#3A9FED;color:#ECFDFD">
+    <div class="left">
+    <ons-back-button style="color:white"></ons-back-button>
+  </div>
+  <div class="center" style="background-color:#3A9FED;color:#ECFDFD"></div>
+</ons-toolbar>
+
+<ons-fab  position="bottom center" style="background-color:#3A9FED;">
+<ons-icon style="margin-left:3px;" icon="ion-compose"></ons-icon>
+</ons-fab>
+
+<div id="topic_banner" >
+
+</div>
+
+<div id="postabstrcts">
+
+</div>
+
+
+</ons-page>
+</template> -->
+
+
+
+
+
+
+<!-- Here starts the third tab page called User -->
+<template id="tab3.html">
+  <ons-page>
+    <ons-toolbar>
+      <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Profile</div>
+    </ons-toolbar>
+    <div id="user_top">
+      <div id="user_top_top" onclick="myNavigator.pushPage('user_following.html')">
+        <div style="float:left" id="user_top_top_left"><img style="width:70px;height:70px;" src="img/head.jpg">
+        </div>
+        <div id="user_top_top_center">
+          <span style="font-weight:bold;font-size:20px;">Time machine1997</span><br/>
+          <span style="display:block;margin-top:10px;font-size:13px;">I am rocket's fans and Harden is my favourite player</span><br/>
+        </div>
+        <div id="user_top_top_right">
+          <ons-icon   icon="ion-chevron-right"></ons-icon>
+        </div>
+      </div>
+
+      <div id="user_top_bottom">
+        <div class="follow" onclick="myNavigator.pushPage('user_following.html')">following<br/><span class="numbers">3</span></div>
+        <div class="follow" onclick="myNavigator.pushPage('user_followers.html')">followers<br/><span class="numbers">9</span></div>
+        <div class="follow" onclick="myNavigator.pushPage('user_followingtopic.html')">my topics<br/><span class="numbers">5</span></div>
+      </div>
+    </div>
+
+    <div id="user_bottom">
+
+      <div class="user_bottom_lists" onclick="myNavigator.pushPage('messages.html')">
+        <ons-icon    class="iconthem" icon="ion-email-unread"></ons-icon>
+        Messages
+        <ons-icon   class="iconarrow" icon="ion-chevron-right"></ons-icon>
+      </div>
+      <div class="user_bottom_lists" onclick="myNavigator.pushPage('subscribe.html')">
+        <ons-icon   class="iconthem" icon="ion-star"></ons-icon>
+        Subscribe
+        <ons-icon   class="iconarrow" icon="ion-chevron-right"></ons-icon>
+      </div>
+      <div class="user_bottom_lists" onclick="myNavigator.pushPage('myposts.html')">
+        <ons-icon   class="iconthem" icon="ion-document-text"></ons-icon>&nbsp;
+        My posts
+        <ons-icon  class="iconarrow" icon="ion-chevron-right"></ons-icon>
+      </div>
+    </div>
+
+  </ons-page>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Here starts user_following page -->
+<template id="user_following.html">
+  <ons-page id="user_following">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>Back</ons-back-button>
+      </div>
+      <div class="center"></div>
+    </ons-toolbar>
+  </ons-page>
+</template>
+
+<!-- Here starts user_follower page -->
+<template id="user_followers.html">
+  <ons-page id="user_following">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>Back</ons-back-button>
+      </div>
+      <div class="center"></div>
+    </ons-toolbar>
+  </ons-page>
+</template>
+
+<!-- Here starts user_followingtopic page-->
+<template id="user_followingtopic.html">
+  <ons-page id="user_following">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>Back</ons-back-button>
+      </div>
+      <div class="center"></div>
+    </ons-toolbar>
+  </ons-page>
+</template>
+
+<!-- Here starts personal message page -->
+<template id="messages.html">
+  <ons-page id="messages">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>Back</ons-back-button>
+      </div>
+      <div class="center"></div>
+    </ons-toolbar>
+  </ons-page>
+</template>
+
+<!-- Here starts subscribe page -->
+<template id="subscribe.html">
+  <ons-page id="subscribe">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>Back</ons-back-button>
+      </div>
+      <div class="center"></div>
+    </ons-toolbar>
+  </ons-page>
+</template>
+
+<!-- Here starts my posts page -->
+<template id="myposts.html">
+  <ons-page id="myposts">
+    <ons-toolbar>
+      <div class="left">
+        <ons-back-button>Back</ons-back-button>
+      </div>
+      <div class="center"></div>
+    </ons-toolbar>
+  </ons-page>
+</template>
+
+</body>
+</html>

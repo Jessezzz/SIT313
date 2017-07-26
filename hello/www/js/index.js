@@ -17,6 +17,10 @@
 * under the License.
 */
 
+
+/****************************************
+JS below are from onsen UI
+****************************************/
 var app = {
   // Application Constructor
   initialize: function() {
@@ -46,28 +50,17 @@ var app = {
 
 app.initialize();
 
-
 /****************************************
-JS below are from onsen UI
+EventListener
 ****************************************/
-// document.addEventListener('init', function (event) {
-//   if (event.target.id === 'pageNav1') {
-//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Houston Rocket';
-//     event.target.querySelector('ons-toolbar div.center').textContent = title;
-//   }
-//   if (event.target.id === 'user_following') {
-//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
-//     event.target.querySelector('ons-toolbar div.center').textContent = title;
-//   }
-//   if (event.target.id === 'user_followers') {
-//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
-//     event.target.querySelector('ons-toolbar div.center').textContent = title;
-//   }
-//   if (event.target.id === 'user_followingtopic') {
-//     var title = event.target.data && event.target.data.title ? event.target.data.title : 'Custom Page';
-//     event.target.querySelector('ons-toolbar div.center').textContent = title;
-//   }
-// });
+document.addEventListener('init', function (event) {
+  if (event.target.id === 'tab2') {
+    showTopicsList();
+  }else if (event.target.id === 'pageNav1') {
+    showTopic(event.target.data.id);
+  }
+});
+
 
 
 /****************************************
@@ -195,16 +188,14 @@ var topics = [
   },
 ]
 
-
 //****************************************
-//  FUNCTIONS
+//  FUNCTIONS - 1
 //****************************************
 
-function topicslistTOtopic(node,topicid){
+function topicslistTOtopic(node,topicID){
   node.on("click",function(){
-    myNavigator.pushPage('pageNav1.html');
-    // showTopic(topicid);
-  });
+    myNavigator.pushPage('pageNav1.html',{data:{id:topicID}});
+})
 };
 
 /*
@@ -213,41 +204,29 @@ In project 1, we are using static data.
 This function shows all topics that are in the "topics" variable.
 */
 function showTopicsList(){
-
   for(index in topics){
-    var listitem = $("<ons-list-item ></ons-list-item>");
-    var listitemLeft = $("<div class='left'></div>");
+    var listitem = $(ons._util.createElement("<ons-list-item></ons-list-item>"));
+    var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
     listitemLeft.append("<img class='list-item__thumbnail' src='"+topics[index].topicPic +"'>");
-    var listitemCenter = $("<div class='center'></div>");
+    var listitemCenter = $(ons._util.createElement("<div class='center'></div>"));
     listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topics[index].topicTitle+"</span>");
     listitemCenter.append("<span class='list-item__subtitle'>"+ topics[index].subscribeNum+" members</span>");
-    var listitemRight = $("<div class='right'></div>");
-    var listitemRightSection = $("<section style='margin: 4px;'></section>");
+    var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
+    var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
     listitemRightSection.append("<ons-button id='onsbutton' onclick='joinSuc()' style='padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
     listitemRight.append(listitemRightSection);
 
     listitem.append(listitemLeft);
     listitem.append(listitemCenter);
     listitem.append(listitemRight);
-
-console.log($("#topic_banner").text());
-
     $("#onslist").append(listitem);
 
     topicslistTOtopic(listitem,topics[index].topicId);
   }
 }
 
-/*
-This function shows one topic
-In project 1, we are using static data.
-This function shows all topics that are in the "topics" variable.
-*/
+
 function showTopic(topicID){
-
-    // console.log("into function");
-    // console.log($("#topic_banner").text());
-
     var topicBannerContent = $("<div id='ban_con'></div>");
     topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
     var topicBannerWords = $("<div id='ban_words'></div>");
@@ -264,7 +243,6 @@ function showTopic(topicID){
 
     showPostAbstracts(topicID);
 };
-
 
 /*
 This function shows all forum post abstracts
@@ -295,6 +273,7 @@ function showPostAbstracts(topicID){
   $("#postabstrcts").append(article);
 };
 
+
 /*
 This function shows a post content page
 In project 1, we are using static data.
@@ -316,8 +295,6 @@ This function shows all posts that are in the "topics" variable.
 //****************************************
 //  WEB APPLICATION LOAD
 //****************************************
-$(document).ready(function(){
-  // showPostAbstracts();
-  showTopicsList();
-  showTopic(3);
-});
+// $(document).ready(function(){
+//   showTopicsList();
+// });
