@@ -58,6 +58,7 @@ function showModal() {
   }, 1000);
 }
 
+
 /****************************************
 JS below are created by Jesse
 ****************************************/
@@ -257,14 +258,16 @@ var topics = [
 EventListener
 ****************************************/
 document.addEventListener('init', function (event) {
-  if (event.target.id === 'tab2') {
+  if (event.target.id === 'topicLists') {
     showTopicsList();
-  }else if (event.target.id === 'pageNav1') {
+  }else if (event.target.id === 'topicmain') {
     showTopic(event.target.data.id);
   }else if(event.target.id === 'postpage'){
     showPost(event.target.data.topicid,event.target.data.postid);
   }else if(event.target.id === 'addapost'){
     showAddPost(event.target.data.id);
+  }else if(event.target.id === 'userPage'){
+    showUserpage();
   }
 });
 
@@ -275,7 +278,7 @@ document.addEventListener('init', function (event) {
 
 function topicslistTOtopic(node,topicID){
   node.on("click",function(){
-    myNavigator.pushPage('pageNav1.html',{data:{id:topicID}});
+    myNavigator.pushPage('topicmain.html',{data:{id:topicID}});
 })
 };
 
@@ -298,7 +301,7 @@ This function shows all topics that are in the "topics" variable.
 */
 function showTopicsList(){
   for(index in topics){
-    var listitem = $(ons._util.createElement("<ons-list-item></ons-list-item>"));
+    var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
     var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
     listitemLeft.append("<img class='list-item__thumbnail' src='"+topics[index].topicPic +"'>");
     var listitemCenter = $(ons._util.createElement("<div class='center'></div>"));
@@ -308,7 +311,6 @@ function showTopicsList(){
     var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
     listitemRightSection.append("<ons-button id='onsbutton' onclick='joinSuc()' style='padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
     listitemRight.append(listitemRightSection);
-
     listitem.append(listitemLeft);
     listitem.append(listitemCenter);
     listitem.append(listitemRight);
@@ -333,15 +335,15 @@ function showTopic(topicID){
     topicBannerWords.append(lab);
     lab.append("<span style='font-weight:normal;'>Subscriber</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
     lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].postNum+"")
-    var section = $("<section style='margin-top: 10px;margin-left:20px;'></section>");
-    section.append("<ons-button id='onsbutton' style='padding:0 8px;margin-left:4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
-    topicBannerContent.append(section);
+    var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
+    $("#topic_banner").append(section);
     $("#topic_banner").append(topicBannerContent);
-    var addpost = $("<ons-fab  position='bottom center' style='background-color:#3A9FED;'></ons-fab>");
-    addpost.append("<ons-icon style='margin-left:3px;' icon='ion-compose'></ons-icon>");
-    $("#topic_banner").append(addpost);
+    var addpost = $("<ons-toolbar-button ></ons-toolbar-button>");
+    addpost.append("<ons-icon  style='color:#FFFFFF' icon='ion-compose'></ons-icon>");
+    $("#addpostbutton").append(addpost);
+    var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
+    $("#topicbar").append(topicbartitle);
     showPostAbstracts(topicID);
-
     topicTOaddpost(addpost,topicID);
 };
 
@@ -352,14 +354,11 @@ This function shows all post abstracts that are in the "topics" variable.
 */
 function showPostAbstracts(topicID){
   var article = $("<div id='articles'></div>");
-
   for(index in topics[topicID-1].posts){
     var postAbstract = $("<div class='contents'></div>");
-
     var mainContent = $("<div class='bod'></div>");
     mainContent.append("<div class='title'>"+ topics[topicID-1].posts[index].postTitle +"</div>");
     mainContent.append("<div class='pics'><img src="+ topics[topicID-1].posts[index].postPic + "></div>");
-
     var footContent = $("<div class='footer'></div>");
     footContent.append("<a>"+ topics[topicID-1].posts[index].postAuthor +"&nbsp;</a>");
     footContent.append("<span>"+ topics[topicID-1].topicTitle +"</span>");
@@ -369,16 +368,16 @@ function showPostAbstracts(topicID){
     postAbstract.append(mainContent);
     postAbstract.append(footContent);
     article.append(postAbstract);
-
     abstractsTOpost(postAbstract,topicID,topics[topicID-1].posts[index].postId);
   }
   $("#postabstrcts").append(article);
 };
 
-//通过使用堆栈中的返回标签，前提是上一个页面可以自动刷新
+// If last page can refresh itself, using back button from stack navigation
+
 function showAddPost(topicID){
   console.log(topicID);
-  var addclick = $("<ons-back-button style='margin-right:10px;width:40px;color:balck'>Add</ons-back-button>");
+  var addclick = $("<ons-back-button style='margin-right:10px;width:40px;color:#3A9FED;'><span style='color:#FFFFFF;'>Add<span></ons-back-button>");
   $("#barofAddpost").append(addclick);
   addclick.on("click",function(){
     addPost(topicID);
@@ -393,14 +392,15 @@ function addPost(topicID){
   showModal();
 }
 
-// 通过点击提交后用pushPage函数跳转到topic页面
+// click submit button - pushPage("topic.html")
+
 // function showAddPost(topicID){
 //   console.log(topicID);
 //   var addclick = $("<p style='margin-right:10px;width:40px;color:balck'>Add</p>");
 //   $("#barofAddpost").append(addclick);
 //   addclick.on("click",function(){
 //     addPost(topicID);
-//     myNavigator.pushPage("pageNav1.html",{data:{id:topicID}});
+//     myNavigator.pushPage("topicmain.html",{data:{id:topicID}});
 // })
 // }
 // function addPost(topicID){
@@ -416,7 +416,6 @@ This function shows a post content page
 In project 1, we are using static data.
 This function shows all posts that are in the "topics" variable.
 */
-
 function showPost(topicID,postID){
    var responsePage = $("<div id='response_page'></div>");
    var responseTitle = $("<div id='response_title'></div>");
@@ -433,10 +432,9 @@ function showPost(topicID,postID){
    var responsePic = $("<div id='response_pic'></div>");
    responsePic.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
    var responseUser = $("<div id='response_user'></div>");
-   responseUser.append("<span style='color:#0060AA;'>"+topics[topicID-1].posts[postID-1].postAuthor+"</span><br/>");
-   responseUser.append("<span style='font-size:4px;'>"+topics[topicID-1].posts[postID-1].postDate+"</span>");
+   responseUser.append("<span style='font-size:18px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].postAuthor+"</span><br/>");
+   responseUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].postDate+"</span>");
    var responseFollow = $("<div id='response_follow'></div>");
-   responseFollow.append("<ons-button id='onsbutton' style='font-size:15px;color:#0060AA;background-color:white;'> &nbsp;&nbsp;+follow&nbsp;&nbsp; </ons-button>")
    responseWriter.append(responsePic);
    responseWriter.append(responseUser);
    responseWriter.append(responseFollow);
@@ -452,15 +450,53 @@ for(index in topics[topicID-1].posts[postID-1].comments){
    var commentPic = $("<div id='response_pic'></div>");
    commentPic.append("<img src='img/head.jpg'>");
    var commentUser = $("<div id='response_user'></div>");
-   commentUser.append("<span style='color:#0060AA;'>"+topics[topicID-1].posts[postID-1].comments[index].commentAuthor+"</span><br/>");
-   commentUser.append("<span style='font-size:4px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
+   commentUser.append("<span style='font-size:18px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].comments[index].commentAuthor+"</span><br/>");
+   commentUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
    commentWriter.append(commentPic);
    commentWriter.append(commentUser);
    responseComment.append("<p>"+topics[topicID-1].posts[postID-1].comments[index].commentText+"");
    responsePage.append(responseComment);
 }
    $("#belowbar").append(responsePage);
+   var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
+   $("#topicbar2").append(topicbartitle);
 };
+
+/*
+This function shows user page
+In project 1, we are using static data.
+This function shows all data that are in the "users" variable.
+*/
+function showUserpage(){
+  var userTop = $("<div id='user_top'></div>");
+  var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='img/head.jpg'>");
+  var userTopCenter = $("<div id='user_top_center'></div>");
+  userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>Time machine1997</span><br/>");
+  userTopCenter.append("<span style='display:block;margin-top:10px;font-size:17px;'>I am rocket's fans and Harden is my favourite player</span><br/>");
+  var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
+  userTop.append(userTopLeft);
+  userTop.append(userTopCenter);
+  userTop.append(userTopicRight);
+  var userBottom1 = $("<div id='user_bottom'></div>");
+  var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-favorite'></ons-icon>My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+  var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+  var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-star'></ons-icon>Subscribe<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+  var bottomList4 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-notifications'></ons-icon>&nbsp;Notifactions<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+  userBottom1.append(bottomList1);
+  userBottom1.append(bottomList2);
+  userBottom1.append(bottomList3);
+  userBottom1.append(bottomList4);
+  var userBottom2 = $("<div id='user_bottom'></div>");
+  var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;App Info<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+  userBottom2.append(bottomList5);
+  var userBottom3 = $("<div id='user_bottom'></div>");
+  var bottomList6 = $("<div style='text-align:center;color:#247ABA;' class='user_bottom_lists' >Log out</div>");
+  userBottom3.append(bottomList6);
+  $("#usermainpage").append(userTop);
+  $("#usermainpage").append(userBottom1);
+  $("#usermainpage").append(userBottom2);
+  $("#usermainpage").append(userBottom3);
+}
 
 
 //****************************************
