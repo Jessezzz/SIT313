@@ -17,7 +17,6 @@
 * under the License.
 */
 
-
 /****************************************
 JS below are from onsen UI
 ****************************************/
@@ -50,18 +49,14 @@ var app = {
 
 app.initialize();
 
-/****************************************
-EventListener
-****************************************/
-document.addEventListener('init', function (event) {
-  if (event.target.id === 'tab2') {
-    showTopicsList();
-  }else if (event.target.id === 'pageNav1') {
-    showTopic(event.target.data.id);
-  }
-});
 
-
+function showModal() {
+  var modal = document.querySelector('ons-modal');
+  modal.show();
+  setTimeout(function() {
+    modal.hide();
+  }, 1000);
+}
 
 /****************************************
 JS below are created by Jesse
@@ -79,20 +74,20 @@ var topics = [
   postNum:3,
   subscribeNum:4397,
   posts:[
-    {postId:"1-1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"test",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
     ]},
-    {postId:"1-2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"test",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
     ]},
-    {postId:"1-3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"test",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
     ]}],
   },
   // Topic2 - Los Angeles Lakers
@@ -102,11 +97,21 @@ var topics = [
   postNum:1,
   subscribeNum:3217,
   posts:[
-    {postId:"2-1",postTitle:"WATCH: Lonzo Ball's Summer League highlight reel will make any Lakers fan swoon",postText:"test",postAuthor:"Nick Birdsong",postDate:"3 hours ago",postPic:"img/lonzo_6cl46k9bbntg190ogp58zksbs.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
-    ]}]
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]}],
   },
   // Topic3 - Golden State Warrios
   {topicId:3,
@@ -115,11 +120,21 @@ var topics = [
   postNum:1,
   subscribeNum:3890,
   posts:[
-    {postId:"3-1",postTitle:"WATCH: Lonzo Ball's Summer League highlight reel will make any Lakers fan swoon",postText:"test",postAuthor:"Nick Birdsong",postDate:"3 hours ago",postPic:"img/lonzo_6cl46k9bbntg190ogp58zksbs.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
-    ]}]
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]}],
   },
   // Topic4 - San Antonio Spurs
   {topicId:4,
@@ -128,11 +143,21 @@ var topics = [
   postNum:1,
   subscribeNum:2337,
   posts:[
-    {postId:"4-1",postTitle:"Report: Manu Ginobili finalising new contract with Spurs",postText:"test",postAuthor:"Andy Wittry",postDate:"2 hours ago",postPic:"img/manu-ginobili-052217-getty-ftr_4o4yo9iz081012huusncu1rsb.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
-    ]}]
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]}],
   },
   // Topic5 - Los Angeles Clippers
   {topicId:5,
@@ -141,11 +166,21 @@ var topics = [
   postNum:1,
   subscribeNum:2492,
   posts:[
-    {postId:"5-1",postTitle:"Report: Manu Ginobili finalising new contract with Spurs",postText:"test",postAuthor:"Andy Wittry",postDate:"2 hours ago",postPic:"img/manu-ginobili-052217-getty-ftr_4o4yo9iz081012huusncu1rsb.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
-    ]}]
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]}],
   },
   // Topic6 - Oklahoma City
   {topicId:6,
@@ -154,11 +189,21 @@ var topics = [
   postNum:1,
   subscribeNum:1962,
   posts:[
-    {postId:"6-1",postTitle:"Report: Manu Ginobili finalising new contract with Spurs",postText:"test",postAuthor:"Andy Wittry",postDate:"2 hours ago",postPic:"img/manu-ginobili-052217-getty-ftr_4o4yo9iz081012huusncu1rsb.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
-    ]}]
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]}],
   },
   // Topic7 - Memphis Grizzlies
   {topicId:7,
@@ -167,11 +212,21 @@ var topics = [
   postNum:1,
   subscribeNum:1962,
   posts:[
-    {postId:"7-1",postTitle:"Report: Manu Ginobili finalising new contract with Spurs",postText:"test",postAuthor:"Andy Wittry",postDate:"2 hours ago",postPic:"img/manu-ginobili-052217-getty-ftr_4o4yo9iz081012huusncu1rsb.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
-    ]}]
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]}],
   },
   // Topic8 - Minnesota Timberwolves
   {topicId:8,
@@ -180,13 +235,39 @@ var topics = [
   postNum:1,
   subscribeNum:3282,
   posts:[
-    {postId:"8-1",postTitle:"Report: Manu Ginobili finalising new contract with Spurs",postText:"test",postAuthor:"Andy Wittry",postDate:"2 hours ago",postPic:"img/manu-ginobili-052217-getty-ftr_4o4yo9iz081012huusncu1rsb.jpg",comments:[
-      {commentText:"eee",commentAuthor:"eee",commentDate:121},
-      {commentText:"e",commentAuthor:"e",commentDate:22},
-      {commentText:"e",commentAuthor:"e",commentDate:12}
-    ]}]
-  },
+    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]},
+    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
+      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
+      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
+      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
+    ]}],
+  }
 ]
+
+/****************************************
+EventListener
+****************************************/
+document.addEventListener('init', function (event) {
+  if (event.target.id === 'tab2') {
+    showTopicsList();
+  }else if (event.target.id === 'pageNav1') {
+    showTopic(event.target.data.id);
+  }else if(event.target.id === 'postpage'){
+    showPost(event.target.data.topicid,event.target.data.postid);
+  }else if(event.target.id === 'addapost'){
+    showAddPost(event.target.data.id);
+  }
+});
+
 
 //****************************************
 //  FUNCTIONS - 1
@@ -195,6 +276,18 @@ var topics = [
 function topicslistTOtopic(node,topicID){
   node.on("click",function(){
     myNavigator.pushPage('pageNav1.html',{data:{id:topicID}});
+})
+};
+
+function abstractsTOpost(node,topicID,postID){
+  node.on("click",function(){
+    myNavigator.pushPage('postpage.html',{data:{topicid:topicID,postid:postID}});
+})
+};
+
+function topicTOaddpost(node,topicID){
+  node.on("click",function(){
+  myNavigator.pushPage('addapost.html',{data:{id:topicID}});
 })
 };
 
@@ -225,7 +318,11 @@ function showTopicsList(){
   }
 }
 
-
+/*
+This function shows one topic
+In project 1, we are using static data.
+This function shows all topics that are in the "topics" variable.
+*/
 function showTopic(topicID){
     var topicBannerContent = $("<div id='ban_con'></div>");
     topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
@@ -240,8 +337,12 @@ function showTopic(topicID){
     section.append("<ons-button id='onsbutton' style='padding:0 8px;margin-left:4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
     topicBannerContent.append(section);
     $("#topic_banner").append(topicBannerContent);
-
+    var addpost = $("<ons-fab  position='bottom center' style='background-color:#3A9FED;'></ons-fab>");
+    addpost.append("<ons-icon style='margin-left:3px;' icon='ion-compose'></ons-icon>");
+    $("#topic_banner").append(addpost);
     showPostAbstracts(topicID);
+
+    topicTOaddpost(addpost,topicID);
 };
 
 /*
@@ -268,11 +369,47 @@ function showPostAbstracts(topicID){
     postAbstract.append(mainContent);
     postAbstract.append(footContent);
     article.append(postAbstract);
-    // createOnClick(postAbstract,topics[0].posts[index].postId);
+
+    abstractsTOpost(postAbstract,topicID,topics[topicID-1].posts[index].postId);
   }
   $("#postabstrcts").append(article);
 };
 
+//通过使用堆栈中的返回标签，前提是上一个页面可以自动刷新
+function showAddPost(topicID){
+  console.log(topicID);
+  var addclick = $("<ons-back-button style='margin-right:10px;width:40px;color:balck'>Add</ons-back-button>");
+  $("#barofAddpost").append(addclick);
+  addclick.on("click",function(){
+    addPost(topicID);
+})
+}
+
+function addPost(topicID){
+  console.log(topicID);
+  // var postTitle = document.getElementById('postTitle').value;
+  // var postText = document.getElementById('postText').value;
+  // 添加 postTitle postText 到 jason
+  showModal();
+}
+
+// 通过点击提交后用pushPage函数跳转到topic页面
+// function showAddPost(topicID){
+//   console.log(topicID);
+//   var addclick = $("<p style='margin-right:10px;width:40px;color:balck'>Add</p>");
+//   $("#barofAddpost").append(addclick);
+//   addclick.on("click",function(){
+//     addPost(topicID);
+//     myNavigator.pushPage("pageNav1.html",{data:{id:topicID}});
+// })
+// }
+// function addPost(topicID){
+//   console.log(topicID);
+//   var postTitle = document.getElementById('postTitle').value;
+//   var postText = document.getElementById('postText').value;
+//   添加 postTitle postText 到 jason
+//   showModal();
+// }
 
 /*
 This function shows a post content page
@@ -280,16 +417,50 @@ In project 1, we are using static data.
 This function shows all posts that are in the "topics" variable.
 */
 
-// function showPost(postId){
-//   // $("#postToolbar").append("<div class='center' style='color:white;'>Houston rocket</div>");
-//    var responsePage = $("<div id='response_page'></div>");
-//
-//    var responseTitle = $("<div id='response_title'></div>");
-//    responseTitle.append("<span>" +  + "</span>");
-// };
+function showPost(topicID,postID){
+   var responsePage = $("<div id='response_page'></div>");
+   var responseTitle = $("<div id='response_title'></div>");
+   responsePage.append(responseTitle);
+   responseTitle.append("<span>" + topics[topicID-1].posts[postID-1].postTitle + "</span><br/>");
+   var counts = $("<div id='countss'></div>");
+   counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
+   counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
+   counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
+   counts.append("<span>293</span>");
+   responseTitle.append(counts);
+   var responseWriter = $("<div id='response_writer'></div>");
+   responsePage.append(responseWriter);
+   var responsePic = $("<div id='response_pic'></div>");
+   responsePic.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
+   var responseUser = $("<div id='response_user'></div>");
+   responseUser.append("<span style='color:#0060AA;'>"+topics[topicID-1].posts[postID-1].postAuthor+"</span><br/>");
+   responseUser.append("<span style='font-size:4px;'>"+topics[topicID-1].posts[postID-1].postDate+"</span>");
+   var responseFollow = $("<div id='response_follow'></div>");
+   responseFollow.append("<ons-button id='onsbutton' style='font-size:15px;color:#0060AA;background-color:white;'> &nbsp;&nbsp;+follow&nbsp;&nbsp; </ons-button>")
+   responseWriter.append(responsePic);
+   responseWriter.append(responseUser);
+   responseWriter.append(responseFollow);
+   var responsePost = $("<div id='main_post'></div>");
+   responsePage.append(responsePost);
+   responsePost.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
+   responsePost.append("<p>"+topics[topicID-1].posts[postID-1].postText+"");
 
-
-
+for(index in topics[topicID-1].posts[postID-1].comments){
+   var responseComment = $("<div id='comments'></div>");
+   var commentWriter = $("<div id='response_writer'></div>");
+   responseComment.append(commentWriter);
+   var commentPic = $("<div id='response_pic'></div>");
+   commentPic.append("<img src='img/head.jpg'>");
+   var commentUser = $("<div id='response_user'></div>");
+   commentUser.append("<span style='color:#0060AA;'>"+topics[topicID-1].posts[postID-1].comments[index].commentAuthor+"</span><br/>");
+   commentUser.append("<span style='font-size:4px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
+   commentWriter.append(commentPic);
+   commentWriter.append(commentUser);
+   responseComment.append("<p>"+topics[topicID-1].posts[postID-1].comments[index].commentText+"");
+   responsePage.append(responseComment);
+}
+   $("#belowbar").append(responsePage);
+};
 
 
 //****************************************

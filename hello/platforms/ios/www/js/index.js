@@ -17,6 +17,10 @@
 * under the License.
 */
 
+
+/****************************************
+JS below are from onsen UI
+****************************************/
 var app = {
   // Application Constructor
   initialize: function() {
@@ -46,18 +50,18 @@ var app = {
 
 app.initialize();
 
-
 /****************************************
-JS below are from onsen UI
+EventListener
 ****************************************/
 document.addEventListener('init', function (event) {
   if (event.target.id === 'tab2') {
     showTopicsList();
   }else if (event.target.id === 'pageNav1') {
-    // event.target.querySelector("#topic_banner").innerHTML = showTopic(event.target.data.id);
     showTopic(event.target.data.id);
   }
 });
+
+
 
 /****************************************
 JS below are created by Jesse
@@ -184,9 +188,8 @@ var topics = [
   },
 ]
 
-
 //****************************************
-//  FUNCTIONS
+//  FUNCTIONS - 1
 //****************************************
 
 function topicslistTOtopic(node,topicID){
@@ -195,14 +198,12 @@ function topicslistTOtopic(node,topicID){
 })
 };
 
-
 /*
 This function shows forum topics list
 In project 1, we are using static data.
 This function shows all topics that are in the "topics" variable.
 */
 function showTopicsList(){
-
   for(index in topics){
     var listitem = $(ons._util.createElement("<ons-list-item></ons-list-item>"));
     var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
@@ -225,6 +226,23 @@ function showTopicsList(){
 }
 
 
+function showTopic(topicID){
+    var topicBannerContent = $("<div id='ban_con'></div>");
+    topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
+    var topicBannerWords = $("<div id='ban_words'></div>");
+    topicBannerContent.append(topicBannerWords);
+    topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
+    var lab = $("<div class='lab'></div>");
+    topicBannerWords.append(lab);
+    lab.append("<span style='font-weight:normal;'>Subscriber</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
+    lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].postNum+"")
+    var section = $("<section style='margin-top: 10px;margin-left:20px;'></section>");
+    section.append("<ons-button id='onsbutton' style='padding:0 8px;margin-left:4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+    topicBannerContent.append(section);
+    $("#topic_banner").append(topicBannerContent);
+
+    showPostAbstracts(topicID);
+};
 
 /*
 This function shows all forum post abstracts
@@ -254,6 +272,7 @@ function showPostAbstracts(topicID){
   }
   $("#postabstrcts").append(article);
 };
+
 
 /*
 This function shows a post content page

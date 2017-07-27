@@ -1,11 +1,13 @@
+//****************************************
+//  FUNCTIONS - 2
+//****************************************
+
 /*
 This function shows one topic
 In project 1, we are using static data.
 This function shows all topics that are in the "topics" variable.
 */
-
 function showTopic(topicID){
-
     var topicBannerContent = $("<div id='ban_con'></div>");
     topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
     var topicBannerWords = $("<div id='ban_words'></div>");
