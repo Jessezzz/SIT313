@@ -173,7 +173,7 @@ clear: both;
 #user_top{
   background-color: white;
   margin-top:10px;
-  height:24%;
+  height:160px;
 }
 #user_top_left{
   margin: 13px;
@@ -195,12 +195,11 @@ clear: both;
   margin:50px 15px 0 0;
   color:#999999;
 }
-
-
 #user_bottom{
   background-color: white;
   margin-top:15px;
   font-size: 17px;
+  width:100%;
 }
 .user_bottom_lists{
   height:50px;

@@ -4,10 +4,13 @@
   <link rel="stylesheet" type="text/css" href="css/index.css">
   <link rel="stylesheet" href="css/onsen-css-components.min.css">
   <link rel="stylesheet" href="css/onsenui.css">
+  <link rel="stylesheet" type="text/css" href="css/mobile.css">
+  <link rel="stylesheet" type="text/css" href="css/jquery.qtip.min.css">
 
   <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="cordova.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/variables.js"></script>
   <script src="js/onsenui.min.js"></script>
 </head>
 <body>
@@ -15,12 +18,40 @@
   <ons-navigator id="myNavigator">
     <ons-page>
       <ons-tabbar position="auto">
-        <ons-tab page="mainPage.html" active icon="ion-home" label="NBA"></ons-tab>
+        <ons-tab page="mainPage.html" active icon="ion-home"  label="NBA"></ons-tab>
         <ons-tab icon="ion-chatboxes" label="Forum"  page="topicLists.html"></ons-tab>
-        <ons-tab icon="ion-person" label="User" page="userPage.html"></ons-tab>
+        <ons-tab icon="ion-person"  label="User" page="userPage.html"></ons-tab>
       </ons-tabbar>
     </ons-page>
   </ons-navigator>
+
+  <template id="login.html">
+    <ons-page id="login">
+      <ons-toolbar  style="background-color:white;">
+        <div class="left">
+          <ons-back-button style="font-size:17px;color:#3A9FED">Cancel</ons-back-button>
+        </div>
+      </ons-toolbar>
+      <header>
+        <div id="header" style="margin-top:100px;">
+          <img style="width:90px;height:90px;" src="img/nbalogo.png">
+        </div>
+      </header>
+      <ul class="form-con reg-ul">
+        <li class="success">
+          <ons-input style="margin-top:5px;" class="logint" placeholder="Username"  id="_account" type="text"></ons-input>
+        </li>
+        <li>
+          <ons-input style="margin-top:5px;"class="logint" placeholder="Password" id="_pwd" type="password"></ons-input>
+        </li>
+      </ul>
+      <div class="form-btn">
+        <button type="submit" onclick="login()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Sign in</button>
+      </div>
+      <span onclick="myNavigator.pushPage('register.html')" style="float:left;display:block;color:#757575;font-size:16px;margin-left:16px;margin-top:24px;">Register</span>
+      <span onclick="myNavigator.pushPage('#.html')" style="float:right;display:block;color:#757575;font-size:16px;margin-right:16px;margin-top:24px;">Forgot password</span>
+    </ons-page>
+  </template>
 
   <!-- Here starts the first tab page called NBA -->
   <template id="mainPage.html">
@@ -29,15 +60,16 @@
         <ons-icon size="30px" spin icon="md-spinner"></ons-icon>
       </ons-pull-hook>
       <ons-toolbar>
-        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Recommend</div>
+        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Recommend
+        </div>
       </ons-toolbar>
-      <!-- Here starts search bar of the first tab page  -->
-      <div class="search-bar" onclick="myNavigator.pushPage('search.html')">
-        <input type="search" class="search-input" style="width: 96%; margin: 50px auto 6px 6px;" placeholder="Search">
-      </div>
-      <!-- Here starts post abstracts of the first tab page  -->
-      <div id="allpostabstrcts">
-      </div>
+          <!-- Here starts search bar of the first tab page  -->
+        <div class="search-bar" onclick="myNavigator.pushPage('search.html')">
+          <input type="search" class="search-input" style="width: 96%; margin: 50px auto 6px 6px;" placeholder="Search">
+        </div>
+        <!-- Here starts post abstracts of the first tab page  -->
+        <div style="margin-top:40px;" id="allpostabstrcts">
+        </div>
     </ons-page>
   </template>
 
@@ -195,8 +227,15 @@
           </ons-toolbar-button>
         </div>
       </ons-toolbar>
-      <div id="usermainpage" style="width:100%;height:100%;">
+      <div id="beforelogin" style="display:block;">
+        <span style="text-align:center;color:#999999;font-size:18px;width:100%;display:block;margin:250px auto 20px auto;">After signing in, all of your favourite teams, published and sbuscribed posts will be displayed here</span>
+        <section style="padding: 8px">
+          <ons-button onclick = "myNavigator.pushPage('login.html')" style="background-color:#3A9FED;"modifier="large">Sign in for more functions</ons-button>
+        </section>
       </div>
+      <div id="usermainpage" style="display:none;" style="width:100%;height:100%;">
+    </div>
+
     </ons-page>
   </template>
 
@@ -282,7 +321,7 @@
 <ons-modal direction="up">
   <div style="text-align: center">
     <p>
-      <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Adding.....
+      <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Signing in.....
     </p>
   </div>
 

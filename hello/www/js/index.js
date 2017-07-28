@@ -49,6 +49,27 @@ var app = {
 
 app.initialize();
 
+function login () {
+  var username = document.getElementById('_account').value;
+  var password = document.getElementById('_pwd').value;
+
+  if (username === '1' && password === '1') {
+    showModal();
+    setTimeout(function() {
+      document.getElementById("beforelogin").style.display="none";
+      document.getElementById("usermainpage").style.display="block";
+      myNavigator.popPage();
+    }, 1000);
+  }
+  else {
+    ons.notification.alert('Incorrect username or password.');
+  }
+};
+
+function logout () {
+  document.getElementById("beforelogin").style.display="block";
+  document.getElementById("usermainpage").style.display="none";
+};
 
 function showModal() {
   var modal = document.querySelector('ons-modal');
@@ -63,196 +84,6 @@ function showModal() {
 JS below are created by Jesse
 ****************************************/
 
-//****************************************
-//  VARIABLES
-//****************************************
-
-var topics = [
-  // Topic1 - Houston Rocket
-  {topicId:1,
-  topicTitle:"Houston Rocket",
-  topicPic:"img/reckets.gif",
-  postNum:3,
-  subscribeNum:4397,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  },
-  // Topic2 - Los Angeles Lakers
-  {topicId:2,
-  topicTitle:"Los Angeles Lakers",
-  topicPic:"img/lakers.png",
-  postNum:1,
-  subscribeNum:3217,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  },
-  // Topic3 - Golden State Warrios
-  {topicId:3,
-  topicTitle:"Golden State Warrios",
-  topicPic:"img/warriors.png",
-  postNum:1,
-  subscribeNum:3890,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  },
-  // Topic4 - San Antonio Spurs
-  {topicId:4,
-  topicTitle:"San Antonio Spurs",
-  topicPic:"img/san.png",
-  postNum:1,
-  subscribeNum:2337,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  },
-  // Topic5 - Los Angeles Clippers
-  {topicId:5,
-  topicTitle:"Los Angeles Clippers",
-  topicPic:"img/clippers.png",
-  postNum:1,
-  subscribeNum:2492,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  },
-  // Topic6 - Oklahoma City
-  {topicId:6,
-  topicTitle:"Oklahoma thunder",
-  topicPic:"img/thunder.png",
-  postNum:1,
-  subscribeNum:1962,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  },
-  // Topic7 - Memphis Grizzlies
-  {topicId:7,
-  topicTitle:"Memphis Grizzlies",
-  topicPic:"img/memphis.gif",
-  postNum:1,
-  subscribeNum:1962,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  },
-  // Topic8 - Minnesota Timberwolves
-  {topicId:8,
-  topicTitle:"Minnesota Timberwolves",
-  topicPic:"img/wolves.png",
-  postNum:1,
-  subscribeNum:3282,
-  posts:[
-    {postId:"1",postTitle:"Carmelo Anthony to the Blazers? 'I think he's interested,' CJ McCollum says",postText:"Carmelo Anthony isn't interested in playing for the Knicks next season, but apparently there is a third team he's willing to waive his no-trade clause to join.",postAuthor:"Joe Rodgers",postDate:"1 hour ago",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"2",postTitle:"Rockets are for sale, team CEO Tad Brown announces",postText:"Speaking to reporters Wednesday at Damian Lillard's basketball camp, Trail Blazers teammate CJ McCollum said Portland is indeed in the mix for Anthony just as ESPN's Adrian Wojnarowksi reported on Saturday.",postAuthor:"Gabrielle McMille",postDate:"2 hours ago",postPic:"img/leslie-alexander_1smvhjmtxno4b18lq12oivon3y.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]},
-    {postId:"3",postTitle:"WATCH: James Harden's INSANE 2016/17 mixtape",postText:"Lillard and McCollum also said Wednesday they each have personally reached out to Anthony in an effort to sell him on the Blazers, which would still need to send ample talent back to New York in a trade for the 10-time All-Star.",postAuthor:"NBA Australia",postDate:"4 hours ago",postPic:"img/harden_1kmoxm1tn0x291k045946trznp.jpg",comments:[
-      {commentText:"Inspirational journey keeps Jonathon Simmons humble and hungry",commentAuthor:"abvj12812",commentDate:"23:21"},
-      {commentText:"It may be hard to picture Anthony on the West Coast, but McCollum can see it now.",commentAuthor:"Fakesrs",commentDate:"21:45"},
-      {commentText:"Rockets are for sale",commentAuthor:"David",commentDate:"20:31"}
-    ]}],
-  }
-]
 
 /****************************************
 EventListener
@@ -279,19 +110,19 @@ document.addEventListener('init', function (event) {
 function topicslistTOtopic(node,topicID){
   node.on("click",function(){
     myNavigator.pushPage('topicmain.html',{data:{id:topicID}});
-})
+  })
 };
 
 function abstractsTOpost(node,topicID,postID){
   node.on("click",function(){
     myNavigator.pushPage('postpage.html',{data:{topicid:topicID,postid:postID}});
-})
+  })
 };
 
 function topicTOaddpost(node,topicID){
   node.on("click",function(){
-  myNavigator.pushPage('addapost.html',{data:{id:topicID}});
-})
+    myNavigator.pushPage('addapost.html',{data:{id:topicID}});
+  })
 };
 
 /*
@@ -326,25 +157,25 @@ In project 1, we are using static data.
 This function shows all topics that are in the "topics" variable.
 */
 function showTopic(topicID){
-    var topicBannerContent = $("<div id='ban_con'></div>");
-    topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
-    var topicBannerWords = $("<div id='ban_words'></div>");
-    topicBannerContent.append(topicBannerWords);
-    topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
-    var lab = $("<div class='lab'></div>");
-    topicBannerWords.append(lab);
-    lab.append("<span style='font-weight:normal;'>Subscriber</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
-    lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].postNum+"")
-    var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
-    $("#topic_banner").append(section);
-    $("#topic_banner").append(topicBannerContent);
-    var addpost = $("<ons-toolbar-button ></ons-toolbar-button>");
-    addpost.append("<ons-icon  style='color:#FFFFFF' icon='ion-compose'></ons-icon>");
-    $("#addpostbutton").append(addpost);
-    var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
-    $("#topicbar").append(topicbartitle);
-    showPostAbstracts(topicID);
-    topicTOaddpost(addpost,topicID);
+  var topicBannerContent = $("<div id='ban_con'></div>");
+  topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
+  var topicBannerWords = $("<div id='ban_words'></div>");
+  topicBannerContent.append(topicBannerWords);
+  topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
+  var lab = $("<div class='lab'></div>");
+  topicBannerWords.append(lab);
+  lab.append("<span style='font-weight:normal;'>Subscriber</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
+  lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].postNum+"")
+  var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
+  $("#topic_banner").append(section);
+  $("#topic_banner").append(topicBannerContent);
+  var addpost = $("<ons-toolbar-button ></ons-toolbar-button>");
+  addpost.append("<ons-icon  style='color:#FFFFFF' icon='ion-compose'></ons-icon>");
+  $("#addpostbutton").append(addpost);
+  var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
+  $("#topicbar").append(topicbartitle);
+  showPostAbstracts(topicID);
+  topicTOaddpost(addpost,topicID);
 };
 
 /*
@@ -373,6 +204,40 @@ function showPostAbstracts(topicID){
   $("#postabstrcts").append(article);
 };
 
+
+function showHotPostAbstracts(){
+  var article = $("<div id='articles'></div>");
+  for(index1 in topics){
+    var hot = 0;
+    var topic = 0;
+    var post = 0;
+    for (index2 in topics[index1].posts){
+      if((topics[index1].posts[index2].comments.length)>hot){
+        hot = topics[index1].posts[index2].comments.length;
+        topic = index1;
+        post = index2;
+      }
+    }
+    var postAbstract = $("<div class='contents'></div>");
+    var mainContent = $("<div class='bod'></div>");
+    mainContent.append("<div class='title'>"+ topics[topic].posts[post].postTitle +"</div>");
+    mainContent.append("<div class='pics'><img src="+ topics[topic].posts[post].postPic + "></div>");
+    var footContent = $("<div class='footer'></div>");
+    footContent.append("<a>"+ topics[topic].posts[post].postAuthor +"&nbsp;</a>");
+    footContent.append("<span>"+ topics[topic].topicTitle +"</span>");
+    // footContent.append("<div id='counts'></div>");
+    // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
+    // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
+    postAbstract.append(mainContent);
+    postAbstract.append(footContent);
+    article.append(postAbstract);
+    abstractsTOpost(postAbstract,parseInt(topic)+1,parseInt(post)+1);
+  }
+  $("#allpostabstrcts").append(article);
+}
+
+
+
 // If last page can refresh itself, using back button from stack navigation
 
 function showAddPost(topicID){
@@ -381,7 +246,7 @@ function showAddPost(topicID){
   $("#barofAddpost").append(addclick);
   addclick.on("click",function(){
     addPost(topicID);
-})
+  })
 }
 
 function addPost(topicID){
@@ -417,49 +282,49 @@ In project 1, we are using static data.
 This function shows all posts that are in the "topics" variable.
 */
 function showPost(topicID,postID){
-   var responsePage = $("<div id='response_page'></div>");
-   var responseTitle = $("<div id='response_title'></div>");
-   responsePage.append(responseTitle);
-   responseTitle.append("<span>" + topics[topicID-1].posts[postID-1].postTitle + "</span><br/>");
-   var counts = $("<div id='countss'></div>");
-   counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
-   counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
-   counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-   counts.append("<span>293</span>");
-   responseTitle.append(counts);
-   var responseWriter = $("<div id='response_writer'></div>");
-   responsePage.append(responseWriter);
-   var responsePic = $("<div id='response_pic'></div>");
-   responsePic.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
-   var responseUser = $("<div id='response_user'></div>");
-   responseUser.append("<span style='font-size:18px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].postAuthor+"</span><br/>");
-   responseUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].postDate+"</span>");
-   var responseFollow = $("<div id='response_follow'></div>");
-   responseWriter.append(responsePic);
-   responseWriter.append(responseUser);
-   responseWriter.append(responseFollow);
-   var responsePost = $("<div id='main_post'></div>");
-   responsePage.append(responsePost);
-   responsePost.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
-   responsePost.append("<p>"+topics[topicID-1].posts[postID-1].postText+"");
+  var responsePage = $("<div id='response_page'></div>");
+  var responseTitle = $("<div id='response_title'></div>");
+  responsePage.append(responseTitle);
+  responseTitle.append("<span>" + topics[topicID-1].posts[postID-1].postTitle + "</span><br/>");
+  var counts = $("<div id='countss'></div>");
+  counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
+  counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
+  counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
+  counts.append("<span>293</span>");
+  responseTitle.append(counts);
+  var responseWriter = $("<div id='response_writer'></div>");
+  responsePage.append(responseWriter);
+  var responsePic = $("<div id='response_pic'></div>");
+  responsePic.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
+  var responseUser = $("<div id='response_user'></div>");
+  responseUser.append("<span style='font-size:18px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].postAuthor+"</span><br/>");
+  responseUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].postDate+"</span>");
+  var responseFollow = $("<div id='response_follow'></div>");
+  responseWriter.append(responsePic);
+  responseWriter.append(responseUser);
+  responseWriter.append(responseFollow);
+  var responsePost = $("<div id='main_post'></div>");
+  responsePage.append(responsePost);
+  responsePost.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
+  responsePost.append("<p style='font-size:17px;'>"+topics[topicID-1].posts[postID-1].postText+"");
 
-for(index in topics[topicID-1].posts[postID-1].comments){
-   var responseComment = $("<div id='comments'></div>");
-   var commentWriter = $("<div id='response_writer'></div>");
-   responseComment.append(commentWriter);
-   var commentPic = $("<div id='response_pic'></div>");
-   commentPic.append("<img src='img/head.jpg'>");
-   var commentUser = $("<div id='response_user'></div>");
-   commentUser.append("<span style='font-size:18px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].comments[index].commentAuthor+"</span><br/>");
-   commentUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
-   commentWriter.append(commentPic);
-   commentWriter.append(commentUser);
-   responseComment.append("<p>"+topics[topicID-1].posts[postID-1].comments[index].commentText+"");
-   responsePage.append(responseComment);
-}
-   $("#belowbar").append(responsePage);
-   var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
-   $("#topicbar2").append(topicbartitle);
+  for(index in topics[topicID-1].posts[postID-1].comments){
+    var responseComment = $("<div id='comments'></div>");
+    var commentWriter = $("<div id='response_writer'></div>");
+    responseComment.append(commentWriter);
+    var commentPic = $("<div id='response_pic'></div>");
+    commentPic.append("<img src='img/head.jpg'>");
+    var commentUser = $("<div id='response_user'></div>");
+    commentUser.append("<span style='font-size:20px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].comments[index].commentAuthor+"</span><br/>");
+    commentUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
+    commentWriter.append(commentPic);
+    commentWriter.append(commentUser);
+    responseComment.append("<p style='font-size:16px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentText+"");
+    responsePage.append(responseComment);
+  }
+  $("#belowbar").append(responsePage);
+  var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
+  $("#topicbar2").append(topicbartitle);
 };
 
 /*
@@ -496,12 +361,15 @@ function showUserpage(){
   $("#usermainpage").append(userBottom1);
   $("#usermainpage").append(userBottom2);
   $("#usermainpage").append(userBottom3);
+  bottomList6.on("click",function(){
+    logout();
+  })
 }
 
 
-//****************************************
+// ****************************************
 //  WEB APPLICATION LOAD
-//****************************************
-// $(document).ready(function(){
-//   showTopicsList();
-// });
+// ****************************************
+$(document).ready(function(){
+  showHotPostAbstracts();
+});
