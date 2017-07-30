@@ -1,0 +1,427 @@
+:-moz-selection{background:#008cd6; color:#fff; text-shadow:none;}
+::selection{background:#008cd6; color:#fff; text-shadow:none;}
+*{margin: 0 auto;padding: 0;}
+html,body{min-height: 100%;}
+body{
+	font-family:"Arial"; 
+	font-size:75%; 
+	color:#000; 
+	background-color: #008cd6; 
+	margin:0; padding:0; 
+	font-weight:normal;
+}
+a,a:hover,a:active{
+	text-decoration: none; 
+	color: #000;
+}
+a{
+	color:#999999; 
+	text-decoration:none; 
+	outline:none; 
+	cursor:pointer;
+}
+ol,li,ul,dl,dt,dd{
+	list-style:none;
+}
+img{
+	border:0;
+}
+table{
+	width:100%; 
+	border-collapse:collapse;
+}
+select,input,textarea{
+	font-size:12px; 
+	color:#000; 
+	outline:none;
+	 resize:none;
+	}
+em{
+	display:inline-block; 
+	vertical-align:middle;
+}
+.cl:after { 
+	content: "."; 
+	display: block; 
+	height: 0; 
+	clear: both; 
+	visibility: hidden;
+	} 
+.cl { zoom:1;}
+
+
+/*公共部分 star*/
+.wrap {
+	height: 100%;
+	padding-bottom: 20px;
+}
+
+ul.form-con{
+	border-radius: 5px;
+	background-color: #fff;
+	width: 95%;
+	margin: 1em auto 3em;
+}
+ul.form-con li{
+	border-bottom: 1px solid #A3CBEB;
+	text-align: center;
+	line-height: 3.8em;
+	position: relative;
+	padding: 0 1em;
+	text-align: left;
+}
+ul.form-con li.radio li{
+	border-radius: 5px;
+	border: 1px solid #A3CBEB;
+	text-align: center;
+	line-height: 3.8em;
+	padding: 0 1em;
+}
+ul.form-con li:last-child{
+	border-bottom: none;
+}
+
+li input {
+	border: none;
+	width: 100%;
+	font-size: 1.4em;
+}
+
+
+/*输入框内右边小图标*/
+ul.form-con li b{
+	width: 23px;
+	height: 23px;
+	overflow: hidden;
+	background: url(https://passport.vivo.com.cn/wap/images/m-login-om-ico.png) no-repeat;
+	background-size: 46px 23px;
+	position: absolute;
+	top: 10px;
+	right: 8px;
+	display: none;
+}
+ul.form-con li b.correct{
+	background-position: 0px 0;
+}
+ul.form-con li b.error{
+	background-position: -23px 0;
+}
+
+/*ul.form-con li.vercode b.correct{
+	right: 42%;
+}*/
+ul.form-con li.vercode b{
+	right: 42%;
+}
+/*错误提示位置 */
+.errorMessage{
+	position: absolute;
+	top: 0px;
+	right: 35px;
+	display: none;
+}
+
+/*大提交按钮*/
+.form-btn button,
+.form-btn a{
+	width: 95%;
+	display: block;
+	text-align: center;
+	height: 2em;
+	line-height: 2em;
+	background-color: #cce8f7;
+	font-size: 2em;
+	color: #008cd6;
+	border-radius: 3px;
+	border: none;
+	cursor: pointer;
+}
+.form-btn a.bg_white{
+	background-color: #FFF;
+}
+
+form .tips{width: 93%;color: #FFFFFF;font-size: 14px;}
+/*公共部分 end*/
+
+
+/*其他方式登录star*/
+.login_sns{
+	text-align: center;
+	width: 95%;
+	margin: 1em auto;
+	font-size: 1.4em;
+
+}
+.login_sns p{
+	color: #a3cbeb;
+	margin: 1em auto;
+}
+.login_sns a{
+	width: 50px; 
+	height: 50px; 
+	overflow: hidden; 
+	display: inline-block; 
+	margin: 0 10px; 
+	background: #ff5858; 
+	border-radius: 6px;
+}
+.login_sns a b{
+	width: 50px; 
+	height: 50px; 
+	display: inline-block; 
+	overflow: hidden; 
+	background: url(https://passport.vivo.com.cn/wap/images/m-login-om-ico.png) no-repeat; 
+}
+.login_sns a.qq{background: #5ca3e1;}
+.login_sns a.qq b{background-position: 10px center;}
+.login_sns a.wechat{background: #47C90E;}
+.login_sns a.wechat b{background-position: -42px center;}
+.login_sns a.weibo{background: #ff5858;}
+.login_sns a.weibo b{background-position: -92px center;}
+.login_sns a.renren{background: #6a9bec;}
+.login_sns a.renren b{background-position: -199px center;}
+
+/*其他方式登录end*/
+
+/*创建账户、已有账户 star*/
+
+div.btns{
+	text-align: center;
+	width: 95%;
+}
+div.btns a{
+	display: block;
+	width: 48%;
+	color: #FFFFFF;
+	background-color: #CCCCCC;
+	border-radius: 3px;
+	height: 48px;
+	line-height: 48px;
+	font-size: 18px;
+	text-align: center;
+}
+div.btns a.founds{
+	background-color: #cce8f7;
+	color: #008cd6;
+}
+
+.founds{
+	float: left;
+}
+.helis{
+	float: right;
+}
+/*创建账户、已有账户 end*/
+
+/*单选按钮 star*/
+ul.form-con li.radio {
+	text-align: left;
+	font-size: 14px;
+}
+ul.form-con li input[type=radio] {
+	width: 1.2em;
+	height: 1.2em;
+	vertical-align: middle;
+	margin-left: 1em;
+}
+/*单选按钮end*/
+
+/*登录star*/
+#header {
+	text-align: center;
+	margin-bottom: 1em;
+}
+#header .logo{
+	width: 130px; 
+	height: 35px;
+	display: block;
+	margin: 30px auto 25px;
+
+}
+#header .logo img{
+	width: 130px; 
+	height: 35px;
+}
+#header p {
+	font-size: 20px;
+	color: #fff;
+	font-weight: normal;
+	margin: 0 auto 25px;
+}
+
+
+
+.link{
+	text-align: right;
+	width: 95%;
+	margin: 2em auto;
+}
+.link a{
+	color: #a3cbeb;
+	margin: 2em;
+	font-size: 1.4em;
+}
+
+
+/*登录end*/
+
+/*选择密保问题*/
+
+/*选择密保问题 star*/
+.select-question{
+
+	/*border: solid 1px blue;*/
+	/*background: url(https://passport.vivo.com.cn/wap/images/select-ico.png) no-repeat right center;*/
+	/*background: url(https://passport.vivo.com.cn/wap/images/select-ico3.png) no-repeat right top;*/
+	position: relative;
+}
+.select-question-ico{
+	width: 40px;
+	height: 40px;
+	/*border: solid 1px red;*/
+	/*background: url(https://passport.vivo.com.cn/wap/images/select-ico.png) no-repeat right center;*/
+	background: #fff url(https://passport.vivo.com.cn/wap/images/select-ico.png) no-repeat  center;
+	position: absolute;
+	right: 0;
+	top: 3px;
+
+}
+#question-box{
+	margin: 0 auto ;
+}
+
+ul.form-con li.question-li{
+	display: none;
+	padding: 0 2.5em;
+}
+/*选择密保问题 end*/
+
+
+/*手机验证码 star*/
+
+input.v_inp{
+	width: 60%;
+	margin: 0;
+	padding: 0;
+	line-height: 30px;
+	
+}
+
+#belaybar{
+	width: 35%;
+	color: #fff;
+	background: #008cd6;
+	-webkit-border-radius: 3px; 
+	-moz-border-radius: 3px; 
+	-o-border-radius: 3px; 
+	border-radius: 3px; 
+	line-height: 30px;
+	font-size: 14px;
+}
+/*手机验证码 end*/
+
+.binding{
+	width: 95%;
+	font-size: 16px;
+	line-height: 30px;
+	/*text-align: center;*/
+	text-align: left;
+	margin: 1.5em auto ;
+	color: #fff;
+}
+
+/*成功提示页面*/
+
+.message{
+	margin:  0 auto; 
+	color: #FFFFFF;
+	text-align: center;
+	width: 95%;
+	padding-top: 20px;
+}
+
+.succeed_ico{
+	background: url(https://passport.vivo.com.cn/wap/images/message.png) center bottom no-repeat; 
+	background-size: 315px; 
+	padding-bottom: 210px;
+}
+.message .info{
+	font-size: 20px;
+	line-height: 30px;
+}
+.message .btn{
+	text-align: center; 
+	margin: 0px auto 0;
+}
+.message .btn a{
+	width: 180px; 
+	height: 38px; 
+	line-height: 38px; 
+	color: #008cd6; 
+	background-color: #cce8f7; 
+	font-size: 16px; 
+	display: inline-block; 
+	overflow: hidden; 
+	text-align: center; 
+	vertical-align: middle;
+	border-radius: 8px;
+}
+
+
+/*个人中心 star*/
+
+ul.userinfo li {
+	text-align: left;
+}
+ul.userinfo li label {
+	display: inline-block;
+	margin-right: 1em;
+	width: 4.5em;
+	text-align: right;
+}
+ul.userinfo li a{
+	color: #008cd6;
+	margin-left: 1em;
+}
+
+.yet-set,.not-set{
+	display: none;
+}
+/*自定义密保问题*/
+.news-question-input{
+	display: none;
+}
+
+/*个人中心 end*/
+
+.mar-top{
+	margin-top: 20px;
+}
+
+.code-box{
+	width: 75px; 
+	height: 42px;
+	border: solid 1px #f5f5f5; 
+	background: #f5f5f5;
+	display: inline-block; 
+	-webkit-border-radius: 3px; 
+	-moz-border-radius: 3px; 
+	-o-border-radius: 3px; 
+	border-radius: 3px; 
+	-webkit-transition:all .3s ease-in-out; 
+	-moz-transition:all .3s ease-in-out; 
+	-o-transition:all .3s ease-in-out; 
+	transition:all .3s ease-in-out;
+	position: absolute;
+	top: 0;
+	right: 60px;
+}
+
+.change-code{
+	/*display: inline-block;*/
+	/*margin-left: 110px;*/
+	display: block;
+	position: absolute;
+	right: 12px;
+	top: 0px;
+}

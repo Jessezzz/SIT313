@@ -29,29 +29,30 @@
   /*margin-top:37px;*/
 }
 .contents{
-  width:300px;
-  height:150px;
+  width:90%;
+  height:25%;
   border-bottom: 1px solid #DBDBDB;
   margin:0 auto;
 }
 .bod{
   padding-top: 10px;
-  width:300px;
-  height:110px;
+  width:100%;
+  height:130px;
 }
 .title{
-  font-size:16px;
-  width:200px;
+  font-size:18px;
+  width:235px;
   float:left;
 }
 .pics img{
   float:right;
-  width:90px;
-  height:90px;
+  width:100px;
+  height:100px;
 }
 .footer{
   color:#8E8E8E;
-  font-size:6px;
+  font-size:14px;
+  margin-bottom: 14px;
 }
 .footer a{
   text-decoration: none;
@@ -60,6 +61,9 @@
 #counts{
   display: block;
   float:right;
+}
+#onslist{
+  font-size:18px;
 }
 
 
@@ -70,47 +74,41 @@
 background-color:white;
 }
 #response_title{
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 22px;
   border-bottom: 1px solid #DBDBDB;
   padding: 10px;
   height:100px;
 }
 #countss{
   margin-top:10px;
-  font-size:15px;
-  font-weight:normal;
+  font-size:16px;
   float:right;
   color:#999999;
 }
 #response_writer{
   margin: 10px;
-  height:30px;
+  height:40px;
 }
 #response_user{
   float: left;
-  margin-left: 10px;
+  margin-left: 15px;
 }
 #response_pic img{
   float: left;
   border-radius:50%;
   overflow:hidden;
-  width:30px;height:30px;
+  width:40px;height:40px;
 }
-#response_follow{
-float:right;
-margin-right: 0px;
-font-size: 8px;
-}
+
 #main_post{
   border-bottom: 1px solid #DBDBDB;
 }
 #main_post img{
-  width:300px;
-  margin:10px;
+  width:94%;
+  margin:12px;
 }
 #main_post p{
-  margin: 16px;
+  margin: 17px;
   line-height: 25px;
 }
 #comments{
@@ -120,40 +118,53 @@ font-size: 8px;
   margin: 16px;
   line-height: 25px;
 }
-
-
+#reply{
+  position:absolute;
+  top:400px;
+  width:100%;
+  height:40px;
+  border: 1px solid red;
+}
 
 
 
 #topic_banner{
-  height:90px;
+  height:16%;
   background-color:#FFFFFF;
-  margin-bottom: 7px;
+  margin-bottom: 9px;
 }
 #ban_con{
-  width:283px;
-  height:52px;
+  width:90%;
+  height:80px;
   margin:0 auto;
-  padding-top: 17px;
+  padding-top: 20px;
 }
 #ban_con img{
   float:left;
-  height:52px;
-  width:52px;
+  height:63px;
+  width:63px;
 }
 #ban_words{
   float:left;
-  height:52px;
-  width:120px;
-  margin:0 19px;
+  height:63px;
+  width:200px;
+  margin-left: 23px;
+}
+#joinbutton{
+  color: #0060AA;
+background-color: white;
+float: right;
+margin-top: 30px;
+font-size: 17px;
+clear: both;
 }
 #topic{
   font-weight: bold;
-  font-size:15px;
+  font-size:18px;
 }
 .lab{
-  margin-top:7px;
-  font-size:11px;
+  margin-top:15px;
+  font-size:16px;
   font-weight: bold;
 }
 
@@ -162,56 +173,37 @@ font-size: 8px;
 #user_top{
   background-color: white;
   margin-top:10px;
-  height:170px;
+  height:160px;
 }
-#user_top_top{
-  height:110px;
-  border-bottom: 1px solid #DBDBDB;
-}
-#user_top_top_left{
+#user_top_left{
   margin: 13px;
+  margin-top:20px;
   border-radius:50%;
   overflow:hidden;
-  width:70px;height:70px;
+  width:80px;height:80px;
   border:1px solid #DBDBDB;
   line-height: 70px;
 }
-#user_top_top_center{
-  margin-top:15px;
-  width:190px;
+#user_top_center{
+  margin-top:30px;
+  width:60%;
   float:left;
-  height:94px;
+  height:20%;
 }
-#user_top_top_right{
+#user_top_right{
   float:right;
-  margin:55px 15px 0 0;
+  margin:50px 15px 0 0;
   color:#999999;
 }
-#user_top_bottom{
-  clear:both;
-  height:60px;
-}
-.follow{
-  text-align: center;
-  width:90px;
-  margin-left: 10px;
-  float:left;
-  margin-top: 15px;
-}
-.numbers{
-  font-size: 8px;
-  color:#3367D6;
-}
-
-
-
 #user_bottom{
   background-color: white;
   margin-top:15px;
+  font-size: 17px;
+  width:100%;
 }
 .user_bottom_lists{
-  height:40px;
-  line-height: 40px;
+  height:50px;
+  line-height: 50px;
   border-bottom: 1px solid #DBDBDB;
 }
 .iconarrow{
@@ -221,7 +213,7 @@ font-size: 8px;
     margin-top:12px;
 }
 .iconthem{
-  margin-left:20px;
+  margin-left:25px;
   margin-right:10px;
   color:#3A9FED;
 }
