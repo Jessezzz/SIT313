@@ -177,14 +177,18 @@ function showTopicsList(){
     listitemCenter.append("<span class='list-item__subtitle'>"+ topics[index].subscribeNum+" members</span>");
     var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
     var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
-    listitemRightSection.append("<ons-button id='onsbutton' onclick='joinSuc()' style='padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+    var join = $("<ons-button id='onsbutton1' style='display:block; padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+    var joined = $("<ons-button id='onsbutton2' style='display:none; padding:0;color:#ADADAE;font-size:14px;background-color:white;border:1px solid #ADADAE'> &nbsp;&nbsp;Joined&nbsp;&nbsp; </ons-button>");
     listitemRight.append(listitemRightSection);
+    listitemRightSection.append(join);
+    listitemRightSection.append(joined);
     listitem.append(listitemLeft);
     listitem.append(listitemCenter);
     listitem.append(listitemRight);
     $("#onslist").append(listitem);
-
-    topicslistTOtopic(listitem,topics[index].topicId);
+    // document.getElementById("onsbutton1").style.display = "none";
+    // document.getElementById("onsbutton2").style.display = "block";
+    topicslistTOtopic(listitemCenter,topics[index].topicId);
   }
 }
 
@@ -299,17 +303,17 @@ function showAddPost(topicID){
   addclick.on("click",function(){
     var posttitle = document.getElementById('postTitle').value;
     var posttext = document.getElementById('postText').value;
-      var newpost = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:""};
-      topics[parseInt(topicID-1)].posts.push(newpost);
-      ons.notification.alert('Post successfully.');
-      setTimeout(function() {
-        $("#topic_banner").html(" ");
-        $("#postabstrcts").html(" ");
-        $("#topicbar").html(" ");
-        showTopic(parseInt(topicID));
-        myNavigator.popPage();
-      }, 500);
-})
+    var newpost = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:""};
+    topics[parseInt(topicID-1)].posts.push(newpost);
+    ons.notification.alert('Post successfully.');
+    setTimeout(function() {
+      $("#topic_banner").html(" ");
+      $("#postabstrcts").html(" ");
+      $("#topicbar").html(" ");
+      showTopic(parseInt(topicID));
+      myNavigator.popPage();
+    }, 500);
+  })
 }
 
 /*
