@@ -87,6 +87,7 @@
         <div class="center" id="topicbar" style="width:250px;background-color:#3A9FED;color:#ECFDFD">
         </div>
         <div class="right" id="addpostbutton">
+          <ons-toolbar-button id="addpost"><ons-icon  style='color:#FFFFFF' icon='ion-compose'></ons-icon></ons-toolbar-button>
         </div>
       </ons-toolbar>
       <div id="topic_banner" >
@@ -238,18 +239,6 @@
     </ons-page>
   </template>
 
-    <!-- Here starts profile page -->
-    <template id="profile.html">
-      <ons-page id="profile">
-        <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-          <div class="left">
-            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-          </div>
-          <div class="center" style="color:#FFFFFF">Profile</div>
-        </ons-toolbar>
-      </ons-page>
-    </template>
-
   <!-- Here starts my teams page -->
   <template id="myteams.html">
     <ons-page id="myteams">
@@ -349,6 +338,21 @@
         <ons-list-item tappable onclick="">Help<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
         <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
       </ons-list>
+    </ons-page>
+  </template>
+
+  <!-- Here starts profile page -->
+  <template id="profile.html">
+    <ons-page id="profile">
+      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Edit Profile
+        </div>
+      </ons-toolbar>
+      <div id="contentofp">
+      </div>
     </ons-page>
   </template>
 

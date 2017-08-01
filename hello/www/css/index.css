@@ -228,3 +228,6 @@ clear: both;
   margin-right:10px;
   color:#3A9FED;
 }
+.text-input{
+  line-height: 50px;
+}
