@@ -65,8 +65,9 @@
   <!-- Here starts the second tab page called Fourm -->
   <template id="topicLists.html">
     <ons-page id="topicLists">
-      <ons-toolbar>
-        <div class="center" style="background-color:#3A9FED;color:#FFFFFF">Forum</div>
+      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Forum
+        </div>
       </ons-toolbar>
       <ons-list id="onslist">
       </ons-list>
@@ -169,13 +170,13 @@
           </ons-toolbar-button>
         </div>
       </ons-toolbar>
-      <div id="beforelogin" style="display:none;">
+      <div id="beforelogin" style="display:block;">
         <span style="text-align:center;color:#999999;font-size:18px;width:100%;display:block;margin:250px auto 20px auto;">After signing in, all of your favourite teams, published and sbuscribed posts will be displayed here</span>
         <section style="padding: 8px">
           <ons-button onclick = "myNavigator.pushPage('login.html')" style="background-color:#3A9FED;"modifier="large">Sign in for more functions</ons-button>
         </section>
       </div>
-      <div id="usermainpage" style="display:block;" style="width:100%;height:100%;">
+      <div id="usermainpage" style="display:none;" style="width:100%;height:100%;">
       </div>
     </ons-page>
   </template>

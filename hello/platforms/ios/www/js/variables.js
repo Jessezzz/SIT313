@@ -2,18 +2,56 @@
 //  VARIABLES
 //****************************************
 var users = [
-  {username:"1",
+  {userId:"1",
+  username:"1",
   password:"1",
+  nickname:"timemachine1996",
+  signature:"I am rocket's fans and Harden is my favourite player",
+  headpic:"img/head.jpg",
   myTopics:[
     {topicId:"1"},
     {topicId:"2"},
+  ],
+  myPosts:[
+    {postId:"1"},
+    {postId:"2"},
+  ],
+  myComments:[
+
   ]
 },
-{username:"2",
+{userId:"2",
+username:"2",
 password:"2",
+nickname:"superman",
+signature:"I am Lakers's fans and Kobe is my favourite player",
+headpic:"",
 myTopics:[
-  {topicId:"4"},
-  {topicId:"5"},
+  {topicId:"1"},
+  {topicId:"2"},
+],
+myPosts:[
+  {postId:"1"},
+  {postId:"2"},
+],
+myComments:[
+]
+},
+{userId:"3",
+username:"3",
+password:"3",
+nickname:"goodgoodstudy",
+signature:"I am Lakers's fans and Kobe is my favourite player",
+headpic:"",
+myTopics:[
+  {topicId:"1"},
+  {topicId:"2"},
+],
+myPosts:[
+  {postId:"1"},
+  {postId:"2"},
+],
+myComments:[
 ]
 }
 ]

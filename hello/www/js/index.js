@@ -135,9 +135,6 @@ document.addEventListener('init', function (event) {
   }else if(event.target.id === 'subscribe'){
     showSubscribe(event.target.data.userid);
   }
-  else if(event.target.id === 'userPage'){
-    showUserpage(1);
-  }
 });
 
 

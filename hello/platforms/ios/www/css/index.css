@@ -65,6 +65,10 @@
 #onslist{
   font-size:18px;
 }
+#tem{
+  font-size:18px;
+  background-color: white;
+}
 
 
 
@@ -98,6 +102,13 @@ background-color:white;
   border-radius:50%;
   overflow:hidden;
   width:40px;height:40px;
+}
+#mypost_pic img{
+  float: left;
+  margin-left: 10px;
+  border-radius:50%;
+  overflow:hidden;
+  width:20px;height:20px;
 }
 
 #main_post{

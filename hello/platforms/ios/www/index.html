@@ -38,7 +38,7 @@
       </ons-toolbar>
       <!-- Here starts search bar of the first tab page  -->
       <div class="search-bar" onclick="myNavigator.pushPage('search.html')">
-        <input class="search-input" style="width: 96%; margin: 50px auto 6px 6px;" placeholder="Search">
+        <div class="search-input" style="width: 92%; margin: 50px auto 6px 14px;" placeholder="Search"></div>
       </div>
       <!-- Here starts post abstracts of the first tab page  -->
       <div style="margin-top:40px;" id="allpostabstrcts">
@@ -65,8 +65,9 @@
   <!-- Here starts the second tab page called Fourm -->
   <template id="topicLists.html">
     <ons-page id="topicLists">
-      <ons-toolbar>
-        <div class="center" style="background-color:#3A9FED;color:#FFFFFF">Forum</div>
+      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Forum
+        </div>
       </ons-toolbar>
       <ons-list id="onslist">
       </ons-list>
@@ -218,6 +219,105 @@
         </div>
         <div class="center" style="color:#FFFFFF">Register</div>
       </ons-toolbar>
+      <header>
+        <div id="header" style="margin-top:100px;">
+          <img style="width:90px;height:90px;" src="img/nbalogo.png">
+        </div>
+      </header>
+      <ul class="form-con reg-ul">
+        <li class="success">
+          <ons-input style="margin-top:5px;" class="logint" placeholder="Username"  id="_accountt" type="text"></ons-input>
+        </li>
+        <li>
+          <ons-input style="margin-top:5px;"class="logint" placeholder="Password" id="_pwdd" type="password"></ons-input>
+        </li>
+      </ul>
+      <div class="form-btn">
+        <button type="submit" onclick="register()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Register</button>
+      </div>
+    </ons-page>
+  </template>
+
+    <!-- Here starts profile page -->
+    <template id="profile.html">
+      <ons-page id="profile">
+        <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+          <div class="left">
+            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          </div>
+          <div class="center" style="color:#FFFFFF">Profile</div>
+        </ons-toolbar>
+      </ons-page>
+    </template>
+
+  <!-- Here starts my teams page -->
+  <template id="myteams.html">
+    <ons-page id="myteams">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">My Teams</div>
+      </ons-toolbar>
+      <div id="tem"></div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts my posts page -->
+  <template id="myposts.html">
+    <ons-page id="myposts">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">My Posts</div>
+      </ons-toolbar>
+      <div id="postofmine">
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts subscribe page -->
+  <template id="subscribe.html">
+    <ons-page id="subscribe">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">Subscribe</div>
+      </ons-toolbar>
+      <div id="postofsub">
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts message page -->
+  <!-- <template id="messages.html">
+    <ons-page id="messages">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">Messages</div>
+      </ons-toolbar>
+    </ons-page>
+  </template> -->
+
+  <!-- Here starts appinfo page -->
+  <template id="appinfo.html">
+    <ons-page id="appinfo">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+      </ons-toolbar>
+      <div id="info" style="font-size:18px;margin-top:20px;">
+      <span>Name: NBA Bar</span><br/>
+      <span>Description: Used for discussing between fans from different teams</span><br/><br/>
+      <span>Created by: Yuanxi Zhang</span><br/>
+      <span>Unit: SIT313 Mobile computing</span><br/>
+      <span>Unit chair: Henry Larkin</span><br/>
+    </div>
     </ons-page>
   </template>
 
@@ -225,75 +325,30 @@
   <template id="setting.html">
     <ons-page id="setting">
       <ons-toolbar>
-        <div class="left">
+        <div class="left" style="font-size:17px;">
           <ons-back-button>Back</ons-back-button>
         </div>
         <div class="center">Setting</div>
       </ons-toolbar>
-      注销
-      修改密码
-      意见反馈
-      关于
-    </ons-page>
-  </template>
-
-  <!-- Here starts my teams page -->
-  <template id="myteams.html">
-    <ons-page id="myposts">
-      <ons-toolbar>
-        <div class="left">
-          <ons-back-button>Back</ons-back-button>
-        </div>
-        <div class="center"></div>
-      </ons-toolbar>
-    </ons-page>
-  </template>
-
-  <!-- Here starts my posts page -->
-  <template id="myposts.html">
-    <ons-page id="myposts">
-      <ons-toolbar>
-        <div class="left">
-          <ons-back-button>Back</ons-back-button>
-        </div>
-        <div class="center"></div>
-      </ons-toolbar>
-    </ons-page>
-  </template>
-
-  <!-- Here starts message page -->
-  <template id="messages.html">
-    <ons-page id="messages">
-      <ons-toolbar>
-        <div class="left">
-          <ons-back-button>Back</ons-back-button>
-        </div>
-        <div class="center"></div>
-      </ons-toolbar>
-    </ons-page>
-  </template>
-
-  <!-- Here starts subscribe page -->
-  <template id="subscribe.html">
-    <ons-page id="subscribe">
-      <ons-toolbar>
-        <div class="left">
-          <ons-back-button>Back</ons-back-button>
-        </div>
-        <div class="center"></div>
-      </ons-toolbar>
-    </ons-page>
-  </template>
-
-  <!-- Here starts profile page -->
-  <template id="profile.html">
-    <ons-page id="subscribe">
-      <ons-toolbar>
-        <div class="left">
-          <ons-back-button>Back</ons-back-button>
-        </div>
-        <div class="center"></div>
-      </ons-toolbar>
+      <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
+      <ons-list style="font-size:16px;">
+        <ons-list-item tappable onclick="">Change Password<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">Add Contact<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      </ons-list>
+      <ons-list-header style="background-color:#F9F9F9;color:#999999">Settings</ons-list-header>
+      <ons-list style="font-size:17px;">
+        <ons-list-item tappable onclick="">Language<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">
+          <div class="center">
+            Notification
+          </div>
+          <div class="right">
+            <ons-switch></ons-switch>
+          </div>
+        </ons-list-item>
+        <ons-list-item tappable onclick="">Help<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      </ons-list>
     </ons-page>
   </template>
 
