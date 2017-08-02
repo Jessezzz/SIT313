@@ -83,6 +83,11 @@
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
 }
+    
+- (BOOL)prefersStatusBarHidden {
+    return NO;
+}
+
 
 /* Comment out the block below to over-ride */
 
