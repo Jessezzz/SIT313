@@ -50,19 +50,19 @@ var app = {
 app.initialize();
 
 app.showFromObject = function (id1,id2) {
-    ons.openActionSheet({
-      cancelable: true,
-      buttons: [
-        'Reply',
-        'Subscribe',
-        {
-          label: 'Cancel',
-        }
-      ]
-    }).then(function (index) { if(index===0){
-      myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
-    } })
-  };
+  ons.openActionSheet({
+    cancelable: true,
+    buttons: [
+      'Reply',
+      'Subscribe',
+      {
+        label: 'Cancel',
+      }
+    ]
+  }).then(function (index) { if(index===0){
+    myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
+  } })
+};
 
 function login () {
   var userName = document.getElementById('_account').value;
@@ -72,7 +72,7 @@ function login () {
     if(users[index].username === userName){
       if(users[index].password === passWord){
         showModal();
-// document.cookie = ""+index+"";
+        // document.cookie = ""+index+"";
         setTimeout(function() {
           document.getElementById("beforelogin").style.display="none";
           $("#usermainpage").html(" ");
@@ -137,6 +137,26 @@ function showModal() {
   }, 1000);
 }
 
+var exception = [];
+function throwException(){
+  try {
+    throw "Test exception";
+  } catch (err) {
+    exception[exception.length] = err;
+  }
+}
+
+function addException(){
+  if(exception.length==0){
+    var items = $("<ons-list-item>No Exception</ons-list-item>");
+    $("#exceptio").append(items);
+  }
+  for (index in exception){
+    var items = $("<ons-list-item>ex"+parseInt(index+1)+"&nbsp;"+exception[index]+"</ons-list-item>");
+    $("#exceptio").append(items);
+  }
+}
+
 
 /****************************************
 JS below are created by Jesse
@@ -147,448 +167,452 @@ JS below are created by Jesse
 EventListener
 ****************************************/
 document.addEventListener('init', function (event) {
-  if (event.target.id === 'topicLists') {
-    showTopicsList();
-  }else if (event.target.id === 'topicmain') {
-    showTopic(event.target.data.id);
-  }else if(event.target.id === 'postpage'){
-    showPost(event.target.data.topicid,event.target.data.postid);
-  }else if(event.target.id === 'addapost'){
-    showAddPost(event.target.data.id);
-  }else if(event.target.id === 'myteams'){
-    showMyteams(event.target.data.userid);
-  }else if(event.target.id === 'myposts'){
-    showMyposts(event.target.data.userid);
-  }else if(event.target.id === 'subscribe'){
-    showSubscribe(event.target.data.userid);
-  }else if(event.target.id === 'profile'){
-    showProfile(event.target.data.userid);
-  }else if(event.target.id === 'mainPage'){
-    showHotPostAbstracts();
-  }else if(event.target.id === 'addareply'){
-    showaAddReply(event.target.data.tid,event.target.data.pid);
-  }
-});
-
-
-//****************************************
-//  FUNCTIONS
-//****************************************
-
-function topicslistTOtopic(node,topicID){
-  node.on("click",function(){
-    myNavigator.pushPage('topicmain.html',{data:{id:topicID}});
-  })
-};
-
-function abstractsTOpost(node,topicID,postID){
-  node.on("click",function(){
-    myNavigator.pushPage('postpage.html',{data:{topicid:topicID,postid:postID}});
-  })
-};
-
-function topicTOaddpost(node,topicID){
-  node.on("click",function(){
-    myNavigator.pushPage('addapost.html',{data:{id:topicID}});
-  })
-};
-
-/*
-This function shows forum topics list
-In project 1, we are using static data.
-This function shows all topics that are in the "topics" variable.
-*/
-function showTopicsList(){
-  for(index in topics){
-    var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
-    var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
-    listitemLeft.append("<img class='list-item__thumbnail' src='"+topics[index].topicPic +"'>");
-    var listitemCenter = $(ons._util.createElement("<div class='center'></div>"));
-    listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topics[index].topicTitle+"</span>");
-    listitemCenter.append("<span class='list-item__subtitle'>"+ topics[index].subscribeNum+" members</span>");
-    var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
-    var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
-    var join = $("<ons-button id='onsbutton1' style='display:block; padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
-    var joined = $("<ons-button id='onsbutton2' style='display:none; padding:0;color:#ADADAE;font-size:14px;background-color:white;border:1px solid #ADADAE'> &nbsp;&nbsp;Joined&nbsp;&nbsp; </ons-button>");
-    listitemRight.append(listitemRightSection);
-    listitemRightSection.append(join);
-    listitemRightSection.append(joined);
-    listitem.append(listitemLeft);
-    listitem.append(listitemCenter);
-    listitem.append(listitemRight);
-    $("#onslist").append(listitem);
-    // var cookieValue = document.cookie;
-    // var usernowid = parseInt(cookieValue.substr(0,1));
-    // alert(usernowid);
-    // document.getElementById("onsbutton1").style.display = "none";
-    // document.getElementById("onsbutton2").style.display = "block";
-    topicslistTOtopic(listitemCenter,topics[index].topicId);
-
-  }
-}
-
-/*
-This function shows one topic
-In project 1, we are using static data.
-This function shows all topics that are in the "topics" variable.
-*/
-function showTopic(topicID){
-  var topicBannerContent = $("<div id='ban_con'></div>");
-  topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
-  var topicBannerWords = $("<div id='ban_words'></div>");
-  topicBannerContent.append(topicBannerWords);
-  topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
-  var lab = $("<div class='lab'></div>");
-  topicBannerWords.append(lab);
-  lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
-  lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].posts.length+"")
-  // var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
-  // $("#topic_banner").append(section);
-  $("#topic_banner").append(topicBannerContent);
-  var addpost = $("#addpost");
-  var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
-  $("#topicbar").append(topicbartitle);
-  showPostAbstracts(topicID);
-  topicTOaddpost(addpost,topicID);
-};
-
-/*
-This function shows all forum post abstracts
-In project 1, we are using static data.
-This function shows all post abstracts that are in the "topics" variable.
-*/
-function showPostAbstracts(topicID){
-  var article = $("<div id='articles'></div>");
-  for(index in topics[topicID-1].posts){
-    var postAbstract = $("<div class='contents'></div>");
-    var mainContent = $("<div class='bod'></div>");
-    mainContent.append("<div class='title'>"+ topics[topicID-1].posts[index].postTitle +"</div>");
-    mainContent.append("<div class='pics'><img src="+ topics[topicID-1].posts[index].postPic + "></div>");
-    var footContent = $("<div class='footer'></div>");
-    footContent.append("<a>"+ topics[topicID-1].posts[index].postAuthor +"&nbsp;</a>");
-    footContent.append("<span>"+ topics[topicID-1].topicTitle +"</span>");
-    var counts = $("<div style='margin-top:0px;' id='countss'></div>");
-    counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
-    counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
-    counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-    counts.append("<span>"+topics[topicID-1].posts[index].comments.length+"</span>");
-    footContent.append(counts);
-    // footContent.append("<div id='counts'></div>");
-    // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
-    // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
-    postAbstract.append(mainContent);
-    postAbstract.append(footContent);
-    article.append(postAbstract);
-    abstractsTOpost(postAbstract,topicID,topics[topicID-1].posts[index].postId);
-  }
-  $("#postabstrcts").append(article);
-};
-
-/*
-This function shows HOT forum post abstracts into recommended page
-In project 1, we are using static data.
-This function shows all post abstracts that are in the "topics" variable.
-*/
-function showHotPostAbstracts(){
-  var article = $("<div id='articles'></div>");
-  for(index1 in topics){
-    var hot = 0;
-    var topic = 0;
-    var post = 0;
-    for (index2 in topics[index1].posts){
-      if((topics[index1].posts[index2].comments.length)>hot){
-        hot = topics[index1].posts[index2].comments.length;
-        topic = index1;
-        post = index2;
-      }
+  try {
+    if (event.target.id === 'topicLists') {
+      showTopicsList();
+    }else if (event.target.id === 'topicmain') {
+      showTopic(event.target.data.id);
+    }else if(event.target.id === 'postpage'){
+      showPost(event.target.data.topicid,event.target.data.postid);
+    }else if(event.target.id === 'addapost'){
+      showAddPost(event.target.data.id);
+    }else if(event.target.id === 'myteams'){
+      showMyteams(event.target.data.userid);
+    }else if(event.target.id === 'myposts'){
+      showMyposts(event.target.data.userid);
+    }else if(event.target.id === 'subscribe'){
+      showSubscribe(event.target.data.userid);
+    }else if(event.target.id === 'profile'){
+      showProfile(event.target.data.userid);
+    }else if(event.target.id === 'mainPage'){
+      showHotPostAbstracts();
+    }else if(event.target.id === 'addareply'){
+      showaAddReply(event.target.data.tid,event.target.data.pid);
+    }else if(event.target.id === 'exception'){
+      addException();
+    }}catch(err){
+      exception[exception.length] = err;
     }
-    var postAbstract = $("<div class='contents'></div>");
-    var mainContent = $("<div class='bod'></div>");
-    mainContent.append("<div class='title'>"+ topics[topic].posts[post].postTitle +"</div>");
-    mainContent.append("<div class='pics'><img src="+ topics[topic].posts[post].postPic + "></div>");
-    var footContent = $("<div class='footer'></div>");
-    footContent.append("<a>"+ topics[topic].posts[post].postAuthor +"&nbsp;</a>");
-    footContent.append("<span>"+ topics[topic].topicTitle +"</span>");
-    var counts = $("<div style='margin-top:0px;' id='countss'></div>");
+  });
+
+
+  //****************************************
+  //  FUNCTIONS
+  //****************************************
+
+  function topicslistTOtopic(node,topicID){
+    node.on("click",function(){
+      myNavigator.pushPage('topicmain.html',{data:{id:topicID}});
+    })
+  };
+
+  function abstractsTOpost(node,topicID,postID){
+    node.on("click",function(){
+      myNavigator.pushPage('postpage.html',{data:{topicid:topicID,postid:postID}});
+    })
+  };
+
+  function topicTOaddpost(node,topicID){
+    node.on("click",function(){
+      myNavigator.pushPage('addapost.html',{data:{id:topicID}});
+    })
+  };
+
+  /*
+  This function shows forum topics list
+  In project 1, we are using static data.
+  This function shows all topics that are in the "topics" variable.
+  */
+  function showTopicsList(){
+    for(index in topics){
+      var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
+      var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
+      listitemLeft.append("<img class='list-item__thumbnail' src='"+topics[index].topicPic +"'>");
+      var listitemCenter = $(ons._util.createElement("<div class='center'></div>"));
+      listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topics[index].topicTitle+"</span>");
+      listitemCenter.append("<span class='list-item__subtitle'>"+ topics[index].subscribeNum+" members</span>");
+      var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
+      var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
+      var join = $("<ons-button id='onsbutton1' style='display:block; padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+      var joined = $("<ons-button id='onsbutton2' style='display:none; padding:0;color:#ADADAE;font-size:14px;background-color:white;border:1px solid #ADADAE'> &nbsp;&nbsp;Joined&nbsp;&nbsp; </ons-button>");
+      listitemRight.append(listitemRightSection);
+      listitemRightSection.append(join);
+      listitemRightSection.append(joined);
+      listitem.append(listitemLeft);
+      listitem.append(listitemCenter);
+      listitem.append(listitemRight);
+      $("#onslist").append(listitem);
+      // var cookieValue = document.cookie;
+      // var usernowid = parseInt(cookieValue.substr(0,1));
+      // alert(usernowid);
+      // document.getElementById("onsbutton1").style.display = "none";
+      // document.getElementById("onsbutton2").style.display = "block";
+      topicslistTOtopic(listitemCenter,topics[index].topicId);
+
+    }
+  }
+
+  /*
+  This function shows one topic
+  In project 1, we are using static data.
+  This function shows all topics that are in the "topics" variable.
+  */
+  function showTopic(topicID){
+    var topicBannerContent = $("<div id='ban_con'></div>");
+    topicBannerContent.append("<img src='"+topics[topicID-1].topicPic+"'>");
+    var topicBannerWords = $("<div id='ban_words'></div>");
+    topicBannerContent.append(topicBannerWords);
+    topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
+    var lab = $("<div class='lab'></div>");
+    topicBannerWords.append(lab);
+    lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
+    lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].posts.length+"")
+    // var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
+    // $("#topic_banner").append(section);
+    $("#topic_banner").append(topicBannerContent);
+    var addpost = $("#addpost");
+    var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
+    $("#topicbar").append(topicbartitle);
+    showPostAbstracts(topicID);
+    topicTOaddpost(addpost,topicID);
+  };
+
+  /*
+  This function shows all forum post abstracts
+  In project 1, we are using static data.
+  This function shows all post abstracts that are in the "topics" variable.
+  */
+  function showPostAbstracts(topicID){
+    var article = $("<div id='articles'></div>");
+    for(index in topics[topicID-1].posts){
+      var postAbstract = $("<div class='contents'></div>");
+      var mainContent = $("<div class='bod'></div>");
+      mainContent.append("<div class='title'>"+ topics[topicID-1].posts[index].postTitle +"</div>");
+      mainContent.append("<div class='pics'><img src="+ topics[topicID-1].posts[index].postPic + "></div>");
+      var footContent = $("<div class='footer'></div>");
+      footContent.append("<a>"+ topics[topicID-1].posts[index].postAuthor +"&nbsp;</a>");
+      footContent.append("<span>"+ topics[topicID-1].topicTitle +"</span>");
+      var counts = $("<div style='margin-top:0px;' id='countss'></div>");
+      counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
+      counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
+      counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
+      counts.append("<span>"+topics[topicID-1].posts[index].comments.length+"</span>");
+      footContent.append(counts);
+      // footContent.append("<div id='counts'></div>");
+      // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
+      // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
+      postAbstract.append(mainContent);
+      postAbstract.append(footContent);
+      article.append(postAbstract);
+      abstractsTOpost(postAbstract,topicID,topics[topicID-1].posts[index].postId);
+    }
+    $("#postabstrcts").append(article);
+  };
+
+  /*
+  This function shows HOT forum post abstracts into recommended page
+  In project 1, we are using static data.
+  This function shows all post abstracts that are in the "topics" variable.
+  */
+  function showHotPostAbstracts(){
+    var article = $("<div id='articles'></div>");
+    for(index1 in topics){
+      var hot = 0;
+      var topic = 0;
+      var post = 0;
+      for (index2 in topics[index1].posts){
+        if((topics[index1].posts[index2].comments.length)>hot){
+          hot = topics[index1].posts[index2].comments.length;
+          topic = index1;
+          post = index2;
+        }
+      }
+      var postAbstract = $("<div class='contents'></div>");
+      var mainContent = $("<div class='bod'></div>");
+      mainContent.append("<div class='title'>"+ topics[topic].posts[post].postTitle +"</div>");
+      mainContent.append("<div class='pics'><img src="+ topics[topic].posts[post].postPic + "></div>");
+      var footContent = $("<div class='footer'></div>");
+      footContent.append("<a>"+ topics[topic].posts[post].postAuthor +"&nbsp;</a>");
+      footContent.append("<span>"+ topics[topic].topicTitle +"</span>");
+      var counts = $("<div style='margin-top:0px;' id='countss'></div>");
+      counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
+      counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
+      counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
+      counts.append("<span>"+topics[topic].posts[post].comments.length+"</span>");
+      footContent.append(counts);
+      // footContent.append("<div id='counts'></div>");
+      // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
+      // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
+      postAbstract.append(mainContent);
+      postAbstract.append(footContent);
+      article.append(postAbstract);
+      abstractsTOpost(postAbstract,parseInt(topic)+1,parseInt(post)+1);
+    }
+    $("#allpostabstrcts").append(article);
+  }
+
+  /*
+  This function shows a add post page and finish the add post function
+  In project 1, we are using static data.
+  This function shows all posts that are in the "topics" variable.
+  */
+  function showAddPost(topicID){
+    var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
+    $("#barofAddpost").append(addclick);
+    addclick.on("click",function(){
+      var posttitle = document.getElementById('postTitle').value;
+      var posttext = document.getElementById('postText').value;
+      var newpost = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/head.jpg",comments:""};
+      topics[parseInt(topicID-1)].posts.push(newpost);
+      ons.notification.alert('Post successfully.');
+      setTimeout(function() {
+        $("#topic_banner").html(" ");
+        $("#postabstrcts").html(" ");
+        $("#topicbar").html(" ");
+        showTopic(parseInt(topicID));
+        myNavigator.popPage();
+      }, 500);
+    })
+  }
+
+  /*
+  This function shows a add reply page and finish the add reply function
+  In project 1, we are using static data.
+  This function shows all posts that are in the "topics" variable.
+  */
+  function showaAddReply(topicID,postID){
+    var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
+    $("#barofAddreply").append(addclick);
+    addclick.on("click",function(){
+      var commenttext = document.getElementById('commentText').value;
+      var newcomment = {commentText:commenttext,commentAuthor:"timemachine1996",commentDate:"Just Now"};
+      topics[parseInt(topicID-1)].posts[parseInt(postID-1)].comments.push(newcomment);
+      ons.notification.alert('Comment successfully.');
+      setTimeout(function() {
+        $("#belowbar").html(" ");
+        $("#topicbar3").html(" ");
+        $("#topicbar2").html(" ");
+        showPost(parseInt(topicID),parseInt(postID));
+        myNavigator.popPage();
+      }, 500);
+    })
+  }
+
+  /*
+  This function shows a post content page
+  In project 1, we are using static data.
+  This function shows all posts that are in the "topics" variable.
+  */
+  function showPost(topicID,postID){
+    $("#topicbar3").append("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.showFromObject("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
+    var responsePage = $("<div id='response_page'></div>");
+    var responseTitle = $("<div id='response_title'></div>");
+    responsePage.append(responseTitle);
+    responseTitle.append("<span>" + topics[topicID-1].posts[postID-1].postTitle + "</span><br/>");
+    var counts = $("<div id='countss'></div>");
     counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
     counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
     counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-    counts.append("<span>"+topics[topic].posts[post].comments.length+"</span>");
-    footContent.append(counts);
-    // footContent.append("<div id='counts'></div>");
-    // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
-    // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
-    postAbstract.append(mainContent);
-    postAbstract.append(footContent);
-    article.append(postAbstract);
-    abstractsTOpost(postAbstract,parseInt(topic)+1,parseInt(post)+1);
+    counts.append("<span>"+topics[topicID-1].posts[postID-1].comments.length+"</span>");
+    responseTitle.append(counts);
+    var responseWriter = $("<div id='response_writer'></div>");
+    responsePage.append(responseWriter);
+    var responsePic = $("<div id='response_pic'></div>");
+    responsePic.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
+    var responseUser = $("<div id='response_user'></div>");
+    responseUser.append("<span style='font-size:18px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].postAuthor+"</span><br/>");
+    responseUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].postDate+"</span>");
+    var responseFollow = $("<div id='response_follow'></div>");
+    responseWriter.append(responsePic);
+    responseWriter.append(responseUser);
+    responseWriter.append(responseFollow);
+    var responsePost = $("<div id='main_post'></div>");
+    responsePage.append(responsePost);
+    responsePost.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
+    responsePost.append("<p style='font-size:17px;'>"+topics[topicID-1].posts[postID-1].postText+"");
+
+    for(index in topics[topicID-1].posts[postID-1].comments){
+      var responseComment = $("<div id='comments'></div>");
+      var commentWriter = $("<div id='response_writer'></div>");
+      responseComment.append(commentWriter);
+      var commentPic = $("<div id='response_pic'></div>");
+      commentPic.append("<img src='img/head.jpg'>");
+      var commentUser = $("<div id='response_user'></div>");
+      commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].comments[index].commentAuthor+"</span><br/>");
+      commentUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
+      commentWriter.append(commentPic);
+      commentWriter.append(commentUser);
+      responseComment.append("<p style='font-size:16px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentText+"");
+      responsePage.append(responseComment);
+    }
+    $("#belowbar").append(responsePage);
+    var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
+    $("#topicbar2").append(topicbartitle);
+  };
+
+  /*
+  This function shows user page
+  In project 1, we are using static data.
+  This function shows all data that are in the "users" variable.
+  */
+  function showUserpage(index){
+    var userTop = $("<div id='user_top'></div>");
+    var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='"+users[index].headpic+"'>");
+    var userTopCenter = $("<div id='user_top_center'></div>");
+    userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+users[index].nickname+"</span><br/>");
+    userTopCenter.append("<span style='display:block;margin-top:10px;font-size:17px;'>"+users[index].signature+"</span><br/>");
+    var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
+    userTop.append(userTopLeft);
+    userTop.append(userTopCenter);
+    userTop.append(userTopicRight);
+    userTop.on("click",function(){
+      myNavigator.pushPage("profile.html",{data:{userid:users[index].userId}});
+    })
+    var userBottom1 = $("<div id='user_bottom'></div>");
+    var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-favorite'></ons-icon>My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+    bottomList1.on("click",function(){
+      myNavigator.pushPage("myteams.html",{data:{userid:users[index].userId}});
+    })
+    var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+    bottomList2.on("click",function(){
+      myNavigator.pushPage("myposts.html",{data:{userid:users[index].userId}});
+    })
+    var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-star'></ons-icon>Subscribe<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+    bottomList3.on("click",function(){
+      myNavigator.pushPage("subscribe.html",{data:{userid:users[index].userId}});
+    })
+    // var bottomList4 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-notifications'></ons-icon>&nbsp;Messages<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+    // bottomList4.on("click",function(){
+    //   myNavigator.pushPage("messages.html",{data:{userid:users[index].userId}});
+    // })
+    userBottom1.append(bottomList1);
+    userBottom1.append(bottomList2);
+    userBottom1.append(bottomList3);
+    // userBottom1.append(bottomList4);
+    var userBottom2 = $("<div id='user_bottom'></div>");
+    var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;App Info<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+    bottomList5.on("click",function(){
+      myNavigator.pushPage("appinfo.html");
+    })
+    userBottom2.append(bottomList5);
+    var userBottom3 = $("<div id='user_bottom'></div>");
+    var bottomList6 = $("<div style='text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Log out</div>");
+    userBottom3.append(bottomList6);
+    $("#usermainpage").append(userTop);
+    $("#usermainpage").append(userBottom1);
+    $("#usermainpage").append(userBottom2);
+    $("#usermainpage").append(userBottom3);
+    bottomList6.on("click",function(){
+      logout();
+    })
   }
-  $("#allpostabstrcts").append(article);
-}
 
-/*
-This function shows a add post page and finish the add post function
-In project 1, we are using static data.
-This function shows all posts that are in the "topics" variable.
-*/
-function showAddPost(topicID){
-  var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
-  $("#barofAddpost").append(addclick);
-  addclick.on("click",function(){
-    var posttitle = document.getElementById('postTitle').value;
-    var posttext = document.getElementById('postText').value;
-    var newpost = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/head.jpg",comments:""};
-    topics[parseInt(topicID-1)].posts.push(newpost);
-    ons.notification.alert('Post successfully.');
-    setTimeout(function() {
-      $("#topic_banner").html(" ");
-      $("#postabstrcts").html(" ");
-      $("#topicbar").html(" ");
-      showTopic(parseInt(topicID));
-      myNavigator.popPage();
-    }, 500);
-  })
-}
-
-/*
-This function shows a add reply page and finish the add reply function
-In project 1, we are using static data.
-This function shows all posts that are in the "topics" variable.
-*/
-function showaAddReply(topicID,postID){
-  var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
-  $("#barofAddreply").append(addclick);
-  addclick.on("click",function(){
-    var commenttext = document.getElementById('commentText').value;
-    var newcomment = {commentText:commenttext,commentAuthor:"timemachine1996",commentDate:"Just Now"};
-    topics[parseInt(topicID-1)].posts[parseInt(postID-1)].comments.push(newcomment);
-    ons.notification.alert('Comment successfully.');
-    setTimeout(function() {
-      $("#belowbar").html(" ");
-      $("#topicbar3").html(" ");
-      $("#topicbar2").html(" ");
-      showPost(parseInt(topicID),parseInt(postID));
-      myNavigator.popPage();
-    }, 500);
-  })
-}
-
-/*
-This function shows a post content page
-In project 1, we are using static data.
-This function shows all posts that are in the "topics" variable.
-*/
-function showPost(topicID,postID){
-  $("#topicbar3").append("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.showFromObject("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
-  var responsePage = $("<div id='response_page'></div>");
-  var responseTitle = $("<div id='response_title'></div>");
-  responsePage.append(responseTitle);
-  responseTitle.append("<span>" + topics[topicID-1].posts[postID-1].postTitle + "</span><br/>");
-  var counts = $("<div id='countss'></div>");
-  counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
-  counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
-  counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-  counts.append("<span>"+topics[topicID-1].posts[postID-1].comments.length+"</span>");
-  responseTitle.append(counts);
-  var responseWriter = $("<div id='response_writer'></div>");
-  responsePage.append(responseWriter);
-  var responsePic = $("<div id='response_pic'></div>");
-  responsePic.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
-  var responseUser = $("<div id='response_user'></div>");
-  responseUser.append("<span style='font-size:18px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].postAuthor+"</span><br/>");
-  responseUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].postDate+"</span>");
-  var responseFollow = $("<div id='response_follow'></div>");
-  responseWriter.append(responsePic);
-  responseWriter.append(responseUser);
-  responseWriter.append(responseFollow);
-  var responsePost = $("<div id='main_post'></div>");
-  responsePage.append(responsePost);
-  responsePost.append("<img src='"+topics[topicID-1].posts[postID-1].postPic+"'>");
-  responsePost.append("<p style='font-size:17px;'>"+topics[topicID-1].posts[postID-1].postText+"");
-
-  for(index in topics[topicID-1].posts[postID-1].comments){
-    var responseComment = $("<div id='comments'></div>");
-    var commentWriter = $("<div id='response_writer'></div>");
-    responseComment.append(commentWriter);
-    var commentPic = $("<div id='response_pic'></div>");
-    commentPic.append("<img src='img/head.jpg'>");
-    var commentUser = $("<div id='response_user'></div>");
-    commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+topics[topicID-1].posts[postID-1].comments[index].commentAuthor+"</span><br/>");
-    commentUser.append("<span style='font-size:14px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
-    commentWriter.append(commentPic);
-    commentWriter.append(commentUser);
-    responseComment.append("<p style='font-size:16px;'>"+topics[topicID-1].posts[postID-1].comments[index].commentText+"");
-    responsePage.append(responseComment);
+  /*
+  This function shows myteams page
+  In project 1, we are using static data.
+  This function shows all data that are in the "users" variable.
+  */
+  function showMyteams(id){
+    for(index in users[id-1].myTopics){
+      var listitem = $("<ons-list-item style='height:75px;'></ons-list-item>");
+      var listitemLeft = $("<div class='left'></div>");
+      listitemLeft.append("<img class='list-item__thumbnail' src='"+topics[parseInt(users[id-1].myTopics[index].topicId-1)].topicPic +"'>");
+      var listitemCenter = $("<div class='center'></div>");
+      listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topics[parseInt(users[id-1].myTopics[index].topicId-1)].topicTitle+"</span>");
+      listitemCenter.append("<span class='list-item__subtitle'>"+ topics[parseInt(users[id-1].myTopics[index].topicId-1)].subscribeNum+" members</span>");
+      listitem.append(listitemLeft);
+      listitem.append(listitemCenter);
+      $("#tem").append(listitem);
+      topicslistTOtopic(listitem,topics[parseInt(users[id-1].myTopics[index].topicId-1)].topicId);
+    }
   }
-  $("#belowbar").append(responsePage);
-  var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
-  $("#topicbar2").append(topicbartitle);
-};
 
-/*
-This function shows user page
-In project 1, we are using static data.
-This function shows all data that are in the "users" variable.
-*/
-function showUserpage(index){
-  var userTop = $("<div id='user_top'></div>");
-  var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='"+users[index].headpic+"'>");
-  var userTopCenter = $("<div id='user_top_center'></div>");
-  userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+users[index].nickname+"</span><br/>");
-  userTopCenter.append("<span style='display:block;margin-top:10px;font-size:17px;'>"+users[index].signature+"</span><br/>");
-  var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
-  userTop.append(userTopLeft);
-  userTop.append(userTopCenter);
-  userTop.append(userTopicRight);
-  userTop.on("click",function(){
-    myNavigator.pushPage("profile.html",{data:{userid:users[index].userId}});
-  })
-  var userBottom1 = $("<div id='user_bottom'></div>");
-  var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-favorite'></ons-icon>My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-  bottomList1.on("click",function(){
-    myNavigator.pushPage("myteams.html",{data:{userid:users[index].userId}});
-  })
-  var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-  bottomList2.on("click",function(){
-    myNavigator.pushPage("myposts.html",{data:{userid:users[index].userId}});
-  })
-  var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-star'></ons-icon>Subscribe<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-  bottomList3.on("click",function(){
-    myNavigator.pushPage("subscribe.html",{data:{userid:users[index].userId}});
-  })
-  // var bottomList4 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-notifications'></ons-icon>&nbsp;Messages<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-  // bottomList4.on("click",function(){
-  //   myNavigator.pushPage("messages.html",{data:{userid:users[index].userId}});
-  // })
-  userBottom1.append(bottomList1);
-  userBottom1.append(bottomList2);
-  userBottom1.append(bottomList3);
-  // userBottom1.append(bottomList4);
-  var userBottom2 = $("<div id='user_bottom'></div>");
-  var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;App Info<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-  bottomList5.on("click",function(){
-    myNavigator.pushPage("appinfo.html");
-  })
-  userBottom2.append(bottomList5);
-  var userBottom3 = $("<div id='user_bottom'></div>");
-  var bottomList6 = $("<div style='text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Log out</div>");
-  userBottom3.append(bottomList6);
-  $("#usermainpage").append(userTop);
-  $("#usermainpage").append(userBottom1);
-  $("#usermainpage").append(userBottom2);
-  $("#usermainpage").append(userBottom3);
-  bottomList6.on("click",function(){
-    logout();
-  })
-}
-
-/*
-This function shows myteams page
-In project 1, we are using static data.
-This function shows all data that are in the "users" variable.
-*/
-function showMyteams(id){
-  for(index in users[id-1].myTopics){
-    var listitem = $("<ons-list-item style='height:75px;'></ons-list-item>");
-    var listitemLeft = $("<div class='left'></div>");
-    listitemLeft.append("<img class='list-item__thumbnail' src='"+topics[parseInt(users[id-1].myTopics[index].topicId-1)].topicPic +"'>");
-    var listitemCenter = $("<div class='center'></div>");
-    listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topics[parseInt(users[id-1].myTopics[index].topicId-1)].topicTitle+"</span>");
-    listitemCenter.append("<span class='list-item__subtitle'>"+ topics[parseInt(users[id-1].myTopics[index].topicId-1)].subscribeNum+" members</span>");
-    listitem.append(listitemLeft);
-    listitem.append(listitemCenter);
-    $("#tem").append(listitem);
-    topicslistTOtopic(listitem,topics[parseInt(users[id-1].myTopics[index].topicId-1)].topicId);
+  /*
+  This function shows myposts page
+  In project 1, we are using static data.
+  This function shows all data that are in the "users" variable.
+  */
+  function showMyposts(id){
+    for(index in users[id-1].myPosts){
+      var responseComment = $("<div style='background-color:white;' id='comments'></div>");
+      responseComment.append("<p style='font-size:18px;padding-top:10px;'>This function shows myposts page.In project 1, we are using static data.");
+      var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
+      responseComment.append(commentWriter);
+      var commentPic = $("<div id='mypost_pic'></div>");
+      commentPic.append("<img src='img/head.jpg'>");
+      var commentUser = $("<div id='response_user'></div>");
+      commentUser.append("<span style='font-size:17px;color:#0060AA;'>noodles</span>&nbsp;&nbsp;&nbsp;");
+      commentUser.append("<span style='font-size:14px;'>2017-9-8</span>");
+      commentWriter.append(commentPic);
+      commentWriter.append(commentUser);
+      $("#postofmine").append(responseComment);
+    }
   }
-}
 
-/*
-This function shows myposts page
-In project 1, we are using static data.
-This function shows all data that are in the "users" variable.
-*/
-function showMyposts(id){
-  for(index in users[id-1].myPosts){
-    var responseComment = $("<div style='background-color:white;' id='comments'></div>");
-    responseComment.append("<p style='font-size:18px;padding-top:10px;'>This function shows myposts page.In project 1, we are using static data.");
-    var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
-    responseComment.append(commentWriter);
-    var commentPic = $("<div id='mypost_pic'></div>");
-    commentPic.append("<img src='img/head.jpg'>");
-    var commentUser = $("<div id='response_user'></div>");
-    commentUser.append("<span style='font-size:17px;color:#0060AA;'>noodles</span>&nbsp;&nbsp;&nbsp;");
-    commentUser.append("<span style='font-size:14px;'>2017-9-8</span>");
-    commentWriter.append(commentPic);
-    commentWriter.append(commentUser);
-    $("#postofmine").append(responseComment);
+  /*
+  This function shows subscribe page
+  In project 1, we are using static data.
+  This function shows all data that are in the "users" variable.
+  */
+  function showSubscribe(id){
+    for(index in users[id-1].myPosts){
+      var responseComment = $("<div style='background-color:white;' id='comments'></div>");
+      responseComment.append("<p style='font-size:18px;padding-top:10px;'>This function shows subscribe page.In project 1, we are using static data.");
+      var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
+      responseComment.append(commentWriter);
+      var commentPic = $("<div id='mypost_pic'></div>");
+      commentPic.append("<img src='img/denver.gif'>");
+      var commentUser = $("<div id='response_user'></div>");
+      commentUser.append("<span style='font-size:17px;color:#0060AA;'>yellowpie</span>&nbsp;&nbsp;&nbsp;");
+      commentUser.append("<span style='font-size:14px;'>2017-9-8</span>");
+      commentWriter.append(commentPic);
+      commentWriter.append(commentUser);
+      $("#postofsub").append(responseComment);
+    }
   }
-}
 
-/*
-This function shows subscribe page
-In project 1, we are using static data.
-This function shows all data that are in the "users" variable.
-*/
-function showSubscribe(id){
-  for(index in users[id-1].myPosts){
-    var responseComment = $("<div style='background-color:white;' id='comments'></div>");
-    responseComment.append("<p style='font-size:18px;padding-top:10px;'>This function shows subscribe page.In project 1, we are using static data.");
-    var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
-    responseComment.append(commentWriter);
-    var commentPic = $("<div id='mypost_pic'></div>");
-    commentPic.append("<img src='img/denver.gif'>");
-    var commentUser = $("<div id='response_user'></div>");
-    commentUser.append("<span style='font-size:17px;color:#0060AA;'>yellowpie</span>&nbsp;&nbsp;&nbsp;");
-    commentUser.append("<span style='font-size:14px;'>2017-9-8</span>");
-    commentWriter.append(commentPic);
-    commentWriter.append(commentUser);
-    $("#postofsub").append(responseComment);
+  /*
+  This function shows profile page
+  In project 1, we are using static data.
+  This function shows all data that are in the "users" variable.
+  */
+  function showProfile(id){
+    var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:80px;height:80px;' src='"+users[id-1].headpic+"'></div>");
+    $("#contentofp").append(head);
+    var changehead = $("<span style='text-align:center;font-size:17px;display:block;color:#3A9FED;margin:10px auto;'>Change Profile Photo<span>");
+    $("#contentofp").append(changehead);
+    changehead.on("click",function(){
+
+    });
+    var userBottom = $("<div id='user_bottom'></div>");
+    var bottomList1 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-person'></ons-icon><ons-input id='proin1' style='line-height:30px;' float placeholder='"+users[id-1].nickname+"'></ons-input></div>");
+    var bottomList2 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon><ons-input id='proin2' style='line-height:30px;width:75%' float placeholder='Input your signature'></ons-input></div>");
+    userBottom.append(bottomList1);
+    userBottom.append(bottomList2);
+    $("#contentofp").append(userBottom);
+
+    var userBottom2 = $("<div id='user_bottom'></div>");
+    var bottomList6 = $("<div style='text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Save</div>");
+    userBottom2.append(bottomList6);
+    $("#contentofp").append(userBottom2);
+    bottomList6.on("click",function(){
+      var nickName = document.getElementById('proin1').value;
+      var sig = document.getElementById('proin2').value;
+      replaceByValue('nickname',users[id-1].nickname,nickName);
+      replaceByValue('signature',users[id-1].signature,sig);
+      ons.notification.alert('Save successfully.');
+      setTimeout(function() {
+        document.getElementById("beforelogin").style.display="none";
+        $("#usermainpage").html(" ");
+        showUserpage(parseInt(id-1));
+        document.getElementById("usermainpage").style.display="block";
+        myNavigator.popPage();
+      }, 500);
+    })
   }
-}
-
-/*
-This function shows profile page
-In project 1, we are using static data.
-This function shows all data that are in the "users" variable.
-*/
-function showProfile(id){
-  var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:80px;height:80px;' src='"+users[id-1].headpic+"'></div>");
-  $("#contentofp").append(head);
-  var changehead = $("<span style='text-align:center;font-size:17px;display:block;color:#3A9FED;margin:10px auto;'>Change Profile Photo<span>");
-  $("#contentofp").append(changehead);
-  changehead.on("click",function(){
-
-  });
-  var userBottom = $("<div id='user_bottom'></div>");
-  var bottomList1 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-person'></ons-icon><ons-input id='proin1' style='line-height:30px;' float placeholder='"+users[id-1].nickname+"'></ons-input></div>");
-  var bottomList2 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon><ons-input id='proin2' style='line-height:30px;width:75%' float placeholder='Input your signature'></ons-input></div>");
-  userBottom.append(bottomList1);
-  userBottom.append(bottomList2);
-  $("#contentofp").append(userBottom);
-
-  var userBottom2 = $("<div id='user_bottom'></div>");
-  var bottomList6 = $("<div style='text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Save</div>");
-  userBottom2.append(bottomList6);
-  $("#contentofp").append(userBottom2);
-  bottomList6.on("click",function(){
-    var nickName = document.getElementById('proin1').value;
-    var sig = document.getElementById('proin2').value;
-    replaceByValue('nickname',users[id-1].nickname,nickName);
-    replaceByValue('signature',users[id-1].signature,sig);
-    ons.notification.alert('Save successfully.');
-    setTimeout(function() {
-      document.getElementById("beforelogin").style.display="none";
-      $("#usermainpage").html(" ");
-      showUserpage(parseInt(id-1));
-      document.getElementById("usermainpage").style.display="block";
-      myNavigator.popPage();
-    }, 500);
-  })
-}
-
-// ****************************************
-//  WEB APPLICATION LOAD
-// ****************************************
-// $(document).ready(function(){
-//   showHotPostAbstracts();
-// });
+  // ****************************************
+  //  WEB APPLICATION LOAD
+  // ****************************************
+  // $(document).ready(function(){
+  //   showHotPostAbstracts();
+  // });

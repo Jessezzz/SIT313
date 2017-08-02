@@ -357,7 +357,7 @@
       </div>
     </ons-toolbar>
     <div id="info" style="font-size:18px;margin-top:20px;">
-      <span>Legal - Public Domain media:</span><br/><br/><p style="font-size:14px;">
+      <span>Legal - Public Domain media:</span><br/><br/><p style="font-size:15px;">
 To make my app become more like a real-world app. This app used all information and images are from the Website http://www.sportingnews.com/au/nba<br/><br/>
 For each post, both of the content and image are from the same article of the website above, <br/><br/>
 Specific web pages used in app<br/>
@@ -367,6 +367,23 @@ Specific web pages used in app<br/>
 4.http://www.sportingnews.com/au/nba-au/news/spurs-manu-ginobili-nba-rumors-new-contract-retirement-free-agency-news/ap9vt06dyzg1bsw5wmhfah9m<br/>
 5.http://www.sportingnews.com/au/nba-au/news/carmelo-anthony-rumors-blazers-interest-cj-mccollum/kixt87jl3hub1cgqoc3m5fwp4<br/>
     </p></div>
+    <br/><hr/><br/>
+    <ons-button onclick="throwException();ons.notification.alert('Exception has been throw')">Clik to throw a exception
+    </ons-button><br/><br/>
+    <ons-button onclick="myNavigator.pushPage('exception.html')">View Exception
+    </ons-button>
+  </ons-page>
+</template>
+
+<!-- Here starts through exception page -->
+<template id="exception.html">
+  <ons-page id="exception">
+    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <div class="left">
+        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+      </div>
+    </ons-toolbar>
+    <div id="exceptio" style="font-size:17px"></div>
   </ons-page>
 </template>
 
