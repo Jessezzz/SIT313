@@ -49,6 +49,21 @@ var app = {
 
 app.initialize();
 
+app.showFromObject = function (id1,id2) {
+    ons.openActionSheet({
+      cancelable: true,
+      buttons: [
+        'Reply',
+        'Subscribe',
+        {
+          label: 'Cancel',
+        }
+      ]
+    }).then(function (index) { if(index===0){
+      myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
+    } })
+  };
+
 function login () {
   var userName = document.getElementById('_account').value;
   var passWord = document.getElementById('_pwd').value;
@@ -136,6 +151,10 @@ document.addEventListener('init', function (event) {
     showSubscribe(event.target.data.userid);
   }else if(event.target.id === 'profile'){
     showProfile(event.target.data.userid);
+  }else if(event.target.id === 'mainPage'){
+    showHotPostAbstracts();
+  }else if(event.target.id === 'addareply'){
+    showaAddReply(event.target.data.tid,event.target.data.pid);
   }
 });
 
@@ -189,6 +208,7 @@ function showTopicsList(){
     // document.getElementById("onsbutton1").style.display = "none";
     // document.getElementById("onsbutton2").style.display = "block";
     topicslistTOtopic(listitemCenter,topics[index].topicId);
+
   }
 }
 
@@ -205,8 +225,8 @@ function showTopic(topicID){
   topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
   var lab = $("<div class='lab'></div>");
   topicBannerWords.append(lab);
-  lab.append("<span style='font-weight:normal;'>Subscriber</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
-  lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].postNum+"")
+  lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
+  lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].posts.length+"")
   // var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
   // $("#topic_banner").append(section);
   $("#topic_banner").append(topicBannerContent);
@@ -297,13 +317,12 @@ In project 1, we are using static data.
 This function shows all posts that are in the "topics" variable.
 */
 function showAddPost(topicID){
-  console.log(topicID);
-  var addclick = $("<p style='margin-right:10px;width:40px;color:balck'>Add</p>");
+  var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
   $("#barofAddpost").append(addclick);
   addclick.on("click",function(){
     var posttitle = document.getElementById('postTitle').value;
     var posttext = document.getElementById('postText').value;
-    var newpost = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:""};
+    var newpost = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/head.jpg",comments:""};
     topics[parseInt(topicID-1)].posts.push(newpost);
     ons.notification.alert('Post successfully.');
     setTimeout(function() {
@@ -317,11 +336,37 @@ function showAddPost(topicID){
 }
 
 /*
+This function shows a add reply page and finish the add reply function
+In project 1, we are using static data.
+This function shows all posts that are in the "topics" variable.
+*/
+function showaAddReply(topicID,postID){
+  console.log(topicID);
+  console.log(postID);
+  var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
+  $("#barofAddreply").append(addclick);
+  addclick.on("click",function(){
+    var commenttext = document.getElementById('commentText').value;
+    // var newcomment = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:""};
+    // topics[parseInt(topicID-1)].posts.push(newpost);
+    // ons.notification.alert('Post successfully.');
+    // setTimeout(function() {
+    //   $("#topic_banner").html(" ");
+    //   $("#postabstrcts").html(" ");
+    //   $("#topicbar").html(" ");
+    //   showTopic(parseInt(topicID));
+    //   myNavigator.popPage();
+    // }, 500);
+  })
+}
+
+/*
 This function shows a post content page
 In project 1, we are using static data.
 This function shows all posts that are in the "topics" variable.
 */
 function showPost(topicID,postID){
+  $("#topicbar3").append("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.showFromObject("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
   var responsePage = $("<div id='response_page'></div>");
   var responseTitle = $("<div id='response_title'></div>");
   responsePage.append(responseTitle);
@@ -545,6 +590,6 @@ function showProfile(id){
 // ****************************************
 //  WEB APPLICATION LOAD
 // ****************************************
-$(document).ready(function(){
-  showHotPostAbstracts();
-});
+// $(document).ready(function(){
+//   showHotPostAbstracts();
+// });

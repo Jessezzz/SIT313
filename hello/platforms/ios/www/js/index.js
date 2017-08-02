@@ -49,6 +49,21 @@ var app = {
 
 app.initialize();
 
+app.showFromObject = function (id1,id2) {
+    ons.openActionSheet({
+      cancelable: true,
+      buttons: [
+        'Reply',
+        'Subscribe',
+        {
+          label: 'Cancel',
+        }
+      ]
+    }).then(function (index) { if(index===0){
+      myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
+    } })
+  };
+
 function login () {
   var userName = document.getElementById('_account').value;
   var passWord = document.getElementById('_pwd').value;
@@ -59,7 +74,7 @@ function login () {
         showModal();
         setTimeout(function() {
           document.getElementById("beforelogin").style.display="none";
-            $("#usermainpage").html(" ");
+          $("#usermainpage").html(" ");
           showUserpage(index);
           document.getElementById("usermainpage").style.display="block";
           myNavigator.popPage();
@@ -134,6 +149,12 @@ document.addEventListener('init', function (event) {
     showMyposts(event.target.data.userid);
   }else if(event.target.id === 'subscribe'){
     showSubscribe(event.target.data.userid);
+  }else if(event.target.id === 'profile'){
+    showProfile(event.target.data.userid);
+  }else if(event.target.id === 'mainPage'){
+    showHotPostAbstracts();
+  }else if(event.target.id === 'addareply'){
+    showaAddReply(event.target.data.tid,event.target.data.pid);
   }
 });
 
@@ -175,14 +196,19 @@ function showTopicsList(){
     listitemCenter.append("<span class='list-item__subtitle'>"+ topics[index].subscribeNum+" members</span>");
     var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
     var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
-    listitemRightSection.append("<ons-button id='onsbutton' onclick='joinSuc()' style='padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+    var join = $("<ons-button id='onsbutton1' style='display:block; padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+    var joined = $("<ons-button id='onsbutton2' style='display:none; padding:0;color:#ADADAE;font-size:14px;background-color:white;border:1px solid #ADADAE'> &nbsp;&nbsp;Joined&nbsp;&nbsp; </ons-button>");
     listitemRight.append(listitemRightSection);
+    listitemRightSection.append(join);
+    listitemRightSection.append(joined);
     listitem.append(listitemLeft);
     listitem.append(listitemCenter);
     listitem.append(listitemRight);
     $("#onslist").append(listitem);
+    // document.getElementById("onsbutton1").style.display = "none";
+    // document.getElementById("onsbutton2").style.display = "block";
+    topicslistTOtopic(listitemCenter,topics[index].topicId);
 
-    topicslistTOtopic(listitem,topics[index].topicId);
   }
 }
 
@@ -199,14 +225,12 @@ function showTopic(topicID){
   topicBannerWords.append("<span id='topic'>"+topics[topicID-1].topicTitle+"</span><br/>");
   var lab = $("<div class='lab'></div>");
   topicBannerWords.append(lab);
-  lab.append("<span style='font-weight:normal;'>Subscriber</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
-  lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].postNum+"")
+  lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+topics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
+  lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+topics[topicID-1].posts.length+"")
   // var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
   // $("#topic_banner").append(section);
   $("#topic_banner").append(topicBannerContent);
-  var addpost = $("<ons-toolbar-button ></ons-toolbar-button>");
-  addpost.append("<ons-icon  style='color:#FFFFFF' icon='ion-compose'></ons-icon>");
-  $("#addpostbutton").append(addpost);
+  var addpost = $("#addpost");
   var topicbartitle=$("<span>"+topics[topicID-1].topicTitle+"</span>");
   $("#topicbar").append(topicbartitle);
   showPostAbstracts(topicID);
@@ -245,7 +269,11 @@ function showPostAbstracts(topicID){
   $("#postabstrcts").append(article);
 };
 
-
+/*
+This function shows HOT forum post abstracts into recommended page
+In project 1, we are using static data.
+This function shows all post abstracts that are in the "topics" variable.
+*/
 function showHotPostAbstracts(){
   var article = $("<div id='articles'></div>");
   for(index1 in topics){
@@ -283,45 +311,54 @@ function showHotPostAbstracts(){
   $("#allpostabstrcts").append(article);
 }
 
-
-
-// If last page can refresh itself, using back button from stack navigation
-
+/*
+This function shows a add post page and finish the add post function
+In project 1, we are using static data.
+This function shows all posts that are in the "topics" variable.
+*/
 function showAddPost(topicID){
-  console.log(topicID);
-  var addclick = $("<ons-back-button style='margin-right:10px;width:40px;color:#3A9FED;'><span style='color:#FFFFFF;'>Add<span></ons-back-button>");
+  var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
   $("#barofAddpost").append(addclick);
   addclick.on("click",function(){
-    addPost(topicID);
+    var posttitle = document.getElementById('postTitle').value;
+    var posttext = document.getElementById('postText').value;
+    var newpost = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/head.jpg",comments:""};
+    topics[parseInt(topicID-1)].posts.push(newpost);
+    ons.notification.alert('Post successfully.');
+    setTimeout(function() {
+      $("#topic_banner").html(" ");
+      $("#postabstrcts").html(" ");
+      $("#topicbar").html(" ");
+      showTopic(parseInt(topicID));
+      myNavigator.popPage();
+    }, 500);
   })
 }
 
-function addPost(topicID){
+/*
+This function shows a add reply page and finish the add reply function
+In project 1, we are using static data.
+This function shows all posts that are in the "topics" variable.
+*/
+function showaAddReply(topicID,postID){
   console.log(topicID);
-  // var postTitle = document.getElementById('postTitle').value;
-  // var postText = document.getElementById('postText').value;
-  // 添加 postTitle postText 到 jason
-  showModal();
+  console.log(postID);
+  var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
+  $("#barofAddreply").append(addclick);
+  addclick.on("click",function(){
+    var commenttext = document.getElementById('commentText').value;
+    // var newcomment = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:""};
+    // topics[parseInt(topicID-1)].posts.push(newpost);
+    // ons.notification.alert('Post successfully.');
+    // setTimeout(function() {
+    //   $("#topic_banner").html(" ");
+    //   $("#postabstrcts").html(" ");
+    //   $("#topicbar").html(" ");
+    //   showTopic(parseInt(topicID));
+    //   myNavigator.popPage();
+    // }, 500);
+  })
 }
-
-// click submit button - pushPage("topic.html")
-
-// function showAddPost(topicID){
-//   console.log(topicID);
-//   var addclick = $("<p style='margin-right:10px;width:40px;color:balck'>Add</p>");
-//   $("#barofAddpost").append(addclick);
-//   addclick.on("click",function(){
-//     addPost(topicID);
-//     myNavigator.pushPage("topicmain.html",{data:{id:topicID}});
-// })
-// }
-// function addPost(topicID){
-//   console.log(topicID);
-//   var postTitle = document.getElementById('postTitle').value;
-//   var postText = document.getElementById('postText').value;
-//   添加 postTitle postText 到 jason
-//   showModal();
-// }
 
 /*
 This function shows a post content page
@@ -329,6 +366,7 @@ In project 1, we are using static data.
 This function shows all posts that are in the "topics" variable.
 */
 function showPost(topicID,postID){
+  $("#topicbar3").append("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.showFromObject("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
   var responsePage = $("<div id='response_page'></div>");
   var responseTitle = $("<div id='response_title'></div>");
   responsePage.append(responseTitle);
@@ -389,10 +427,12 @@ function showUserpage(index){
   userTop.append(userTopLeft);
   userTop.append(userTopCenter);
   userTop.append(userTopicRight);
+  userTop.on("click",function(){
+    myNavigator.pushPage("profile.html",{data:{userid:users[index].userId}});
+  })
   var userBottom1 = $("<div id='user_bottom'></div>");
   var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-favorite'></ons-icon>My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
   bottomList1.on("click",function(){
-    console.log(users[index].userId);
     myNavigator.pushPage("myteams.html",{data:{userid:users[index].userId}});
   })
   var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
@@ -493,9 +533,63 @@ function showSubscribe(id){
   }
 }
 
+
+/* This idea to replace value in JSON is from a user St.Woland at https://stackoverflow.com/questions/4553235/how-to-change-json-keyvalue */
+function replaceByValue(field, oldvalue, newvalue ) {
+  for( var k = 0; k < users.length; ++k ) {
+    if( oldvalue == users[k][field] ) {
+      users[k][field] = newvalue ;
+    }
+  }
+  return users;
+}
+/* end St.Woland's idea*/
+
+
+/*
+This function shows profile page
+In project 1, we are using static data.
+This function shows all data that are in the "users" variable.
+*/
+function showProfile(id){
+  var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:80px;height:80px;' src='"+users[id-1].headpic+"'></div>");
+  $("#contentofp").append(head);
+  var changehead = $("<span style='text-align:center;font-size:17px;display:block;color:#3A9FED;margin:10px auto;'>Change Profile Photo<span>");
+  $("#contentofp").append(changehead);
+  changehead.on("click",function(){
+
+  });
+  var userBottom = $("<div id='user_bottom'></div>");
+  var bottomList1 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-person'></ons-icon><ons-input id='proin1' style='line-height:30px;' float placeholder='"+users[id-1].nickname+"'></ons-input></div>");
+  var bottomList2 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon><ons-input id='proin2' style='line-height:30px;width:75%' float placeholder='Input your signature'></ons-input></div>");
+  userBottom.append(bottomList1);
+  userBottom.append(bottomList2);
+  $("#contentofp").append(userBottom);
+
+  var userBottom2 = $("<div id='user_bottom'></div>");
+  var bottomList6 = $("<div style='text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Save</div>");
+  userBottom2.append(bottomList6);
+  $("#contentofp").append(userBottom2);
+  bottomList6.on("click",function(){
+    var nickName = document.getElementById('proin1').value;
+    var sig = document.getElementById('proin2').value;
+    replaceByValue('nickname',users[id-1].nickname,nickName);
+    replaceByValue('signature',users[id-1].signature,sig);
+    ons.notification.alert('Save successfully.');
+    setTimeout(function() {
+      document.getElementById("beforelogin").style.display="none";
+      $("#usermainpage").html(" ");
+      showUserpage(parseInt(id-1));
+      document.getElementById("usermainpage").style.display="block";
+      myNavigator.popPage();
+    }, 500);
+  })
+}
+
+
 // ****************************************
 //  WEB APPLICATION LOAD
 // ****************************************
-$(document).ready(function(){
-  showHotPostAbstracts();
-});
+// $(document).ready(function(){
+//   showHotPostAbstracts();
+// });

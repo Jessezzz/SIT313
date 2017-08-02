@@ -87,6 +87,7 @@
         <div class="center" id="topicbar" style="width:250px;background-color:#3A9FED;color:#ECFDFD">
         </div>
         <div class="right" id="addpostbutton">
+          <ons-toolbar-button id="addpost"><ons-icon  style='color:#FFFFFF' icon='ion-compose'></ons-icon></ons-toolbar-button>
         </div>
       </ons-toolbar>
       <div id="topic_banner" >
@@ -130,34 +131,35 @@
         </div>
         <div class="center" id="topicbar2" style="width:250px;background-color:#3A9FED;color:#ECFDFD">
         </div>
-        <div class="right" >
-          <ons-toolbar-button>
-            <ons-icon  style="color:#FFFFFF" icon="ion-more" onclick="app.showFromTemplate()"></ons-icon>
-          </ons-toolbar-button>
+        <div class="right" id="topicbar3">
         </div>
       </ons-toolbar>
       <div id="belowbar"></div>
     </ons-page>
   </template>
 
-  <template id="action-sheet.html">
-    <ons-action-sheet id="sheet">
-      <ons-action-sheet-button  onclick="app.hideFromTemplate()">Reply</ons-action-sheet-button>
-      <ons-action-sheet-button  onclick="app.hideFromTemplate()">Subscribe</ons-action-sheet-button>
-      <ons-action-sheet-button  onclick="app.hideFromTemplate()">Cancel</ons-action-sheet-button>
-    </ons-action-sheet>
-  </template>
 
-  <script>
-  var app = {};
-  ons.ready(function () {
-    ons.createElement('action-sheet.html', { append: true })
-    .then(function (sheet) {
-      app.showFromTemplate = sheet.show.bind(sheet);
-      app.hideFromTemplate = sheet.hide.bind(sheet);
-    });
-  });
-  </script>
+  <!-- Here starts add reply page-->
+  <template id="addareply.html">
+    <ons-page id="addareply">
+      <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="color:#FFFFFF;"></ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF;">Edit
+        </div>
+        <div class="right" style="font-size:18px;" id="barofAddreply">
+        </div>
+      </ons-toolbar>
+      <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
+        <div style="text-align: center;">
+          <p>
+            <ons-input style="width:90%;" id="commentText" placeholder="Input your thought here" float></ons-input>
+          </p>
+        </div>
+      </div>
+    </ons-page>
+  </template>
 
   <!-- Here starts the third tab page for User -->
   <template id="userPage.html">
@@ -183,7 +185,7 @@
 
   <!-- Here starts the login page -->
   <template id="login.html">
-    <ons-page id="login">
+    <ons-page id="login" >
       <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
         <div class="left">
           <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
@@ -238,18 +240,6 @@
     </ons-page>
   </template>
 
-    <!-- Here starts profile page -->
-    <template id="profile.html">
-      <ons-page id="profile">
-        <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-          <div class="left">
-            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-          </div>
-          <div class="center" style="color:#FFFFFF">Profile</div>
-        </ons-toolbar>
-      </ons-page>
-    </template>
-
   <!-- Here starts my teams page -->
   <template id="myteams.html">
     <ons-page id="myteams">
@@ -291,74 +281,98 @@
     </ons-page>
   </template>
 
-  <!-- Here starts message page -->
+  <!-- Here starts reply notification page -->
   <!-- <template id="messages.html">
-    <ons-page id="messages">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-        <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-        </div>
-        <div class="center" style="color:#FFFFFF">Messages</div>
-      </ons-toolbar>
-    </ons-page>
-  </template> -->
+  <ons-page id="messages">
+  <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+  <div class="left">
+  <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+</div>
+<div class="center" style="color:#FFFFFF">Messages</div>
+</ons-toolbar>
+</ons-page>
+</template> -->
 
-  <!-- Here starts appinfo page -->
-  <template id="appinfo.html">
-    <ons-page id="appinfo">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-        <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-        </div>
-      </ons-toolbar>
-      <div id="info" style="font-size:18px;margin-top:20px;">
+<!-- Here starts appinfo page -->
+<template id="appinfo.html">
+  <ons-page id="appinfo">
+    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <div class="left">
+        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+      </div>
+    </ons-toolbar>
+    <div id="info" style="font-size:18px;margin-top:20px;">
       <span>Name: NBA Bar</span><br/>
       <span>Description: Used for discussing between fans from different teams</span><br/><br/>
       <span>Created by: Yuanxi Zhang</span><br/>
+      <span>Student Number: 216036612</span><br/>
       <span>Unit: SIT313 Mobile computing</span><br/>
       <span>Unit chair: Henry Larkin</span><br/>
     </div>
-    </ons-page>
-  </template>
+  </ons-page>
+</template>
 
-  <!-- Here starts setting page -->
-  <template id="setting.html">
-    <ons-page id="setting">
-      <ons-toolbar>
-        <div class="left" style="font-size:17px;">
-          <ons-back-button>Back</ons-back-button>
+<!-- Here starts setting page -->
+<template id="setting.html">
+  <ons-page id="setting">
+    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <div class="left">
+        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+      </div>
+      <div class="center" style="font-size:18px;color:white">Setting</div>
+    </ons-toolbar>
+    <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
+    <ons-list style="font-size:16px;">
+      <ons-list-item tappable onclick="">Change Password<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      <ons-list-item tappable onclick="">Add Contact<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+    </ons-list>
+    <ons-list-header style="background-color:#F9F9F9;color:#999999">Settings</ons-list-header>
+    <ons-list style="font-size:17px;">
+      <ons-list-item tappable onclick="">
+        <div class="center">
+          Image Autoload
         </div>
-        <div class="center">Setting</div>
-      </ons-toolbar>
-      <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
-      <ons-list style="font-size:16px;">
-        <ons-list-item tappable onclick="">Change Password<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-        <ons-list-item tappable onclick="">Add Contact<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      </ons-list>
-      <ons-list-header style="background-color:#F9F9F9;color:#999999">Settings</ons-list-header>
-      <ons-list style="font-size:17px;">
-        <ons-list-item tappable onclick="">Language<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-        <ons-list-item tappable onclick="">
-          <div class="center">
-            Notification
-          </div>
-          <div class="right">
-            <ons-switch></ons-switch>
-          </div>
-        </ons-list-item>
-        <ons-list-item tappable onclick="">Help<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-        <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      </ons-list>
-    </ons-page>
-  </template>
+        <div class="right">
+          <ons-switch checked></ons-switch>
+        </div>
+      </ons-list-item>
+      <ons-list-item tappable onclick="">Language<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      <ons-list-item tappable onclick="">
+        <div class="center">
+          Notification
+        </div>
+        <div class="right">
+          <ons-switch></ons-switch>
+        </div>
+      </ons-list-item>
+      <ons-list-item tappable onclick="">About<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+    </ons-list>
+  </ons-page>
+</template>
 
-  <!-- Here starts a modal page-->
-  <ons-modal direction="up">
-    <div style="text-align: center">
-      <p>
-        <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Signing in.....
-      </p>
+<!-- Here starts profile page -->
+<template id="profile.html">
+  <ons-page id="profile">
+    <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+      <div class="left">
+        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+      </div>
+      <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Edit Profile
+      </div>
+    </ons-toolbar>
+    <div id="contentofp">
     </div>
-  </ons-modal>
+  </ons-page>
+</template>
+
+<!-- Here starts a modal page-->
+<ons-modal direction="up">
+  <div style="text-align: center">
+    <p>
+      <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Signing in.....
+    </p>
+  </div>
+</ons-modal>
 </body>
 </html>
