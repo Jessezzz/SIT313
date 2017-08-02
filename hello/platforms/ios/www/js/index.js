@@ -115,8 +115,19 @@ function register(){
       }, 1000);
     }
   }
-
 }
+
+/* This idea to replace value in JSON is from a user St.Woland at https://stackoverflow.com/questions/4553235/how-to-change-json-keyvalue */
+function replaceByValue(field, oldvalue, newvalue ) {
+  for( var k = 0; k < users.length; ++k ) {
+    if( oldvalue == users[k][field] ) {
+      users[k][field] = newvalue ;
+    }
+  }
+  return users;
+}
+/* end St.Woland's idea*/
+
 
 function showModal() {
   var modal = document.querySelector('ons-modal');
@@ -161,7 +172,7 @@ document.addEventListener('init', function (event) {
 
 
 //****************************************
-//  FUNCTIONS - 1
+//  FUNCTIONS
 //****************************************
 
 function topicslistTOtopic(node,topicID){
@@ -535,19 +546,6 @@ function showSubscribe(id){
   }
 }
 
-
-/* This idea to replace value in JSON is from a user St.Woland at https://stackoverflow.com/questions/4553235/how-to-change-json-keyvalue */
-function replaceByValue(field, oldvalue, newvalue ) {
-  for( var k = 0; k < users.length; ++k ) {
-    if( oldvalue == users[k][field] ) {
-      users[k][field] = newvalue ;
-    }
-  }
-  return users;
-}
-/* end St.Woland's idea*/
-
-
 /*
 This function shows profile page
 In project 1, we are using static data.
@@ -587,7 +585,6 @@ function showProfile(id){
     }, 500);
   })
 }
-
 
 // ****************************************
 //  WEB APPLICATION LOAD

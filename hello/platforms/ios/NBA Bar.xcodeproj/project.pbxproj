@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0477D7C71F31BF0F008E8B20 /* PBXContainerItemProxy */ = {
+		04928CA81F31D7BC003F1C3B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 301BF52D109A57CC0062928A /* CordovaLib/CordovaLib.xcodeproj */;
 			proxyType = 2;
@@ -147,7 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				301BF535109A57CC0062928A /* libCordova.a */,
-				0477D7C81F31BF0F008E8B20 /* Cordova.framework */,
+				04928CA91F31D7BC003F1C3B /* Cordova.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -237,11 +237,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		0477D7C81F31BF0F008E8B20 /* Cordova.framework */ = {
+		04928CA91F31D7BC003F1C3B /* Cordova.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Cordova.framework;
-			remoteRef = 0477D7C71F31BF0F008E8B20 /* PBXContainerItemProxy */;
+			remoteRef = 04928CA81F31D7BC003F1C3B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		301BF535109A57CC0062928A /* libCordova.a */ = {
