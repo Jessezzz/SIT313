@@ -72,6 +72,7 @@ function login () {
     if(users[index].username === userName){
       if(users[index].password === passWord){
         showModal();
+// document.cookie = ""+index+"";
         setTimeout(function() {
           document.getElementById("beforelogin").style.display="none";
           $("#usermainpage").html(" ");
@@ -114,8 +115,19 @@ function register(){
       }, 1000);
     }
   }
-
 }
+
+/* This idea to replace value in JSON is from a user St.Woland at https://stackoverflow.com/questions/4553235/how-to-change-json-keyvalue */
+function replaceByValue(field, oldvalue, newvalue ) {
+  for( var k = 0; k < users.length; ++k ) {
+    if( oldvalue == users[k][field] ) {
+      users[k][field] = newvalue ;
+    }
+  }
+  return users;
+}
+/* end St.Woland's idea*/
+
 
 function showModal() {
   var modal = document.querySelector('ons-modal');
@@ -160,7 +172,7 @@ document.addEventListener('init', function (event) {
 
 
 //****************************************
-//  FUNCTIONS - 1
+//  FUNCTIONS
 //****************************************
 
 function topicslistTOtopic(node,topicID){
@@ -205,6 +217,9 @@ function showTopicsList(){
     listitem.append(listitemCenter);
     listitem.append(listitemRight);
     $("#onslist").append(listitem);
+    // var cookieValue = document.cookie;
+    // var usernowid = parseInt(cookieValue.substr(0,1));
+    // alert(usernowid);
     // document.getElementById("onsbutton1").style.display = "none";
     // document.getElementById("onsbutton2").style.display = "block";
     topicslistTOtopic(listitemCenter,topics[index].topicId);
@@ -341,22 +356,20 @@ In project 1, we are using static data.
 This function shows all posts that are in the "topics" variable.
 */
 function showaAddReply(topicID,postID){
-  console.log(topicID);
-  console.log(postID);
   var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
   $("#barofAddreply").append(addclick);
   addclick.on("click",function(){
     var commenttext = document.getElementById('commentText').value;
-    // var newcomment = {postId:topics[parseInt(topicID-1)].posts.length+1,postTitle:posttitle,postText:posttext,postAuthor:"timemachine1996",postDate:"Just Now",postPic:"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg",comments:""};
-    // topics[parseInt(topicID-1)].posts.push(newpost);
-    // ons.notification.alert('Post successfully.');
-    // setTimeout(function() {
-    //   $("#topic_banner").html(" ");
-    //   $("#postabstrcts").html(" ");
-    //   $("#topicbar").html(" ");
-    //   showTopic(parseInt(topicID));
-    //   myNavigator.popPage();
-    // }, 500);
+    var newcomment = {commentText:commenttext,commentAuthor:"timemachine1996",commentDate:"Just Now"};
+    topics[parseInt(topicID-1)].posts[parseInt(postID-1)].comments.push(newcomment);
+    ons.notification.alert('Comment successfully.');
+    setTimeout(function() {
+      $("#belowbar").html(" ");
+      $("#topicbar3").html(" ");
+      $("#topicbar2").html(" ");
+      showPost(parseInt(topicID),parseInt(postID));
+      myNavigator.popPage();
+    }, 500);
   })
 }
 
@@ -533,19 +546,6 @@ function showSubscribe(id){
   }
 }
 
-
-/* This idea to replace value in JSON is from a user St.Woland at https://stackoverflow.com/questions/4553235/how-to-change-json-keyvalue */
-function replaceByValue(field, oldvalue, newvalue ) {
-  for( var k = 0; k < users.length; ++k ) {
-    if( oldvalue == users[k][field] ) {
-      users[k][field] = newvalue ;
-    }
-  }
-  return users;
-}
-/* end St.Woland's idea*/
-
-
 /*
 This function shows profile page
 In project 1, we are using static data.
@@ -585,7 +585,6 @@ function showProfile(id){
     }, 500);
   })
 }
-
 
 // ****************************************
 //  WEB APPLICATION LOAD
