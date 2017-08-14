@@ -168,7 +168,7 @@ EventListener
 document.addEventListener('init', function (event) {
   try {
     if (event.target.id === 'topicLists') {
-      showTopicsList(abc);
+      showTopicsList();
     }else if (event.target.id === 'topicmain') {
       showTopic(event.target.data.id);
     }else if(event.target.id === 'postpage'){
