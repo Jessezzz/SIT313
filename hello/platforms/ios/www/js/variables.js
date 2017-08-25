@@ -2,8 +2,8 @@
 //  VARIABLES
 //****************************************
 var users = [
-  {userId:"1",
-  username:"1",
+  {userId:"6",
+  username:"6",
   password:"1",
   nickname:"timemachine1996",
   signature:"I am rocket's fans and Harden is my favourite player",
@@ -17,8 +17,8 @@ var users = [
     {postId:"2"},
   ]
 },
-{userId:"2",
-username:"2",
+{userId:"5",
+username:"5",
 password:"2",
 nickname:"superman",
 signature:"I am Lakers's fans and Kobe is my favourite player",
@@ -32,8 +32,8 @@ myPosts:[
   {postId:"2"},
 ]
 },
-{userId:"3",
-username:"3",
+{userId:"4",
+username:"4",
 password:"3",
 nickname:"goodgoodstudy",
 signature:"I am Lakers's fans and Kobe is my favourite player",
