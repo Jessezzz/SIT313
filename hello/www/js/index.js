@@ -57,7 +57,6 @@ app.showFromObject = function (id1,id2) {
     cancelable: true,
     buttons: [
       'Reply',
-      'Subscribe',
       {
         label: 'Cancel',
       }
@@ -71,31 +70,16 @@ app.showFromObject = function (id1,id2) {
           myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
         }
       }
-      if(index===1){
-        if(document.cookie == ""){
-          ons.notification.alert('You have to sign in.');
-        }else{
-          //    subscribe
-        }
-      }
     }
   )
 };
-
-//*********************************************************************
-//This file encapsules interfaces for database given
-//  1.list: list all objectid's
-//  2.load: get the content of one objectid
-//  3.addData(): write / overwrite the objectid with the new contents
-//  4.delete: an objectid and its associated contents
-//  5.
-//*********************************************************************
 
 
 /****************************************
 JS below are created by Jesse
 ****************************************/
 
+window.baseUsername = document.cookie.substr(9);
 
 function unFollowTopic(currentUser,topicid){
   var dataChanged;
@@ -152,6 +136,7 @@ function login () {
 
   if(currentUser != null){
     var passwordCorrect = currentUser.password;
+
     if(passWord === passwordCorrect){
       showModal();
 
@@ -159,11 +144,11 @@ function login () {
 
       setTimeout(function() {
         document.getElementById("beforelogin").style.display="none";
-        //$("#usermainpage").html(" ");
-        $("#onslist").html(" ");
-        showTopicsList();
         document.getElementById("usermainpage").style.display="block";
-        showUserpage(currentUser);
+
+        updatePages1();
+        updatePages3(currentUser);
+
         myNavigator.popPage();
       }, 500);
     }else{
@@ -177,23 +162,29 @@ function login () {
 function logout () {
   document.getElementById("beforelogin").style.display="block";
   document.getElementById("usermainpage").style.display="none";
+
   document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  $("#onslist").html(" ");
-  showTopicsList();
+
+  updatePages1();
 };
 
 function register(){
   var userName = document.getElementById('_accountt').value;
   var passWord = document.getElementById('_pwdd').value;
+
   var emptyUser = userExist();
+
   if(emptyUser){
     addUser(userName,passWord);
+
     ons.notification.alert('Register successfully.');
+
     setTimeout(function() {
       myNavigator.popPage();
     }, 1000);
   }else{
     var allUsers = getUsers();
+
     for (index in allUsers){
       if(allUsers[index].username === userName){
         if(parseInt(index) === parseInt(allUsers.length-1)){
@@ -203,6 +194,7 @@ function register(){
       }
       else if(parseInt(index) === parseInt(allUsers.length-1)){
         addUser(userName,passWord);
+
         ons.notification.alert('Register successfully.');
         setTimeout(function() {
           myNavigator.popPage();
@@ -212,20 +204,9 @@ function register(){
   }
 }
 
-/* This idea to replace value in JSON is from a user St.Woland at https://stackoverflow.com/questions/4553235/how-to-change-json-keyvalue */
-function replaceByValue(field, oldvalue, newvalue ) {
-  for( var k = 0; k < users.length; ++k ) {
-    if( oldvalue == users[k][field] ) {
-      users[k][field] = newvalue ;
-    }
-  }
-  return users;
-}
-/* end St.Woland's idea*/
-
-
 function showModal() {
   var modal = document.querySelector('ons-modal');
+
   modal.show();
   setTimeout(function() {
     modal.hide();
@@ -269,8 +250,6 @@ document.addEventListener('init', function (event) {
       showMyteams(event.target.data.currentuser);
     }else if(event.target.id === 'myposts'){
       showMyposts(event.target.data.currentuser);
-    }else if(event.target.id === 'subscribe'){
-      showSubscribe(event.target.data.currentuser);
     }else if(event.target.id === 'profile'){
       showProfile(event.target.data.currentuser);
     }else if(event.target.id === 'mainPage'){
@@ -302,16 +281,74 @@ document.addEventListener('init', function (event) {
   };
 
   function topicTOaddpost(node,topicID){
+    var follow = isFollow(baseUsername,topicID);
+
     if(document.cookie == ""){
       node.on("click",function(){
         ons.notification.alert('You have to sign in');
       })
     }else{
       node.on("click",function(){
-        myNavigator.pushPage('addapost.html',{data:{id:topicID}});
+        if(follow){
+          myNavigator.pushPage('addapost.html',{data:{id:topicID}});
+        }else{
+          ons.notification.alert('You have to follow this topic firstly.');
+        }
       })
     }
   };
+
+  function joinTeam(node,currentUser,topicId) {
+    if(node.html() == " &nbsp;&nbsp;Join&nbsp;&nbsp; "){
+      node.on("click",function(){
+        followTopic(currentUser,topicId);
+        ons.notification.alert('You have joined this topic');
+        currentUser = getUser(currentUser.username);
+        updatePages3(currentUser);
+        updatePages1();
+      })
+    }else{
+      node.on("click",function(){
+        unFollowTopic(currentUser,topicId);
+        ons.notification.alert('You have unfollow this topic');
+        currentUser = getUser(currentUser.username);
+        updatePages3(currentUser);
+        updatePages1();
+      })
+    }
+  }
+
+  //Refresh pages which do not need parameters
+  function updatePages1(){
+    $("#onslist").html(" ");
+    showTopicsList();
+    $("#allpostabstrcts").html(" ");
+    showHotPostAbstracts();
+  }
+
+  //Refresh pages which only need topicId
+  function updatePages2(topicId){
+    $("#topic_banner").html(" ");
+    $("#postabstrcts").html(" ");
+    $("#topicbar").html(" ");
+    showTopic(topicId);
+  }
+
+  //Refresh pages which only need object-currentUser
+  function updatePages3(currentUser){
+    $("#usermainpage").html(" ");
+    showUserpage(currentUser);
+    $("#postofmine").html(" ");
+    showMyposts(currentUser);
+  }
+
+  //Refresh pages which only need both id of topic and post
+  function updatePages4(topicId,postId){
+    $("#belowbar").html(" ");
+    $("#topicbar3").html(" ");
+    $("#topicbar2").html(" ");
+    showPost(topicId,postId);
+  }
 
   /*
   This function shows forum topics list
@@ -345,8 +382,7 @@ document.addEventListener('init', function (event) {
         })
         topicslistTOtopic(listitemCenter,allTopics[index].topicId);
       }}else{
-        var username = document.cookie.substr(9);
-        var currentUser = getUser(username);
+        var currentUser = getUser(baseUsername);
         for(index in allTopics){
           var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
           var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
@@ -360,14 +396,11 @@ document.addEventListener('init', function (event) {
 
           for(myIndex in currentUser.myTopics){
             if(currentUser.myTopics[myIndex].topicId == allTopics[index].topicId){
-              //document.getElementById("onsbutton1").style.display = "none";
-              //document.getElementById("onsbutton2").style.display = "block";
               join = $("<ons-button id='onsbutton1' style='padding:0;color:#ADADAE;font-size:14px;background-color:white;border:1px solid #ADADAE'> &nbsp;&nbsp;Joined&nbsp;&nbsp; </ons-button>");
             }
           }
           listitemRight.append(listitemRightSection);
           listitemRightSection.append(join);
-          //listitemRightSection.append(joined);
           listitem.append(listitemLeft);
           listitem.append(listitemCenter);
           listitem.append(listitemRight);
@@ -376,32 +409,6 @@ document.addEventListener('init', function (event) {
           joinTeam(join,currentUser,allTopics[index].topicId);
           topicslistTOtopic(listitemCenter,allTopics[index].topicId);
         }
-      }
-    }
-
-    function joinTeam(node,currentUser,topicId) {
-      if(node.html() == " &nbsp;&nbsp;Join&nbsp;&nbsp; "){
-        node.on("click",function(){
-          followTopic(currentUser,topicId);
-          ons.notification.alert('You have joined this topic');
-          $("#onslist").html(" ");
-          showTopicsList();
-          $("#tem").html(" ");
-          currentUser = getUser(currentUser.username);
-          $("#usermainpage").html(" ");
-          showUserpage(currentUser);
-        })
-      }else{
-        node.on("click",function(){
-          unFollowTopic(currentUser,topicId);
-          ons.notification.alert('You have unfollow this topic');
-          $("#onslist").html(" ");
-          showTopicsList();
-          $("#tem").html(" ");
-          currentUser = getUser(currentUser.username);
-          $("#usermainpage").html(" ");
-          showUserpage(currentUser);
-        })
       }
     }
 
@@ -421,8 +428,6 @@ document.addEventListener('init', function (event) {
       topicBannerWords.append(lab);
       lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+allTopics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
       lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+allTopics[topicID-1].posts.length+"")
-      // var section = $("<ons-button id='joinbutton' > +Join </ons-button>");
-      // $("#topic_banner").append(section);
       $("#topic_banner").append(topicBannerContent);
       var addpost = $("#addpost");
       var topicbartitle=$("<span>"+allTopics[topicID-1].topicTitle+"</span>");
@@ -471,18 +476,28 @@ document.addEventListener('init', function (event) {
     */
     function showHotPostAbstracts(){
       var allTopics = getTopics();
-      var article = $("<div id='articles'></div>");
+
       for(index1 in allTopics){
         var hot = 0;
         var topic = 0;
         var post = 0;
-        for (index2 in allTopics[index1].posts){
-          if((allTopics[index1].posts[index2].comments.length)>hot){
-            hot = allTopics[index1].posts[index2].comments.length;
-            topic = index1;
-            post = index2;
+
+        if(allTopics[index1].posts.length == 0){
+          continue;
+        }else if(allTopics[index1].posts.length == 1){
+          topic = index1;
+          post = 0;
+        }else{
+          for (index2 in allTopics[index1].posts){
+            if((allTopics[index1].posts[index2].comments.length)>=hot){
+              hot = allTopics[index1].posts[index2].comments.length;
+              topic = index1;
+              post = index2;
+            }
           }
         }
+
+        var article = $("<div id='articles'></div>");
         var postAbstract = $("<div class='contents'></div>");
         var mainContent = $("<div class='bod'></div>");
         mainContent.append("<div class='title'>"+ allTopics[topic].posts[post].postTitle +"</div>");
@@ -503,8 +518,8 @@ document.addEventListener('init', function (event) {
         postAbstract.append(footContent);
         article.append(postAbstract);
         abstractsTOpost(postAbstract,parseInt(topic)+1,parseInt(post)+1);
+        $("#allpostabstrcts").append(article);
       }
-      $("#allpostabstrcts").append(article);
     }
 
     /*
@@ -520,18 +535,22 @@ document.addEventListener('init', function (event) {
         var postid = allTopics[parseInt(topicID-1)].posts.length+1;
         var posttitle = document.getElementById('postTitle').value;
         var posttext = document.getElementById('postText').value;
-        var postauthor = document.cookie.substr(9);
         var postdate = "10 minutes ago";
         var postpic = "";
-        addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic);
-        ons.notification.alert('Post successfully.');
+
+        showModal();
+
         setTimeout(function() {
-          $("#topic_banner").html(" ");
-          $("#postabstrcts").html(" ");
-          $("#topicbar").html(" ");
-          showTopic(parseInt(topicID));
+          addPost(topicID,postid,posttitle,posttext,baseUsername,postdate,postpic);
+          ons.notification.alert('Post successfully.');
+          addMyPost(baseUsername,topicID,postid);
+          var currentUser = getUser(baseUsername);
+          updatePages3(currentUser);
+          updatePages2(parseInt(topicID));
+          updatePages1();
           myNavigator.popPage();
-        }, 500);
+        }, 300);
+
       })
     }
 
@@ -546,15 +565,15 @@ document.addEventListener('init', function (event) {
       $("#barofAddreply").append(addclick);
       addclick.on("click",function(){
         var commenttext = document.getElementById('commentText').value;
-        var commenauthor = document.cookie.substr(9);
         var commentDate = "Just now"
-        addReply(topicID,postID,commenttext,commenauthor,commentDate);
+        addReply(topicID,postID,commenttext,baseUsername,commentDate);
         ons.notification.alert('Comment successfully.');
         setTimeout(function() {
-          $("#belowbar").html(" ");
-          $("#topicbar3").html(" ");
-          $("#topicbar2").html(" ");
-          showPost(parseInt(topicID),parseInt(postID));
+
+          updatePages2(topicID);
+          updatePages1();
+          updatePages4(parseInt(topicID),parseInt(postID));
+
           myNavigator.popPage();
         }, 500);
       })
@@ -588,7 +607,7 @@ document.addEventListener('init', function (event) {
       var responseDelete = $("<div style='margin-top:10px;margin-left: 20px;color: #5C91C0;font-size: 15px;' id='response_delete'>Delete this post</div>");
       responseWriter.append(responsePic);
       responseWriter.append(responseUser);
-      if(document.cookie.substr(9) == allTopics[topicID-1].posts[postID-1].postAuthor){
+      if(baseUsername == allTopics[topicID-1].posts[postID-1].postAuthor){
         responsePage.append(responseDelete);
       }
       responseDelete.on("click",function(){
@@ -597,12 +616,18 @@ document.addEventListener('init', function (event) {
         .then(
           function (index) {
             if(index===1){
-              deletePost(topicID,postID);
-              $("#topic_banner").html("");
-              $("#postabstrcts").html("");
-              $("#topicbar").html("");
-              showTopic(topicID);
-              myNavigator.popPage();
+              showModal();
+
+              setTimeout(function() {
+                deleteMyPost(baseUsername,topicID,postID);
+                deletePost(topicID,postID);
+
+                var currentUser = getUser(baseUsername);
+                updatePages2(topicID);
+                updatePages1();
+                updatePages3(currentUser);
+                myNavigator.popPage();
+              }, 300);
             }
           }
         )
@@ -658,17 +683,12 @@ document.addEventListener('init', function (event) {
       bottomList2.on("click",function(){
         myNavigator.pushPage("myposts.html",{data:{currentuser:currentUser}});
       })
-      var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-star'></ons-icon>Subscribe<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-      bottomList3.on("click",function(){
-        myNavigator.pushPage("subscribe.html",{data:{currentuser:currentUser}});
-      })
       // var bottomList4 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-notifications'></ons-icon>&nbsp;Messages<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
       // bottomList4.on("click",function(){
       //   myNavigator.pushPage("messages.html",{data:{userid:users[index].userId}});
       // })
       userBottom1.append(bottomList1);
       userBottom1.append(bottomList2);
-      userBottom1.append(bottomList3);
       // userBottom1.append(bottomList4);
       var userBottom2 = $("<div id='user_bottom'></div>");
       var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;App Info<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
@@ -715,83 +735,39 @@ document.addEventListener('init', function (event) {
     This function shows all data that are in the "users" variable.
     */
     function showMyposts(currentuser){
+      var allTopics = getTopics();
+      var postTitle;
+      var postDate;
+
       for(index in currentuser.myPosts){
+        for(index2 in allTopics){
+          if(allTopics[index2].topicId == currentuser.myPosts[index].topicId){
+            for(index3 in allTopics[index2].posts){
+              if(allTopics[index2].posts[index3].postId == currentuser.myPosts[index].postId){
+                postTitle = allTopics[index2].posts[index3].postTitle;
+                postDate = allTopics[index2].posts[index3].postDate;
+              }
+            }
+          }
+        }
+
         var responseComment = $("<div style='background-color:white;' id='comments'></div>");
-        responseComment.append("<p style='font-size:18px;padding-top:10px;'>This function shows myposts page.In project 1, we are using static data.");
+        responseComment.append("<p style='font-size:18px;padding-top:10px;'>"+postTitle+"");
         var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
         responseComment.append(commentWriter);
         var commentPic = $("<div id='mypost_pic'></div>");
         commentPic.append("<img src='img/head.jpg'>");
         var commentUser = $("<div id='response_user'></div>");
-        commentUser.append("<span style='font-size:17px;color:#0060AA;'>noodles</span>&nbsp;&nbsp;&nbsp;");
-        commentUser.append("<span style='font-size:14px;'>2017-9-8</span>");
+        commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+baseUsername+"</span>&nbsp;&nbsp;&nbsp;");
+        commentUser.append("<span style='font-size:14px;'>"+postDate+"</span>");
         commentWriter.append(commentPic);
         commentWriter.append(commentUser);
         $("#postofmine").append(responseComment);
+
+        abstractsTOpost(responseComment,currentuser.myPosts[index].topicId,currentuser.myPosts[index].postId);
       }
     }
 
-    /*
-    This function shows subscribe page
-    In project 1, we are using static data.
-    This function shows all data that are in the "users" variable.
-    */
-    function showSubscribe(currentuser){
-      for(index in currentuser.myPosts){
-        var responseComment = $("<div style='background-color:white;' id='comments'></div>");
-        responseComment.append("<p style='font-size:18px;padding-top:10px;'>This function shows subscribe page.In project 1, we are using static data.");
-        var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
-        responseComment.append(commentWriter);
-        var commentPic = $("<div id='mypost_pic'></div>");
-        commentPic.append("<img src='img/denver.gif'>");
-        var commentUser = $("<div id='response_user'></div>");
-        commentUser.append("<span style='font-size:17px;color:#0060AA;'>yellowpie</span>&nbsp;&nbsp;&nbsp;");
-        commentUser.append("<span style='font-size:14px;'>2017-9-8</span>");
-        commentWriter.append(commentPic);
-        commentWriter.append(commentUser);
-        $("#postofsub").append(responseComment);
-      }
-    }
-
-    /*
-    This function shows profile page
-    In project 1, we are using static data.
-    This function shows all data that are in the "users" variable.
-    */
-    function showProfile(currentuser){
-      var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:80px;height:80px;' src='"+currentuser.headpic+"'></div>");
-      $("#contentofp").append(head);
-      var changehead = $("<span style='text-align:center;font-size:17px;display:block;color:#3A9FED;margin:10px auto;'>Change Profile Photo<span>");
-      $("#contentofp").append(changehead);
-      changehead.on("click",function(){
-
-      });
-      var userBottom = $("<div id='user_bottom'></div>");
-      var bottomList1 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-person'></ons-icon><ons-input id='proin1' style='line-height:30px;' float placeholder='"+currentuser.nickname+"'></ons-input></div>");
-      var bottomList2 = $("<div class='user_bottom_lists'><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon><ons-input id='proin2' style='line-height:30px;width:75%' float placeholder='Input your signature'></ons-input></div>");
-      userBottom.append(bottomList1);
-      userBottom.append(bottomList2);
-      $("#contentofp").append(userBottom);
-
-      var userBottom2 = $("<div id='user_bottom'></div>");
-      var bottomList6 = $("<div style='text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Save</div>");
-      userBottom2.append(bottomList6);
-      $("#contentofp").append(userBottom2);
-      bottomList6.on("click",function(){
-        var nickName = document.getElementById('proin1').value;
-        var sig = document.getElementById('proin2').value;
-        //replaceByValue('nickname',users[id-1].nickname,nickName);
-        //replaceByValue('signature',users[id-1].signature,sig);
-        ons.notification.alert('Save successfully.');
-        setTimeout(function() {
-          document.getElementById("beforelogin").style.display="none";
-          $("#usermainpage").html(" ");
-          showUserpage(parseInt(id-1));
-          document.getElementById("usermainpage").style.display="block";
-          myNavigator.popPage();
-        }, 500);
-      })
-    }
     // ****************************************
     //  WEB APPLICATION LOAD
     // ****************************************

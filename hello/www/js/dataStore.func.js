@@ -6,15 +6,17 @@
 //  4.delete: an objectid and its associated contents
 //  5.
 //*********************************************************************
+window.baseUrl = "http://introtoapps.com/datastore.php";
+window.baseAppid = "216036612";
 
 function userExist(){
   var userExist = false;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "list",
-      appid: "216036612" ,
+      appid: baseAppid
     },
     dataType: "json",
     async : false,
@@ -37,10 +39,10 @@ function addUser(userName,passWord){
 
   $.ajax({
     type: "POST",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "append",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "users",
       data: newUser
     },
@@ -55,10 +57,10 @@ function followTopic(currentUser,topicid){
   var dataChanged;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "load",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "users",
     },
     dataType: "json",
@@ -78,10 +80,10 @@ function followTopic(currentUser,topicid){
 
   $.ajax({
     type: "POST",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "save",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "users",
       data: dataChanged
     },
@@ -93,14 +95,44 @@ function followTopic(currentUser,topicid){
 }
 
 
+function isFollow(username,topicId){
+  var follow = false;
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "load",
+      appid: baseAppid,
+      objectid: "users"
+    },
+    dataType: "json",
+    async : false,
+    success: function(data) {
+      for(var i = 0; i < data.length; i ++){
+        if(data[i].username  = username){
+          for(var j=0; j <data[i].myTopics.length;j++){
+            if(data[i].myTopics[j].topicId == topicId){
+              follow = true;
+            }
+          }
+        }
+      }
+    },
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+  return follow;
+}
+
 function getUser(username){
   var currentUser;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "load",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "users",
     },
     dataType: "json",
@@ -123,10 +155,10 @@ function getUsers(){
   var allTopics;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "load",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "users",
     },
     dataType: "json",
@@ -145,10 +177,10 @@ function getTopics(){
   var allTopics;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "load",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "topics",
     },
     dataType: "json",
@@ -167,10 +199,10 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
   var dataChanged;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "load",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "topics",
     },
     dataType: "json",
@@ -190,10 +222,10 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
 
   $.ajax({
     type: "POST",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "save",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "topics",
       data: dataChanged
     },
@@ -209,10 +241,10 @@ function addReply(topicID,postID,commenttext,commenauthor,commentDate){
   var dataChanged;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "load",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "topics",
     },
     dataType: "json",
@@ -236,10 +268,10 @@ function addReply(topicID,postID,commenttext,commenauthor,commentDate){
 
   $.ajax({
     type: "POST",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "save",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "topics",
       data: dataChanged
     },
@@ -254,10 +286,10 @@ function deletePost(topicID,postID){
   var dataChanged;
   $.ajax({
     type: "GET",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "load",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "topics",
     },
     dataType: "json",
@@ -281,11 +313,97 @@ function deletePost(topicID,postID){
 
   $.ajax({
     type: "POST",
-    url: "http://introtoapps.com/datastore.php",
+    url: baseUrl,
     data: {
       action: "save",
-      appid: "216036612" ,
+      appid: baseAppid ,
       objectid: "topics",
+      data: dataChanged
+    },
+    dataType: "json",
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+}
+
+function addMyPost(postauthor,topicid,postid){
+  var dataChanged;
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "load",
+      appid: baseAppid ,
+      objectid: "users",
+    },
+    dataType: "json",
+    async : false,
+    success: function(data) {
+      for(var i=0; i < data.length; i++){
+        if(data[i].username == postauthor){
+          data[i].myPosts.push({"topicId":""+topicid+"","postId":""+postid+""});
+        }
+      }
+      dataChanged = JSON.stringify(data);
+    },
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+
+  $.ajax({
+    type: "POST",
+    url: baseUrl,
+    data: {
+      action: "save",
+      appid: baseAppid ,
+      objectid: "users",
+      data: dataChanged
+    },
+    dataType: "json",
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+}
+
+function deleteMyPost(postauthor,topicid,postid){
+  var dataChanged;
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "load",
+      appid: baseAppid ,
+      objectid: "users",
+    },
+    dataType: "json",
+    async : false,
+    success: function(data) {
+      for(var i=0; i < data.length; i++){
+        if(data[i].username == postauthor){
+          for(var j=0; j < data[i].myPosts.length; j++){
+            if((data[i].myPosts[j].topicId == topicid) && (data[i].myPosts[j].postId == postid)){
+              data[i].myPosts.splice(j,1);
+            }
+          }
+        }
+      }
+      dataChanged = JSON.stringify(data);
+    },
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+
+  $.ajax({
+    type: "POST",
+    url: baseUrl,
+    data: {
+      action: "save",
+      appid: baseAppid ,
+      objectid: "users",
       data: dataChanged
     },
     dataType: "json",
