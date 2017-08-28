@@ -10,7 +10,6 @@
   <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
   <!-- <script type="text/javascript" src="cordova.js"></script> -->
   <script type="text/javascript" src="js/index.js"></script>
-  <!-- <script type="text/javascript" src="js/variables.js"></script> -->
 <script type="text/javascript" src="js/dataStore.func.js"></script>
   <script src="js/onsenui.min.js"></script>
 </head>
@@ -265,17 +264,18 @@
     </ons-page>
   </template>
 
-  <!-- Here starts reply notification page -->
-  <!-- <template id="messages.html">
-  <ons-page id="messages">
+  <!-- Here starts recent viewing page -->
+  <template id="viewing.html">
+  <ons-page id="viewing">
   <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
   <div class="left">
   <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
 </div>
-<div class="center" style="color:#FFFFFF">Messages</div>
+<div class="center" style="color:#FFFFFF">Recent viewing</div>
 </ons-toolbar>
+<div id="viewing"></div>
 </ons-page>
-</template> -->
+</template>
 
 <!-- Here starts appinfo page -->
 <template id="appinfo.html">

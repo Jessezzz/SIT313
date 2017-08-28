@@ -79,7 +79,6 @@ app.showFromObject = function (id1,id2) {
 JS below are created by Jesse
 ****************************************/
 
-window.baseUsername = document.cookie.substr(9);
 
 function unFollowTopic(currentUser,topicid){
   var dataChanged;
@@ -140,15 +139,19 @@ function login () {
     if(passWord === passwordCorrect){
       showModal();
 
-      document.cookie="username="+currentUser.username+"";
-
       setTimeout(function() {
         document.getElementById("beforelogin").style.display="none";
         document.getElementById("usermainpage").style.display="block";
 
+        window.localStorage.setItem("Username",currentUser.username);
+        window.localStorage.setItem("Password",currentUser.password);
+        window.localStorage.setItem("Nickname",currentUser.nickname);
+        window.localStorage.setItem("Signature",currentUser.signature);
+        window.localStorage.setItem("Headpic",currentUser.headpic);
+        window.localStorage.setItem("Password",currentUser.password);
+
         updatePages1();
         updatePages3(currentUser);
-
         myNavigator.popPage();
       }, 500);
     }else{
@@ -254,6 +257,8 @@ document.addEventListener('init', function (event) {
       showProfile(event.target.data.currentuser);
     }else if(event.target.id === 'mainPage'){
       showHotPostAbstracts();
+    }else if(event.target.id === 'viewing'){
+      showRecentviewing(event.target.data.currentuser);
     }else if(event.target.id === 'addareply'){
       showaAddReply(event.target.data.tid,event.target.data.pid);
     }else if(event.target.id === 'exception'){
@@ -281,7 +286,7 @@ document.addEventListener('init', function (event) {
   };
 
   function topicTOaddpost(node,topicID){
-    var follow = isFollow(baseUsername,topicID);
+    var follow = isFollow(document.cookie.substr(9),topicID);
 
     if(document.cookie == ""){
       node.on("click",function(){
@@ -382,7 +387,7 @@ document.addEventListener('init', function (event) {
         })
         topicslistTOtopic(listitemCenter,allTopics[index].topicId);
       }}else{
-        var currentUser = getUser(baseUsername);
+        var currentUser = getUser(document.cookie.substr(9));
         for(index in allTopics){
           var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
           var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
@@ -541,10 +546,10 @@ document.addEventListener('init', function (event) {
         showModal();
 
         setTimeout(function() {
-          addPost(topicID,postid,posttitle,posttext,baseUsername,postdate,postpic);
+          addPost(topicID,postid,posttitle,posttext,document.cookie.substr(9),postdate,postpic);
           ons.notification.alert('Post successfully.');
-          addMyPost(baseUsername,topicID,postid);
-          var currentUser = getUser(baseUsername);
+          addMyPost(document.cookie.substr(9),topicID,postid);
+          var currentUser = getUser(document.cookie.substr(9));
           updatePages3(currentUser);
           updatePages2(parseInt(topicID));
           updatePages1();
@@ -566,7 +571,7 @@ document.addEventListener('init', function (event) {
       addclick.on("click",function(){
         var commenttext = document.getElementById('commentText').value;
         var commentDate = "Just now"
-        addReply(topicID,postID,commenttext,baseUsername,commentDate);
+        addReply(topicID,postID,commenttext,document.cookie.substr(9),commentDate);
         ons.notification.alert('Comment successfully.');
         setTimeout(function() {
 
@@ -607,7 +612,7 @@ document.addEventListener('init', function (event) {
       var responseDelete = $("<div style='margin-top:10px;margin-left: 20px;color: #5C91C0;font-size: 15px;' id='response_delete'>Delete this post</div>");
       responseWriter.append(responsePic);
       responseWriter.append(responseUser);
-      if(baseUsername == allTopics[topicID-1].posts[postID-1].postAuthor){
+      if(document.cookie.substr(9) == allTopics[topicID-1].posts[postID-1].postAuthor){
         responsePage.append(responseDelete);
       }
       responseDelete.on("click",function(){
@@ -619,13 +624,14 @@ document.addEventListener('init', function (event) {
               showModal();
 
               setTimeout(function() {
-                deleteMyPost(baseUsername,topicID,postID);
+                deleteMyPost(document.cookie.substr(9),topicID,postID);
                 deletePost(topicID,postID);
 
-                var currentUser = getUser(baseUsername);
+                var currentUser = getUser(document.cookie.substr(9));
                 updatePages2(topicID);
                 updatePages1();
                 updatePages3(currentUser);
+
                 myNavigator.popPage();
               }, 300);
             }
@@ -662,11 +668,15 @@ document.addEventListener('init', function (event) {
     This function shows all data that are in the "users" variable.
     */
     function showUserpage(currentUser){
+      var nickname = window.localStorage.getItem("Nickname");
+      var signature = window.localStorage.getItem("Signature");
+      var headpic = window.localStorage.getItem("Headpic");
+
       var userTop = $("<div id='user_top'></div>");
-      var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='"+currentUser.headpic+"'>");
+      var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='"+headpic+"'>");
       var userTopCenter = $("<div id='user_top_center'></div>");
-      userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+currentUser.nickname+"</span><br/>");
-      userTopCenter.append("<span style='display:block;margin-top:10px;font-size:17px;'>"+currentUser.signature+"</span><br/>");
+      userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+nickname+"</span><br/>");
+      userTopCenter.append("<span style='display:block;margin-top:10px;font-size:17px;'>"+signature+"</span><br/>");
       var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
       userTop.append(userTopLeft);
       userTop.append(userTopCenter);
@@ -675,21 +685,21 @@ document.addEventListener('init', function (event) {
         myNavigator.pushPage("profile.html",{data:{currentuser:currentUser}});
       })
       var userBottom1 = $("<div id='user_bottom'></div>");
-      var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-favorite'></ons-icon>My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+      var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-android-favorite'></ons-icon>&nbsp;My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
       bottomList1.on("click",function(){
         myNavigator.pushPage("myteams.html",{data:{currentuser:currentUser}});
       })
-      var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+      var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
       bottomList2.on("click",function(){
         myNavigator.pushPage("myposts.html",{data:{currentuser:currentUser}});
       })
-      // var bottomList4 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-android-notifications'></ons-icon>&nbsp;Messages<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-      // bottomList4.on("click",function(){
-      //   myNavigator.pushPage("messages.html",{data:{userid:users[index].userId}});
-      // })
+      var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='21px' class='iconthem' icon='ion-eye'></ons-icon>&nbsp;Recent Viewing<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+      bottomList3.on("click",function(){
+        myNavigator.pushPage("viewing.html",{data:{currentuser:currentUser}});
+      })
       userBottom1.append(bottomList1);
       userBottom1.append(bottomList2);
-      // userBottom1.append(bottomList4);
+      userBottom1.append(bottomList3);
       var userBottom2 = $("<div id='user_bottom'></div>");
       var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;App Info<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
       bottomList5.on("click",function(){
@@ -758,7 +768,46 @@ document.addEventListener('init', function (event) {
         var commentPic = $("<div id='mypost_pic'></div>");
         commentPic.append("<img src='img/head.jpg'>");
         var commentUser = $("<div id='response_user'></div>");
-        commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+baseUsername+"</span>&nbsp;&nbsp;&nbsp;");
+        commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+document.cookie.substr(9)+"</span>&nbsp;&nbsp;&nbsp;");
+        commentUser.append("<span style='font-size:14px;'>"+postDate+"</span>");
+        commentWriter.append(commentPic);
+        commentWriter.append(commentUser);
+        $("#postofmine").append(responseComment);
+
+        abstractsTOpost(responseComment,currentuser.myPosts[index].topicId,currentuser.myPosts[index].postId);
+      }
+    }
+
+    /*
+    This function shows my Recentviewing
+    In project 1, we are using static data.
+    This function shows all data that are in the "users" variable.
+    */
+    function showRecentviewing(currentuser){
+      var allTopics = getTopics();
+      var postTitle;
+      var postDate;
+
+      for(index in currentuser.myPosts){
+        for(index2 in allTopics){
+          if(allTopics[index2].topicId == currentuser.myPosts[index].topicId){
+            for(index3 in allTopics[index2].posts){
+              if(allTopics[index2].posts[index3].postId == currentuser.myPosts[index].postId){
+                postTitle = allTopics[index2].posts[index3].postTitle;
+                postDate = allTopics[index2].posts[index3].postDate;
+              }
+            }
+          }
+        }
+
+        var responseComment = $("<div style='background-color:white;' id='comments'></div>");
+        responseComment.append("<p style='font-size:18px;padding-top:10px;'>"+postTitle+"");
+        var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
+        responseComment.append(commentWriter);
+        var commentPic = $("<div id='mypost_pic'></div>");
+        commentPic.append("<img src='img/head.jpg'>");
+        var commentUser = $("<div id='response_user'></div>");
+        commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+document.cookie.substr(9)+"</span>&nbsp;&nbsp;&nbsp;");
         commentUser.append("<span style='font-size:14px;'>"+postDate+"</span>");
         commentWriter.append(commentPic);
         commentWriter.append(commentUser);
@@ -772,7 +821,19 @@ document.addEventListener('init', function (event) {
     //  WEB APPLICATION LOAD
     // ****************************************
     $(document).ready(function(){
-      //var userJson = '[{"userId":2}]';
-      //addUsers(userJson);
-      document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      var username = window.localStorage.getItem("Username");
+      var password = window.localStorage.getItem("Password");
+
+      if(username != null){
+        var currentUser = getUser(username);
+        var correctPassword = currentUser.password;
+        if(password == correctPassword){
+          updatePages3(currentUser);
+
+          document.getElementById("beforelogin").style.display = "none";
+          document.getElementById("usermainpage").style.display = "block";
+        }else{
+          ons.notification.alert('Password has been changed, you have to sign in again.');
+        }
+      }
     });
