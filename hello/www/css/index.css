@@ -80,14 +80,13 @@ background-color:white;
 #response_title{
   font-size: 22px;
   border-bottom: 1px solid #DBDBDB;
-  padding: 10px;
-  height:100px;
+  padding: 14px;
 }
 #countss{
-  margin-top:10px;
   font-size:16px;
   float:right;
   color:#999999;
+  margin-top:20px;
 }
 #response_writer{
   margin: 10px;
@@ -102,7 +101,8 @@ background-color:white;
   float: left;
   border-radius:50%;
   overflow:hidden;
-  width:40px;height:40px;
+  width:40px;
+  height:40px;
 }
 #mypost_pic img{
   float: left;
@@ -214,15 +214,15 @@ clear: both;
   width:100%;
 }
 .user_bottom_lists{
-  height:50px;
-  line-height: 50px;
+  height:60px;
+  line-height: 60px;
   border-bottom: 1px solid #DBDBDB;
 }
 .iconarrow{
     color:#999999;
     float:right;
     margin-right:15px;
-    margin-top:12px;
+    margin-top:15px;
 }
 .iconthem{
   margin-left:25px;

@@ -53,6 +53,7 @@ function addUser(userName,passWord){
   });
 }
 
+
 function followTopic(currentUser,topicid){
   var dataChanged;
   $.ajax({
