@@ -52,10 +52,11 @@ var app = {
 
 app.initialize();
 
-app.showFromObject = function (id1,id2) {
+app.deleteComment = function (topicID,postID,commentID) {
   ons.openActionSheet({
     cancelable: true,
     buttons: [
+      'Delete',
       'Reply',
       {
         label: 'Cancel',
@@ -67,7 +68,125 @@ app.showFromObject = function (id1,id2) {
         if(window.localStorage.getItem("Username") == null){
           ons.notification.alert('You have to sign in.');
         }else{
-          myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
+          showModal();
+          setTimeout(function() {
+            deleteCmt(topicID,postID,commentID);
+            var currentUser = getUser(window.localStorage.getItem("Username"));
+            updatePages2(topicID);
+            updatePages1();
+            updatePages3(currentUser);
+            updatePages4(topicID,postID);
+          }, 300);
+        }
+      }
+    }
+  )
+};
+
+app.replyComment = function (topicID,postID,index) {
+  ons.openActionSheet({
+    cancelable: true,
+    buttons: [
+      'Reply',
+      {
+        label: 'Cancel',
+      }
+    ]
+  })
+};
+
+app.othersPost = function (id1,id2) {
+  ons.openActionSheet({
+    cancelable: true,
+    buttons: [
+      'Reply',
+      {
+        label: 'Cancel',
+      }
+    ]
+  }).then(
+    function (index) {
+      if(index===0){
+        var follow = isFollow(window.localStorage.getItem("Username"),id1);
+
+        if(window.localStorage.getItem("Username") == null){
+          ons.notification.alert('You have to sign in.');
+        }else{
+          if(follow){
+            myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
+          }else{
+            ons.notification.alert('You have to follow this topic firstly.');
+          }
+        }
+      }
+    }
+  )
+};
+
+app.myPost = function (id1,id2) {
+  ons.openActionSheet({
+    cancelable: true,
+    buttons: [
+      'Edit',
+      'Delete',
+      'Reply',
+      {
+        label: 'Cancel',
+      }
+    ]
+  }).then(
+    function (index) {
+      if(index == 0){
+        var follow = isFollow(window.localStorage.getItem("Username"),id1);
+
+        if(window.localStorage.getItem("Username") == null){
+          ons.notification.alert('You have to sign in.');
+        }else{
+          if(follow){
+            myNavigator.pushPage("editapost.html",{data:{topicId:id1,postId:id2}});
+          }else{
+            ons.notification.alert('You have to follow this topic firstly.');
+          }
+        }
+      }
+      else if(index==1){
+        if(window.localStorage.getItem("Username") == null){
+          ons.notification.alert('You have to sign in.');
+        }else{
+          ons.notification.confirm
+          ({message: 'All comments will be deleted after deleting this post.'})
+          .then(
+            function (index) {
+              if(index===1){
+                showModal();
+
+                setTimeout(function() {
+                  deleteMyPost(window.localStorage.getItem("Nickname"),id1,id2);
+                  deletePost(id1,id2);
+
+                  var currentUser = getUser(window.localStorage.getItem("Username"));
+                  updatePages2(id1);
+                  updatePages1();
+                  updatePages3(currentUser);
+
+                  myNavigator.popPage();
+                }, 300);
+              }
+            }
+          )
+        }
+      }
+      else if(index===2){
+        var follow = isFollow(window.localStorage.getItem("Username"),id1);
+
+        if(window.localStorage.getItem("Username") == null){
+          ons.notification.alert('You have to sign in.');
+        }else{
+          if(follow){
+            myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
+          }else{
+            ons.notification.alert('You have to follow this topic firstly.');
+          }
         }
       }
     }
@@ -78,9 +197,6 @@ app.showFromObject = function (id1,id2) {
 /****************************************
 JS below are created by Jesse
 ****************************************/
-
-
-
 
 function unFollowTopic(currentUser,topicid){
   var dataChanged;
@@ -118,6 +234,56 @@ function unFollowTopic(currentUser,topicid){
       action: "save",
       appid: "216036612" ,
       objectid: "users",
+      data: dataChanged
+    },
+    dataType: "json",
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+}
+
+
+function deleteCmt(topicID,postID,commentID){
+  var dataChanged;
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "load",
+      appid: baseAppid ,
+      objectid: "topics",
+    },
+    dataType: "json",
+    async : false,
+    success: function(data) {
+      for(var i=0; i < data.length; i++){
+        if(data[i].topicId == topicID){
+          for(var j=0; j<data[i].posts.length; j++){
+            if(data[i].posts[j].postId == postID){
+              for(var k=0; k<data[i].posts[j].comments.length; k++){
+                if(data[i].posts[j].comments[k].commentId == commentID){
+                  data[i].posts[j].comments.splice(k,1);
+                }
+              }
+            }
+          }
+        }
+      }
+      dataChanged = JSON.stringify(data);
+    },
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+
+  $.ajax({
+    type: "POST",
+    url: baseUrl,
+    data: {
+      action: "save",
+      appid: baseAppid ,
+      objectid: "topics",
       data: dataChanged
     },
     dataType: "json",
@@ -259,6 +425,8 @@ document.addEventListener('init', function (event) {
       showTopicsList();
     }else if (event.target.id === 'topicmain') {
       showTopic(event.target.data.id);
+    }else if (event.target.id === 'editapost') {
+      showEditPost(event.target.data.topicId,event.target.data.postId);
     }else if(event.target.id === 'postpage'){
       showPost(event.target.data.topicid,event.target.data.postid);
     }else if(event.target.id === 'addapost'){
@@ -302,24 +470,6 @@ document.addEventListener('init', function (event) {
     })
   };
 
-  function topicTOaddpost(node,topicID){
-    var follow = isFollow(window.localStorage.getItem("Username"),topicID);
-
-    if(window.localStorage.getItem("Username") == null){
-      node.on("click",function(){
-        ons.notification.alert('You have to sign in');
-      })
-    }else{
-      node.on("click",function(){
-        if(follow){
-          myNavigator.pushPage('addapost.html',{data:{id:topicID}});
-        }else{
-          ons.notification.alert('You have to follow this topic firstly.');
-        }
-      })
-    }
-  };
-
   function joinTeam(node,currentUser,topicId) {
     if(node.html() == " &nbsp;&nbsp;Join&nbsp;&nbsp; "){
       node.on("click",function(){
@@ -338,6 +488,18 @@ document.addEventListener('init', function (event) {
         updatePages1();
       })
     }
+  }
+
+  function deleteMyComment(node,topicID,postID,commentID){
+    node.on("click",function(){
+      app.deleteComment(topicID,postID,commentID);
+    });
+  }
+
+  function replyOtherComment(node,topicID,postID,index){
+    node.on("click",function(){
+      app.replyComment(topicID,postID,index);
+    });
   }
 
   //Refresh pages which do not need parameters
@@ -410,9 +572,15 @@ document.addEventListener('init', function (event) {
           showTopicListNoLogin(topicPic[index],topicTitle[index],subscribeNum[index],topicId[index]);
         }
       }else{
-        var currentUser = getUser(window.localStorage.getItem("Username"));
-        for(index in allTopics){
-          showTopicListLogined(topicPic[index],topicTitle[index],subscribeNum[index],topicId[index],currentUser);
+        if(navigator.onLine){
+          var currentUser = getUser(window.localStorage.getItem("Username"));
+          for(index in allTopics){
+            showTopicListLogined(allTopics[index].topicPic,allTopics[index].topicTitle,allTopics[index].subscribeNum,allTopics[index].topicId,currentUser);
+          }
+        }else{
+          for(index in topicPic){
+            showTopicListNoLogin(topicPic[index],topicTitle[index],subscribeNum[index],topicId[index]);
+          }
         }
       }
     }
@@ -424,9 +592,15 @@ document.addEventListener('init', function (event) {
           showTopicListNoLogin(allTopics[index].topicPic,allTopics[index].topicTitle,allTopics[index].subscribeNum,allTopics[index].topicId);
         }
       }else{
-        var currentUser = getUser(window.localStorage.getItem("Username"));
-        for(index in allTopics){
-          showTopicListLogined(allTopics[index].topicPic,allTopics[index].topicTitle,allTopics[index].subscribeNum,allTopics[index].topicId,currentUser);
+        if(navigator.onLine){
+          var currentUser = getUser(window.localStorage.getItem("Username"));
+          for(index in allTopics){
+            showTopicListLogined(allTopics[index].topicPic,allTopics[index].topicTitle,allTopics[index].subscribeNum,allTopics[index].topicId,currentUser);
+          }
+        }else{
+          for(index in allTopics){
+            showTopicListNoLogin(allTopics[index].topicPic,allTopics[index].topicTitle,allTopics[index].subscribeNum,allTopics[index].topicId);
+          }
         }
       }
     }
@@ -455,10 +629,9 @@ document.addEventListener('init', function (event) {
     listitem.append(listitemRight);
     $("#onslist").append(listitem);
 
-    joinTeam(join,currentUser,topicId[index]);
-    topicslistTOtopic(listitemCenter,topicId[index]);
+    joinTeam(join,currentUser,topicId);
+    topicslistTOtopic(listitemCenter,topicId);
   }
-
 
   function showTopicListNoLogin(topicPic,topicTitle,subscribeNum,topicId){
     var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
@@ -479,7 +652,9 @@ document.addEventListener('init', function (event) {
     join.on("click",function(){
       ons.notification.alert('You have to sign in');
     })
-    topicslistTOtopic(listitemCenter,topicId);
+    if(navigator.onLine){
+      topicslistTOtopic(listitemCenter,topicId);
+    }
   }
 
   /*
@@ -490,20 +665,41 @@ document.addEventListener('init', function (event) {
   function showTopic(topicID){
     var allTopics = getTopics();
     var topicBannerContent = $("<div id='ban_con'></div>");
-    topicBannerContent.append("<img src='"+allTopics[topicID-1].topicPic+"'>");
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+      }
+    }
+    topicBannerContent.append("<img src='"+allTopics[topicindex].topicPic+"'>");
     var topicBannerWords = $("<div id='ban_words'></div>");
     topicBannerContent.append(topicBannerWords);
-    topicBannerWords.append("<span id='topic'>"+allTopics[topicID-1].topicTitle+"</span><br/>");
+    topicBannerWords.append("<span id='topic'>"+allTopics[topicindex].topicTitle+"</span><br/>");
     var lab = $("<div class='lab'></div>");
     topicBannerWords.append(lab);
-    lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+allTopics[topicID-1].subscribeNum+"&nbsp;&nbsp;");
-    lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+allTopics[topicID-1].posts.length+"")
+    lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+allTopics[topicindex].subscribeNum+"&nbsp;&nbsp;");
+    lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+allTopics[topicindex].posts.length+"")
     $("#topic_banner").append(topicBannerContent);
     var addpost = $("#addpost");
-    var topicbartitle=$("<span>"+allTopics[topicID-1].topicTitle+"</span>");
+    var topicbartitle=$("<span>"+allTopics[topicindex].topicTitle+"</span>");
     $("#topicbar").append(topicbartitle);
     showPostAbstracts(topicID);
-    topicTOaddpost(addpost,topicID);
+
+    var follow = isFollow(window.localStorage.getItem("Username"),topicID);
+
+    if(window.localStorage.getItem("Username") == null){
+      addpost.on("click",function(){
+        ons.notification.alert('You have to sign in');
+      })
+    }else{
+      addpost.on("click",function(){
+        if(follow){
+          myNavigator.pushPage('addapost.html',{data:{id:topicID}});
+        }else{
+          ons.notification.alert('You have to follow this topic firstly.');
+        }
+      })
+    }
   };
 
   /*
@@ -513,21 +709,27 @@ document.addEventListener('init', function (event) {
   */
   function showPostAbstracts(topicID){
     var allTopics = getTopics();
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+      }
+    }
     var article = $("<div id='articles'></div>");
-    for(index in allTopics[topicID-1].posts){
-      var currentAuthor = getUser(allTopics[topicID-1].posts[index].postAuthor);
+    for(index in allTopics[topicindex].posts){
+      var currentAuthor = getUser(allTopics[topicindex].posts[index].postAuthor);
       var postAbstract = $("<div class='contents'></div>");
       var mainContent = $("<div class='bod'></div>");
-      mainContent.append("<div class='title'>"+ allTopics[topicID-1].posts[index].postTitle +"</div>");
-      mainContent.append("<div class='pics'><img src="+ allTopics[topicID-1].posts[index].postPic + "></div>");
+      mainContent.append("<div class='title'>"+ allTopics[topicindex].posts[index].postTitle +"</div>");
+      mainContent.append("<div class='pics'><img src="+ allTopics[topicindex].posts[index].postPic + "></div>");
       var footContent = $("<div class='footer'></div>");
       footContent.append("<a>"+ currentAuthor.nickname +"&nbsp;</a>");
-      footContent.append("<span>"+ allTopics[topicID-1].topicTitle +"</span>");
+      footContent.append("<span>"+ allTopics[topicindex].topicTitle +"</span>");
       var counts = $("<div style='margin-top:0px;' id='countss'></div>");
       counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
       counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
       counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-      counts.append("<span>"+allTopics[topicID-1].posts[index].comments.length+"</span>");
+      counts.append("<span>"+allTopics[topicindex].posts[index].comments.length+"</span>");
       footContent.append(counts);
       // footContent.append("<div id='counts'></div>");
       // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
@@ -535,7 +737,7 @@ document.addEventListener('init', function (event) {
       postAbstract.append(mainContent);
       postAbstract.append(footContent);
       article.append(postAbstract);
-      abstractsTOpost(postAbstract,topicID,allTopics[topicID-1].posts[index].postId);
+      abstractsTOpost(postAbstract,topicID,allTopics[topicindex].posts[index].postId);
     }
     $("#postabstrcts").append(article);
   };
@@ -589,7 +791,7 @@ document.addEventListener('init', function (event) {
       postAbstract.append(mainContent);
       postAbstract.append(footContent);
       article.append(postAbstract);
-      abstractsTOpost(postAbstract,parseInt(topic)+1,parseInt(post)+1);
+      abstractsTOpost(postAbstract,allTopics[topic].topicId,allTopics[topic].posts[post].postId);
       $("#allpostabstrcts").append(article);
     }
   }
@@ -617,15 +819,28 @@ document.addEventListener('init', function (event) {
   */
   function showAddPost(topicID){
     var allTopics = getTopics();
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+      }
+    }
     var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
     $("#barofAddpost").append(addclick);
 
     //richText();
 
     addclick.on("click",function(){
-      var postid = allTopics[parseInt(topicID-1)].posts.length+1;
+      //If the biggest id of post is a, and the new id is a+1
+      var max = 0;
+      for(var i=0; i < allTopics[parseInt(topicindex)].posts.length; i ++){
+        if(parseInt(allTopics[parseInt(topicindex)].posts[i].postId) > max){
+          max = parseInt(allTopics[parseInt(topicindex)].posts[i].postId);
+        }
+      }
+      var postid = max+1;
       var posttitle = document.getElementById('postTitle').value;
-      var posttext = document.getElementById('editor').innerHTML;
+      var posttext = document.getElementById('editor').value;
       alert(posttext);
       var postdate = "10 minutes ago";
       var postpic = "";
@@ -642,10 +857,60 @@ document.addEventListener('init', function (event) {
         updatePages1();
         myNavigator.popPage();
       }, 300);
-
     })
+  }
 
 
+
+
+  /*
+  This function shows a edit post page and finish the edit post function
+  In project 1, we are using static data.
+  This function shows all posts that are in the "topics" variable.
+  */
+  function showEditPost(topicID,postID){
+    var allTopics = getTopics();
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+      }
+    }
+
+    var postindex;
+    for(index in allTopics[topicindex].posts){
+      if(allTopics[topicindex].posts[index].postId == postID){
+        postindex = index;
+      }
+    }
+
+    var addclick = $("<p style='margin-right:35px;margin-bottom:5px;font-weight:500;width:40px;'>Change</p>");
+    $("#barofEditpost").append(addclick);
+    $("#postTitle2").val(allTopics[topicindex].posts[postindex].postTitle);
+    $("#editor2").val(allTopics[topicindex].posts[postindex].postText);
+
+    //richText();
+
+    addclick.on("click",function(){
+      var postid = postID;
+      var posttitle = document.getElementById('postTitle2').value;
+      var posttext = document.getElementById('editor2').value;
+      var postdate = "10 minutes ago";
+      var postpic = "";
+
+      showModal();
+
+      setTimeout(function() {
+        editPost(topicID,postid,posttitle,posttext,window.localStorage.getItem("Username"),postdate,postpic);
+        ons.notification.alert('Edit successfully.');
+        var currentUser = getUser(window.localStorage.getItem("Username"));
+        updatePages3(currentUser);
+        updatePages2(parseInt(topicID));
+        updatePages1();
+        updatePages4(topicID,postid);
+        myNavigator.popPage();
+      }, 300);
+    })
   }
 
   /*
@@ -655,20 +920,43 @@ document.addEventListener('init', function (event) {
   */
   function showaAddReply(topicID,postID){
     var allTopics = getTopics();
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+      }
+    }
     var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
     $("#barofAddreply").append(addclick);
     addclick.on("click",function(){
+
+      var postindex;
+      for(index in allTopics[topicindex].posts){
+        if(allTopics[topicindex].posts[index].postId == postID){
+          postindex = index;
+        }
+      }
+
+      //If the biggest id of comment is a, and the new id is a+1
+      var max = 0;
+      for(var i=0; i < allTopics[parseInt(topicindex)].posts[postindex].comments.length; i ++){
+        if(parseInt(allTopics[parseInt(topicindex)].posts[i].comments[i].commentId) > max){
+          max = parseInt(allTopics[parseInt(topicindex)].posts[i].comments[i].commentId);
+        }
+      }
+
+      var commentid = max+1;
       var commenttext = document.getElementById('commentText').value;
       var commentDate = "Just now"
-      addReply(topicID,postID,commenttext,window.localStorage.getItem("Username"),commentDate);
-      ons.notification.alert('Comment successfully.');
-      setTimeout(function() {
+      addReply(topicID,postID,commentid,commenttext,window.localStorage.getItem("Username"),commentDate);
 
+      showModal();
+      setTimeout(function() {
         updatePages2(topicID);
         updatePages1();
         updatePages4(parseInt(topicID),parseInt(postID));
-
         myNavigator.popPage();
+        ons.notification.alert('Comment successfully.');
       }, 500);
     })
   }
@@ -680,82 +968,85 @@ document.addEventListener('init', function (event) {
   */
   function showPost(topicID,postID){
     var allTopics = getTopics();
-    var currentAuthor = getUser(allTopics[topicID-1].posts[postID-1].postAuthor);
-    $("#topicbar3").append("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.showFromObject("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+      }
+    }
+
+    var postindex;
+    for(index in allTopics[topicindex].posts){
+      if(allTopics[topicindex].posts[index].postId == postID){
+        postindex = index;
+      }
+    }
+
+    var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
+    var forMyPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.myPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
+    var forOthersPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.othersPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
+    if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
+      $("#topicbar3").append(forMyPost);
+    }else{
+      $("#topicbar3").append(forOthersPost);
+    }
     var responsePage = $("<div id='response_page'></div>");
     var responseTitle = $("<div id='response_title'></div>");
     responsePage.append(responseTitle);
-    responseTitle.append("<span>" + allTopics[topicID-1].posts[postID-1].postTitle + "</span><br/>");
+    responseTitle.append("<span>" + allTopics[topicindex].posts[postindex].postTitle + "</span><br/>");
     var counts = $("<div id='countss'></div>");
     counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
     counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
     counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-    counts.append("<span>"+allTopics[topicID-1].posts[postID-1].comments.length+"</span>");
+    counts.append("<span>"+allTopics[topicindex].posts[postindex].comments.length+"</span>");
     responseTitle.append(counts);
     var responseWriter = $("<div id='response_writer'></div>");
     responsePage.append(responseWriter);
     var responsePic = $("<div id='response_pic'></div>");
-    responsePic.append("<img src='"+allTopics[topicID-1].posts[postID-1].postPic+"'>");
+    responsePic.append("<img src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
     var responseUser = $("<div id='response_user'></div>");
     responseUser.append("<span style='font-size:18px;color:#0060AA;margin-bottm:20px;'>"+currentAuthor.nickname+"</span><br/>");
-    responseUser.append("<span style='font-size:14px;'>"+allTopics[topicID-1].posts[postID-1].postDate+"</span>");
-    var responseDelete = $("<div style='margin-top:10px;margin:20px;color: #5C91C0;font-size: 15px;' id='response_delete'>Delete this post</div>");
+    responseUser.append("<span style='font-size:14px;'>"+allTopics[topicindex].posts[postindex].postDate+"</span>");
     responseWriter.append(responsePic);
     responseWriter.append(responseUser);
-    if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
-      responsePage.append(responseDelete);
-    }
-    responseDelete.on("click",function(){
-      ons.notification.confirm
-      ({message: 'All comments will be deleted after deleting this post.'})
-      .then(
-        function (index) {
-          if(index===1){
-            showModal();
-
-            setTimeout(function() {
-              deleteMyPost(window.localStorage.getItem("Nickname"),topicID,postID);
-              deletePost(topicID,postID);
-
-              var currentUser = getUser(window.localStorage.getItem("Username"));
-              updatePages2(topicID);
-              updatePages1();
-              updatePages3(currentUser);
-
-              myNavigator.popPage();
-            }, 300);
-          }
-        }
-      )
-    });
 
     var responsePost = $("<div id='main_post'></div>");
     responsePage.append(responsePost);
-    responsePost.append("<img src='"+allTopics[topicID-1].posts[postID-1].postPic+"'>");
+    responsePost.append("<img src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
 
-    responsePost.append("<p style='font-size:17px;'>"+allTopics[topicID-1].posts[postID-1].postText+"");
+    responsePost.append("<p style='font-size:17px;'>"+allTopics[topicindex].posts[postindex].postText+"");
     responsePost.append("<p style='font-size:16px;color:#999999; margin-left:20px;'>"+currentAuthor.signature+"");
 
-    for(index in allTopics[topicID-1].posts[postID-1].comments){
-      var currentAuthor = getUser(allTopics[topicID-1].posts[postID-1].comments[index].commentAuthor);
-
+    for(index in allTopics[topicindex].posts[postindex].comments){
+      var currentAuthor = getUser(allTopics[topicindex].posts[postindex].comments[index].commentAuthor);
+      var commentID = allTopics[topicindex].posts[postindex].comments[index].commentId;
       var responseComment = $("<div id='comments'></div>");
       var commentWriter = $("<div id='response_writer'></div>");
 
       responseComment.append(commentWriter);
       var commentPic = $("<div id='response_pic'></div>");
       commentPic.append("<img src='img/head.jpg'>");
-      var commentUser = $("<div id='response_user'></div>");
-      commentUser.append("<span style='float:left;font-size:17px;color:#0060AA;'>"+currentAuthor.nickname+"</span>");
-      commentUser.append("<span style='float:right;margin-left:20px;font-size:16px;'>"+allTopics[topicID-1].posts[postID-1].comments[index].commentDate+"</span>");
+      var commentUser = $("<div id='comment_user'></div>");
+      commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+currentAuthor.nickname+"</span>");
+      var deleteIcon = $("<ons-icon style='float:right;margin-right:15px;' size='22px' icon='ion-more' ></ons-icon><br>")
+      var replyIcon = $("<ons-icon style='float:right;margin-right:15px;' size='22px' icon='ion-more' ></ons-icon><br>")
+      if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
+        commentUser.append(deleteIcon);
+        deleteMyComment(deleteIcon,topicID,postID,commentID);
+      }else{
+        commentUser.append(replyIcon);
+        replyOtherComment(replyIcon,topicID,postID,index);
+      }
+      commentUser.append("<span style='font-size:14px;'>"+allTopics[topicindex].posts[postindex].comments[index].commentDate+"</span>");
       commentWriter.append(commentPic);
       commentWriter.append(commentUser);
-      responseComment.append("<p style='font-size:16px; margin-left:60px;'>"+allTopics[topicID-1].posts[postID-1].comments[index].commentText+"");
+      responseComment.append("<p style='font-size:16px; margin-left:60px;'>"+allTopics[topicindex].posts[postindex].comments[index].commentText+"");
       responseComment.append("<p style='font-size:12px;color:#999999; margin-left:60px;'>"+currentAuthor.signature+"");
       responsePage.append(responseComment);
+
     }
     $("#belowbar").append(responsePage);
-    var topicbartitle=$("<span>"+allTopics[topicID-1].topicTitle+"</span>");
+    var topicbartitle=$("<span>"+allTopics[topicindex].topicTitle+"</span>");
     $("#topicbar2").append(topicbartitle);
   };
 
@@ -766,32 +1057,39 @@ document.addEventListener('init', function (event) {
   */
   function showUserpage(currentUser){
     var nickname = window.localStorage.getItem("Nickname");
-    var signature = window.localStorage.getItem("Signature");
+    var signature;
+    if(window.localStorage.getItem("Signature") == "null"){
+      signature = "Please input your signature (footer)"
+    }else{
+      signature = window.localStorage.getItem("Signature");
+    }
+
     var headpic = window.localStorage.getItem("Headpic");
 
     var userTop = $("<div id='user_top'></div>");
     var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='"+headpic+"'>");
     var userTopCenter = $("<div id='user_top_center'></div>");
     userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+nickname+"</span><br/>");
-    userTopCenter.append("<span style='display:block;margin-top:10px;font-size:17px;'>"+signature+"</span><br/>");
+    userTopCenter.append("<span style='display:block;margin-top:10px;font-size:16px;'>"+signature+"</span><br/>");
     var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
     userTop.append(userTopLeft);
     userTop.append(userTopCenter);
     userTop.append(userTopicRight);
-    userTop.on("click",function(){
-      myNavigator.pushPage("profile.html",{data:{currentuser:currentUser}});
-    })
-
     var userBottom1 = $("<div id='user_bottom'></div>");
     var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-android-favorite'></ons-icon>&nbsp;My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-    bottomList1.on("click",function(){
-      myNavigator.pushPage("myteams.html",{data:{currentuser:currentUser}});
-    })
     var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-    bottomList2.on("click",function(){
-      myNavigator.pushPage("myposts.html",{data:{currentuser:currentUser}});
-    })
     var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='21px' class='iconthem' icon='ion-eye'></ons-icon>&nbsp;Recent Viewing<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+    if(navigator.onLine){
+      userTop.on("click",function(){
+        myNavigator.pushPage("profile.html",{data:{currentuser:currentUser}});
+      })
+      bottomList1.on("click",function(){
+        myNavigator.pushPage("myteams.html",{data:{currentuser:currentUser}});
+      })
+      bottomList2.on("click",function(){
+        myNavigator.pushPage("myposts.html",{data:{currentuser:currentUser}});
+      })
+    }
     bottomList3.on("click",function(){
       myNavigator.pushPage("viewing.html");
     })
@@ -823,7 +1121,12 @@ document.addEventListener('init', function (event) {
   */
   function showProfile(currentuser){
     var nickname = window.localStorage.getItem("Nickname");
-    var signature = window.localStorage.getItem("Signature");
+    var signature;
+    if(window.localStorage.getItem("Signature") == "null"){
+      signature = ""
+    }else{
+      signature = window.localStorage.getItem("Signature");
+    }
     var username = window.localStorage.getItem("Username");
 
     var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:80px;height:80px;' src='"+currentuser.headpic+"'></div>");
@@ -914,17 +1217,24 @@ document.addEventListener('init', function (event) {
   */
   function showMyteams(currentuser){
     var allTopics = getTopics();
+
     for(index in currentuser.myTopics){
+      var topicindex;
+      for(index in allTopics){
+        if(allTopics[index].topicId == currentuser.myTopics[index].topicId){
+          topicindex = index;
+        }
+      }
       var listitem = $("<ons-list-item style='height:75px;'></ons-list-item>");
       var listitemLeft = $("<div class='left'></div>");
-      listitemLeft.append("<img class='list-item__thumbnail' src='"+allTopics[parseInt(currentuser.myTopics[index].topicId-1)].topicPic +"'>");
+      listitemLeft.append("<img class='list-item__thumbnail' src='"+allTopics[parseInt(topicindex)].topicPic +"'>");
       var listitemCenter = $("<div class='center'></div>");
-      listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+allTopics[parseInt(currentuser.myTopics[index].topicId-1)].topicTitle+"</span>");
-      listitemCenter.append("<span class='list-item__subtitle'>"+ allTopics[parseInt(currentuser.myTopics[index].topicId-1)].subscribeNum+" members</span>");
+      listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+allTopics[parseInt(topicindex)].topicTitle+"</span>");
+      listitemCenter.append("<span class='list-item__subtitle'>"+ allTopics[parseInt(topicindex)].subscribeNum+" members</span>");
       listitem.append(listitemLeft);
       listitem.append(listitemCenter);
       $("#tem").append(listitem);
-      topicslistTOtopic(listitem,allTopics[parseInt(currentuser.myTopics[index].topicId-1)].topicId);
+      topicslistTOtopic(listitem,allTopics[parseInt(topicindex)].topicId);
     }
   }
 
@@ -937,6 +1247,7 @@ document.addEventListener('init', function (event) {
     var allTopics = getTopics();
     var postTitle;
     var postDate;
+    var currentuser = getUser(window.localStorage.getItem("Username"));
 
     for(index in currentuser.myPosts){
       for(index2 in allTopics){
@@ -1013,20 +1324,32 @@ document.addEventListener('init', function (event) {
   //  WEB APPLICATION LOAD
   // ****************************************
   $(document).ready(function(){
-
     var username = window.localStorage.getItem("Username");
     var password = window.localStorage.getItem("Password");
 
     if(username != null){
-      var currentUser = getUser(username);
-      var correctPassword = currentUser.password;
-      if(password == correctPassword){
-        updatePages3(currentUser);
+      if (navigator.onLine) {
+        //Connect to the Internet
+        var currentUser = getUser(username);
+        var correctPassword = currentUser.password;
+        if(password == correctPassword){
+          updatePages3(currentUser);
+
+          document.getElementById("beforelogin").style.display = "none";
+          document.getElementById("usermainpage").style.display = "block";
+        }else{
+          ons.notification.alert('Password has been changed, you have to sign in again.');
+        }
+      } else {
+        //No internet
+        $("#usermainpage").html(" ");
+        showUserpage(currentUser);
 
         document.getElementById("beforelogin").style.display = "none";
         document.getElementById("usermainpage").style.display = "block";
-      }else{
-        ons.notification.alert('Password has been changed, you have to sign in again.');
+
+        $("#onslist").html(" ");
+        showTopicsList();
       }
     }
   });
