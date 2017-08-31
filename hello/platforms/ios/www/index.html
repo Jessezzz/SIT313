@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html >
 <head>
   <link rel="stylesheet" type="text/css" href="css/index.css">
   <link rel="stylesheet" href="css/onsen-css-components.min.css">
@@ -10,9 +10,9 @@
   <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
   <!-- <script type="text/javascript" src="cordova.js"></script> -->
   <script type="text/javascript" src="js/index.js"></script>
-  <script type="text/javascript" src="js/variables.js"></script>
-<script type="text/javascript" src="js/dataStore.func.js"></script>
+  <script type="text/javascript" src="js/dataStore.func.js"></script>
   <script src="js/onsenui.min.js"></script>
+
 </head>
 
 <body>
@@ -60,9 +60,10 @@
     </ons-page>
   </template>
 
+
   <!-- Here starts the second tab page called Fourm -->
-  <template id="topicLists.html">
-    <ons-page id="topicLists">
+  <template id="topicLists.html" >
+    <ons-page id="topicLists" >
       <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
         <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Forum
         </div>
@@ -112,9 +113,23 @@
           <p>
             <ons-input style="margin-top:6px;width:90%;" id="postTitle" modifier="underbar" placeholder="Title" float></ons-input>
           </p>
-          <p>
-            <ons-input style="width:90%;" id="postText" placeholder="Please input content" float></ons-input>
-          </p>
+          <!-- <div class="toolbar">
+            <a href="#" data-command='undo'><i class='fa fa-undo'></i></a>
+            <a href="#" data-command='redo'><i class='fa fa-repeat'></i></a>
+            <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
+            <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
+            <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
+
+            <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
+            <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
+
+            <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
+            <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
+          </div>
+          <div id='editor' contenteditable='true'>
+          </div> -->
+
+          <textarea>Next, get a TinyMCE Cloud API key!</textarea>
         </div>
       </div>
     </ons-page>
@@ -265,151 +280,138 @@
     </ons-page>
   </template>
 
-  <!-- Here starts subscribe page -->
-  <template id="subscribe.html">
-    <ons-page id="subscribe">
+  <!-- Here starts recent viewing page -->
+  <template id="viewing.html">
+    <ons-page id="viewing">
       <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
         <div class="left">
           <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
         </div>
-        <div class="center" style="color:#FFFFFF">Subscribe</div>
+        <div class="center" style="color:#FFFFFF">Recent viewing</div>
       </ons-toolbar>
-      <div id="postofsub">
+      <div id="recentView"></div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts appinfo page -->
+  <template id="appinfo.html">
+    <ons-page id="appinfo">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+      </ons-toolbar>
+      <div id="info" style="font-size:18px;margin-top:20px;">
+        <span>Name: NBA Bar</span><br/>
+        <span>Description: Used for discussing between fans from different teams</span><br/><br/>
+        <span>Created by: Yuanxi Zhang</span><br/>
+        <span>Student Number: 216036612</span><br/>
+        <span>Unit: SIT313 Mobile computing</span><br/>
+        <span>Unit chair: Henry Larkin</span><br/>
       </div>
     </ons-page>
   </template>
 
-  <!-- Here starts reply notification page -->
-  <!-- <template id="messages.html">
-  <ons-page id="messages">
-  <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-  <div class="left">
-  <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-</div>
-<div class="center" style="color:#FFFFFF">Messages</div>
-</ons-toolbar>
-</ons-page>
-</template> -->
-
-<!-- Here starts appinfo page -->
-<template id="appinfo.html">
-  <ons-page id="appinfo">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-    </ons-toolbar>
-    <div id="info" style="font-size:18px;margin-top:20px;">
-      <span>Name: NBA Bar</span><br/>
-      <span>Description: Used for discussing between fans from different teams</span><br/><br/>
-      <span>Created by: Yuanxi Zhang</span><br/>
-      <span>Student Number: 216036612</span><br/>
-      <span>Unit: SIT313 Mobile computing</span><br/>
-      <span>Unit chair: Henry Larkin</span><br/>
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts setting page -->
-<template id="setting.html">
-  <ons-page id="setting">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-      <div class="center" style="font-size:18px;color:white">Setting</div>
-    </ons-toolbar>
-    <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
-    <ons-list style="font-size:16px;">
-      <ons-list-item tappable onclick="">Change Password<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      <ons-list-item tappable onclick="">Add Contact<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-    </ons-list>
-    <ons-list-header style="background-color:#F9F9F9;color:#999999">Settings</ons-list-header>
-    <ons-list style="font-size:17px;">
-      <ons-list-item tappable onclick="">
-        <div class="center">
-          Image Autoload
+  <!-- Here starts setting page -->
+  <template id="setting.html">
+    <ons-page id="setting">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
         </div>
-        <div class="right">
-          <ons-switch checked></ons-switch>
+        <div class="center" style="font-size:18px;color:white">Setting</div>
+      </ons-toolbar>
+      <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
+      <ons-list style="font-size:16px;">
+        <ons-list-item tappable onclick="">Change Password<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">Add Contact<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      </ons-list>
+      <ons-list-header style="background-color:#F9F9F9;color:#999999">Settings</ons-list-header>
+      <ons-list style="font-size:17px;">
+        <ons-list-item tappable onclick="">
+          <div class="center">
+            Image Autoload
+          </div>
+          <div class="right">
+            <ons-switch checked></ons-switch>
+          </div>
+        </ons-list-item>
+        <ons-list-item tappable onclick="">Language<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">
+          <div class="center">
+            Notification
+          </div>
+          <div class="right">
+            <ons-switch></ons-switch>
+          </div>
+        </ons-list-item>
+        <ons-list-item tappable onclick="myNavigator.pushPage('about.html')">About<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      </ons-list>
+    </ons-page>
+  </template>
+
+  <!-- Here starts about page -->
+  <template id="about.html">
+    <ons-page id="about">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
         </div>
-      </ons-list-item>
-      <ons-list-item tappable onclick="">Language<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      <ons-list-item tappable onclick="">
-        <div class="center">
-          Notification
+      </ons-toolbar>
+      <div id="info" style="font-size:18px;margin-top:20px;">
+        <span>Legal - Public Domain media:</span><br/><br/><p style="font-size:15px;">
+          To make my app become more like a real-world app. This app used all information and images are from the Website http://www.sportingnews.com/au/nba<br/><br/>
+          For each post, both of the content and image are from the same article of the website above, <br/><br/>
+          Specific web pages used in app<br/>
+          1.http://www.sportingnews.com/au/nba-au/news/watch-james-hardens-insane-201617-mixtape-rockets/mr3aw1lcv7g31oe577nupe29n<br/>
+          2.http://www.sportingnews.com/au/nba-au/news/lonzo-lavar-ball-nba-summer-league-passes-highlights-video-stats-mvp-big-baller-brand-shoes/1jly0tdp9e1a81x10yo4akjuss<br/>
+          3. http://www.sportingnews.com/au/nba-au/news/rockets-for-sale-team-ceo-tad-brown/3phtp971fxu61d2sj8dajj6gi<br/>
+          4.http://www.sportingnews.com/au/nba-au/news/spurs-manu-ginobili-nba-rumors-new-contract-retirement-free-agency-news/ap9vt06dyzg1bsw5wmhfah9m<br/>
+          5.http://www.sportingnews.com/au/nba-au/news/carmelo-anthony-rumors-blazers-interest-cj-mccollum/kixt87jl3hub1cgqoc3m5fwp4<br/>
+        </p></div>
+        <br/><hr/><br/>
+        <ons-button onclick="throwException();ons.notification.alert('Exception has been throw')">Clik to throw a exception
+        </ons-button><br/><br/>
+        <ons-button onclick="myNavigator.pushPage('exception.html')">View Exception
+        </ons-button>
+      </ons-page>
+    </template>
+
+    <!-- Here starts through exception page -->
+    <template id="exception.html">
+      <ons-page id="exception">
+        <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+          <div class="left">
+            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          </div>
+        </ons-toolbar>
+        <div id="exceptio" style="font-size:17px"></div>
+      </ons-page>
+    </template>
+
+    <!-- Here starts profile page -->
+    <template id="profile.html">
+      <ons-page id="profile">
+        <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+          <div class="left">
+            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          </div>
+          <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Edit Profile
+          </div>
+        </ons-toolbar>
+        <div id="contentofp">
         </div>
-        <div class="right">
-          <ons-switch></ons-switch>
-        </div>
-      </ons-list-item>
-      <ons-list-item tappable onclick="myNavigator.pushPage('about.html')">About<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-    </ons-list>
-  </ons-page>
-</template>
+      </ons-page>
+    </template>
 
-<!-- Here starts about page -->
-<template id="about.html">
-  <ons-page id="about">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+    <!-- Here starts a modal page-->
+    <ons-modal direction="up">
+      <div style="text-align: center">
+        <p>
+          <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Waiting.....
+        </p>
       </div>
-    </ons-toolbar>
-    <div id="info" style="font-size:18px;margin-top:20px;">
-      <span>Legal - Public Domain media:</span><br/><br/><p style="font-size:15px;">
-To make my app become more like a real-world app. This app used all information and images are from the Website http://www.sportingnews.com/au/nba<br/><br/>
-For each post, both of the content and image are from the same article of the website above, <br/><br/>
-Specific web pages used in app<br/>
-1.http://www.sportingnews.com/au/nba-au/news/watch-james-hardens-insane-201617-mixtape-rockets/mr3aw1lcv7g31oe577nupe29n<br/>
-2.http://www.sportingnews.com/au/nba-au/news/lonzo-lavar-ball-nba-summer-league-passes-highlights-video-stats-mvp-big-baller-brand-shoes/1jly0tdp9e1a81x10yo4akjuss<br/>
-3. http://www.sportingnews.com/au/nba-au/news/rockets-for-sale-team-ceo-tad-brown/3phtp971fxu61d2sj8dajj6gi<br/>
-4.http://www.sportingnews.com/au/nba-au/news/spurs-manu-ginobili-nba-rumors-new-contract-retirement-free-agency-news/ap9vt06dyzg1bsw5wmhfah9m<br/>
-5.http://www.sportingnews.com/au/nba-au/news/carmelo-anthony-rumors-blazers-interest-cj-mccollum/kixt87jl3hub1cgqoc3m5fwp4<br/>
-    </p></div>
-    <br/><hr/><br/>
-    <ons-button onclick="throwException();ons.notification.alert('Exception has been throw')">Clik to throw a exception
-    </ons-button><br/><br/>
-    <ons-button onclick="myNavigator.pushPage('exception.html')">View Exception
-    </ons-button>
-  </ons-page>
-</template>
-
-<!-- Here starts through exception page -->
-<template id="exception.html">
-  <ons-page id="exception">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-    </ons-toolbar>
-    <div id="exceptio" style="font-size:17px"></div>
-  </ons-page>
-</template>
-
-<!-- Here starts profile page -->
-<template id="profile.html">
-  <ons-page id="profile">
-    <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-      <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Edit Profile
-      </div>
-    </ons-toolbar>
-    <div id="contentofp">
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts a modal page-->
-<ons-modal direction="up">
-  <div style="text-align: center">
-    <p>
-      <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Signing in.....
-    </p>
-  </div>
-</ons-modal>
-</body>
-</html>
+    </ons-modal>
+  </body>
+  </html>

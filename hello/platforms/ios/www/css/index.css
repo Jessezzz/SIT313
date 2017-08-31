@@ -16,6 +16,12 @@
 * specific language governing permissions and limitations
 * under the License.
 */
+
+/**[contenteditable] {
+    -webkit-user-select: auto !important;
+}*/
+
+
 .search-bar {
     width: 100%;
     position: fixed;
@@ -80,14 +86,13 @@ background-color:white;
 #response_title{
   font-size: 22px;
   border-bottom: 1px solid #DBDBDB;
-  padding: 10px;
-  height:100px;
+  padding: 14px;
 }
 #countss{
-  margin-top:10px;
   font-size:16px;
   float:right;
   color:#999999;
+  margin-top:20px;
 }
 #response_writer{
   margin: 10px;
@@ -97,11 +102,13 @@ background-color:white;
   float: left;
   margin-left: 15px;
 }
+
 #response_pic img{
   float: left;
   border-radius:50%;
   overflow:hidden;
-  width:40px;height:40px;
+  width:40px;
+  height:40px;
 }
 #mypost_pic img{
   float: left;
@@ -213,15 +220,15 @@ clear: both;
   width:100%;
 }
 .user_bottom_lists{
-  height:50px;
-  line-height: 50px;
+  height:60px;
+  line-height: 60px;
   border-bottom: 1px solid #DBDBDB;
 }
 .iconarrow{
     color:#999999;
     float:right;
     margin-right:15px;
-    margin-top:12px;
+    margin-top:15px;
 }
 .iconthem{
   margin-left:25px;
@@ -230,4 +237,42 @@ clear: both;
 }
 .text-input{
   line-height: 50px;
+}
+
+
+
+
+.toolbar {
+  display: block;
+  width: 100%;
+  height: 35px;
+  border-top: 1px solid #c2cacf;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  background: #fff;
+}
+.toolbar a {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  vertical-align: top;
+  line-height: 38px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  color: #adb5b9;
+}
+
+#editor {
+  max-width: 100%;
+  width: 90%;
+  height: auto;
+  resize: both;
+  overflow: auto;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  border-radius: 0 0 3px 3px;
+  height:200px;
+  color:#999999;
+  margin-left:5%;
 }
