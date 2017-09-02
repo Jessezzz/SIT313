@@ -18,26 +18,28 @@
 */
 
 /**[contenteditable] {
-    -webkit-user-select: auto !important;
+-webkit-user-select: auto !important;
 }*/
 
 
 .search-bar {
-    width: 100%;
-    position: fixed;
-    display: block;
-    margin-top: -45px;
-    background-color: white;
+  width: 100%;
+  position: fixed;
+  display: block;
+  margin-top: -45px;
+  background-color: white;
 }
 
 #articles{
   background-color: white;
+  border-radius:8px;
+  width:95%;
+  margin: 10px;
   /*margin-top:37px;*/
 }
 .contents{
   width:90%;
   height:25%;
-  border-bottom: 1px solid #DBDBDB;
   margin:0 auto;
 }
 .bod{
@@ -46,9 +48,10 @@
   height:130px;
 }
 .title{
-  font-size:18px;
-  width:235px;
+  font-size:20px;
+  width:210px;
   float:left;
+  margin-top: 10px;
 }
 .pics img{
   float:right;
@@ -70,10 +73,11 @@
 }
 #onslist{
   font-size:18px;
+  background-color: #F9F9F9;
+  border:none;
 }
 #tem{
   font-size:18px;
-  background-color: white;
 }
 
 
@@ -81,7 +85,7 @@
 
 
 #response_page{
-background-color:white;
+  background-color:white;
 }
 #response_title{
   font-size: 22px;
@@ -176,11 +180,11 @@ background-color:white;
 }
 #joinbutton{
   color: #0060AA;
-background-color: white;
-float: right;
-margin-top: 30px;
-font-size: 17px;
-clear: both;
+  background-color: white;
+  float: right;
+  margin-top: 30px;
+  font-size: 17px;
+  clear: both;
 }
 #topic{
   font-weight: bold;
@@ -198,6 +202,7 @@ clear: both;
   background-color: white;
   margin-top:10px;
   height:160px;
+
 }
 #user_top_left{
   margin: 13px;
@@ -231,10 +236,10 @@ clear: both;
   border-bottom: 1px solid #DBDBDB;
 }
 .iconarrow{
-    color:#999999;
-    float:right;
-    margin-right:15px;
-    margin-top:15px;
+  color:#999999;
+  float:right;
+  margin-right:15px;
+  margin-top:15px;
 }
 .iconthem{
   margin-left:25px;
@@ -270,15 +275,45 @@ clear: both;
 }
 
 /*#editor {
-  max-width: 100%;
-  width: 90%;
-  height: auto;
-  resize: both;
-  overflow: auto;
-  font-family: Helvetica, sans-serif;
-  font-size: 12px;
-  border-radius: 0 0 3px 3px;
-  height:200px;
-  color:#999999;
-  margin-left:5%;
+max-width: 100%;
+width: 90%;
+height: auto;
+resize: both;
+overflow: auto;
+font-family: Helvetica, sans-serif;
+font-size: 12px;
+border-radius: 0 0 3px 3px;
+height:200px;
+color:#999999;
+margin-left:5%;
 }*/
+
+.suggest{width:375px; background-color:#fff;position:absolute;margin:0;padding:0;border-width:1px;border-style:solid;border-color: #999;}
+.suggest ul{list-style:none;display:block;margin:0;padding:0}
+.suggest ul li {padding:3px;line-height:40px;height: 40px;width:90%;font-size: 18px;color: #777;cursor: pointer;border-top: 1px solid #D1D1D1;padding:3px;}
+.suggest ul li:hover{background-color:#e5e5e5;text-decoration: underline;}
+.suggest ul li label{line-height:40px;height: 40px;position: fixed;margin-left: 10px;}
+.suggest strong{color:#000;}
+
+.list-header{
+  height:30px;
+}
+
+.list-item{
+  font-size: 16px;
+  height:50px;
+  line-height: 50px;
+  width:100%;
+  background-color: white;
+  border-top: 1px solid #EEEEEE;
+}
+
+.list-item span{
+margin:20px;
+}
+
+.checkboxs .checkbox{
+  width: 30px;
+  padding: 0;
+  float: left;
+}

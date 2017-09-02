@@ -294,10 +294,183 @@ function deleteCmt(topicID,postID,commentID){
 }
 
 
+function keywordSearch(str){
+  $("#search-result").html("");
+  document.getElementById("search-suggest").style.display = "block";
+
+  var titleCheck = document.getElementById("checkTitle").checked;
+  var textCheck = document.getElementById("checkText").checked;
+
+  if(str.length != 0 ){
+
+    var input = str.trim().split(" ");
+    var results = new Array();
+    var allTopics = new Array();
+
+    for(index in input){
+      results[index] = new Array();
+
+      $.ajax({
+        type: "GET",
+        url: baseUrl,
+        data: {
+          action: "load",
+          appid: baseAppid ,
+          objectid: "topics",
+        },
+        dataType: "json",
+        async : false,
+        success: function(data) {
+          allTopics = data;
+          for(var i=0; i< data.length; i++){
+            for(var j=0;j<data[i].posts.length;j++){
+              if(titleCheck && !textCheck){
+                // only title search
+                if(data[i].posts[j].postTitle.indexOf(input[index])!=(-1)){
+                  results[index].push([data[i].topicId,data[i].posts[j].postId]);
+                }
+              }
+              if(!titleCheck && textCheck){
+                // only text search
+                if(data[i].posts[j].postText.indexOf(input[index])!=(-1)){
+                  results[index].push([data[i].topicId,data[i].posts[j].postId]);
+                }
+              }
+              if(titleCheck && textCheck){
+                // both title and text search
+                if((data[i].posts[j].postTitle.indexOf(input[index])!=(-1))||(data[i].posts[j].postText.indexOf(input[index])!=(-1))){
+                  results[index].push([data[i].topicId,data[i].posts[j].postId]);
+                }
+              }
+              if(!titleCheck && !textCheck){
+                // no search
+                break;
+              }
+
+            }
+          }
+        },
+        fail: function(jqXHR){
+          console.log(jqXHR.status);
+        },
+      });
+    }
+
+    function findPostTitle(topicId,postId){
+      for(var i=0; i< allTopics.length; i++){
+        if(allTopics[i].topicId == topicId){
+          for(var j=0;j<allTopics[i].posts.length;j++){
+            if(allTopics[i].posts[j].postId == postId){
+              postTitle = allTopics[i].posts[j].postTitle;
+              return postTitle;
+            }
+          }
+        }
+      }
+    }
+
+    function findTopicTitle(topicId){
+      for(var i=0; i< allTopics.length; i++){
+        if(allTopics[i].topicId == topicId){
+            topicTitle = allTopics[i].topicTitle;
+              return topicTitle;
+        }
+      }
+    }
+
+    function findTopicPic(topicId){
+      for(var i=0; i< allTopics.length; i++){
+        if(allTopics[i].topicId == topicId){
+            topicPic = allTopics[i].topicPic;
+              return topicPic;
+        }
+      }
+    }
+
+    if(input.length == 1){
+      for(index in results[0]){
+        var topicId = results[0][index][0];
+        var postId = results[0][index][1];
+        var topicTitle = findTopicTitle(topicId);
+        var topicPic = findTopicPic(topicId);
+        var postTitle = findPostTitle(topicId,postId);
+
+        var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
+        $("#search-result").append(hint);
+      }
+    }
+
+    //Find the common post of different results
+    //Start 2
+    //End (total num of words)-1   results[]
+    if(input.length >=2 ){
+
+      var duplicate = new Array();
+      duplicate[0] = new Array();
+      for(index1 in results[0]){
+        for(index2 in results[1]){
+          if(results[0][index1][0] == results[1][index2][0]){
+            if(results[0][index1][1] == results[1][index2][1]){
+              // console.log("Finding first 2 " + results[0][index1]);
+              duplicate[0].push(results[0][index1]);
+            }
+          }
+        }
+      }
+
+      var resultsThanTwo = new Array();
+      for(var i=2; i <= input.length -1; i++){
+        duplicate[i-1] = new Array();
+        for(index1 in duplicate[i-2]){
+          for(index2 in results[i]){
+            if(duplicate[i-2][index1][0] == results[i][index2][0]){
+              if(duplicate[i-2][index1][1] == results[i][index2][1]){
+                // console.log("Finding 3 common " + duplicate[i-2][index1]);
+                duplicate[i-1].push(duplicate[i-2][index1]);
+                resultsThanTwo = duplicate[i-1];
+              }
+            }
+          }
+        }
+      }
+
+
+      if(input.length == 2){
+        for(index in duplicate[0]){
+          var topicId = duplicate[0][index][0];
+          var postId = duplicate[0][index][1];
+          var topicTitle = findTopicTitle(topicId);
+          var topicPic = findTopicPic(topicId);
+          var postTitle = findPostTitle(topicId,postId);
+
+          var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
+          $("#search-result").append(hint);
+        }
+      }else{
+        if(resultsThanTwo.length == 0){
+          console.log("No results");
+        }else{
+          for(index in resultsThanTwo){
+            var topicId = resultsThanTwo[index][0];
+            var postId = resultsThanTwo[index][1];
+            var postTitle = findPostTitle(topicId,postId);
+
+            var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'>"+postTitle+"</li>");
+            $("#search-result").append(hint);
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
 
 function login () {
   var userName = document.getElementById('_account').value;
-  var passWord = document.getElementById('_pwd').value;
+  var passWord = sha256_digest(document.getElementById('_pwd').value);
+  console.log("Input password after encrypting: " + passWord);
 
   var currentUser = getUser(userName);
 
@@ -350,9 +523,12 @@ function logout () {
   updatePages1();
 };
 
+
 function register(){
   var userName = document.getElementById('_accountt').value;
-  var passWord = document.getElementById('_pwdd').value;
+  var passWord = sha256_digest(document.getElementById('_pwdd').value);
+
+  console.log("password after encrypting is : "+passWord);
 
   var emptyUser = userExist();
 
@@ -469,6 +645,10 @@ document.addEventListener('init', function (event) {
       myNavigator.pushPage('postpage.html',{data:{topicid:topicID,postid:postID}});
     })
   };
+
+  function searchTopost(topicId,postId){
+    myNavigator.pushPage('postpage.html',{data:{topicid:topicId,postid:postId}})
+  }
 
   function joinTeam(node,currentUser,topicId) {
     if(node.html() == " &nbsp;&nbsp;Join&nbsp;&nbsp; "){
@@ -607,11 +787,11 @@ document.addEventListener('init', function (event) {
   }
 
   function showTopicListLogined(topicPic,topicTitle,subscribeNum,topicId,currentUser){
-    var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
+    var listitem = $(ons._util.createElement("<ons-list-item style='margin:12px;width:94%;background-color:white;height:85px;border-radius:8px;'></ons-list-item>"));
     var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
-    listitemLeft.append("<img class='list-item__thumbnail' src='"+topicPic +"'>");
-    var listitemCenter = $(ons._util.createElement("<div class='center'></div>"));
-    listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topicTitle+"</span>");
+    listitemLeft.append("<img class='list-item__thumbnail' style='height:60px;width:60px;' src='"+topicPic +"'>");
+    var listitemCenter = $(ons._util.createElement("<div style='margin-left:10px;' class='center'></div>"));
+    listitemCenter.append("<span style='display:block;float:left;font-size:18px;font-size:18px;' class='list-item__title'>"+topicTitle+"</span>");
     listitemCenter.append("<span class='list-item__subtitle'>"+ subscribeNum+" members</span>");
     var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
     var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
@@ -634,10 +814,10 @@ document.addEventListener('init', function (event) {
   }
 
   function showTopicListNoLogin(topicPic,topicTitle,subscribeNum,topicId){
-    var listitem = $(ons._util.createElement("<ons-list-item style='height:75px;'></ons-list-item>"));
+    var listitem = $(ons._util.createElement("<ons-list-item style='margin:12px;width:94%;background-color:white;height:85px;border-radius:8px;'></ons-list-item>"));
     var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
-    listitemLeft.append("<img class='list-item__thumbnail' src='"+topicPic +"'>");
-    var listitemCenter = $(ons._util.createElement("<div class='center'></div>"));
+    listitemLeft.append("<img class='list-item__thumbnail' style='height:60px;width:60px;' src='"+topicPic +"'>");
+    var listitemCenter = $(ons._util.createElement("<div class='center' style='margin-left:10px;'></div>"));
     listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topicTitle+"</span>");
     listitemCenter.append("<span class='list-item__subtitle'>"+ subscribeNum+" members</span>");
     var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
@@ -669,6 +849,7 @@ document.addEventListener('init', function (event) {
     for(index in allTopics){
       if(allTopics[index].topicId == topicID){
         topicindex = index;
+        break;
       }
     }
     topicBannerContent.append("<img src='"+allTopics[topicindex].topicPic+"'>");
@@ -713,10 +894,12 @@ document.addEventListener('init', function (event) {
     for(index in allTopics){
       if(allTopics[index].topicId == topicID){
         topicindex = index;
+        break;
       }
     }
-    var article = $("<div id='articles'></div>");
+
     for(index in allTopics[topicindex].posts){
+      var article = $("<div id='articles'></div>");
       var currentAuthor = getUser(allTopics[topicindex].posts[index].postAuthor);
       var postAbstract = $("<div class='contents'></div>");
       var mainContent = $("<div class='bod'></div>");
@@ -738,8 +921,8 @@ document.addEventListener('init', function (event) {
       postAbstract.append(footContent);
       article.append(postAbstract);
       abstractsTOpost(postAbstract,topicID,allTopics[topicindex].posts[index].postId);
+      $("#postabstrcts").append(article);
     }
-    $("#postabstrcts").append(article);
   };
 
   /*
@@ -823,6 +1006,7 @@ document.addEventListener('init', function (event) {
     for(index in allTopics){
       if(allTopics[index].topicId == topicID){
         topicindex = index;
+        break;
       }
     }
     var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
@@ -874,6 +1058,7 @@ document.addEventListener('init', function (event) {
     for(index in allTopics){
       if(allTopics[index].topicId == topicID){
         topicindex = index;
+        break;
       }
     }
 
@@ -881,6 +1066,7 @@ document.addEventListener('init', function (event) {
     for(index in allTopics[topicindex].posts){
       if(allTopics[topicindex].posts[index].postId == postID){
         postindex = index;
+        break;
       }
     }
 
@@ -924,6 +1110,7 @@ document.addEventListener('init', function (event) {
     for(index in allTopics){
       if(allTopics[index].topicId == topicID){
         topicindex = index;
+        break;
       }
     }
     var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
@@ -934,17 +1121,17 @@ document.addEventListener('init', function (event) {
       for(index in allTopics[topicindex].posts){
         if(allTopics[topicindex].posts[index].postId == postID){
           postindex = index;
+          break;
         }
       }
 
       //If the biggest id of comment is a, and the new id is a+1
       var max = 0;
-      for(var i=0; i < allTopics[parseInt(topicindex)].posts[postindex].comments.length; i ++){
-        if(parseInt(allTopics[parseInt(topicindex)].posts[i].comments[i].commentId) > max){
-          max = parseInt(allTopics[parseInt(topicindex)].posts[i].comments[i].commentId);
+      for(var i=0; i < allTopics[topicindex].posts[postindex].comments.length; i ++){
+        if(parseInt(allTopics[topicindex].posts[postindex].comments[i].commentId) > max){
+          max = parseInt(allTopics[parseInt(topicindex)].posts[postindex].comments[i].commentId);
         }
       }
-
       var commentid = max+1;
       var commenttext = document.getElementById('commentText').value;
       var commentDate = "Just now"
@@ -972,6 +1159,7 @@ document.addEventListener('init', function (event) {
     for(index in allTopics){
       if(allTopics[index].topicId == topicID){
         topicindex = index;
+        break;
       }
     }
 
@@ -979,6 +1167,7 @@ document.addEventListener('init', function (event) {
     for(index in allTopics[topicindex].posts){
       if(allTopics[topicindex].posts[index].postId == postID){
         postindex = index;
+        break;
       }
     }
 
@@ -1138,8 +1327,8 @@ document.addEventListener('init', function (event) {
     });
     var userBottom = $("<div id='user_bottom'></div>");
     var bottomList0 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Username:&nbsp;&nbsp;&nbsp;<input style='line-height:30px;font-size:20px;' readOnly='true' placeholder='"+username+"'></input></div>");
-    var bottomList1 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Nickname:&nbsp;&nbsp;&nbsp;<input id='proin1' style='line-height:30px;font-size:20px;' placeholder='"+nickname+"'></input></div>");
-    var bottomList2 = $("<div class='user_bottom_lists' style='height:70px;'><div style='float:left;'>&nbsp;&nbsp;&nbsp;Signature:&nbsp;&nbsp;&nbsp;&nbsp;</div><textarea type='text' id='proin2'  style='float:left;font-size:15px;height:60px;line-height:30px;width:60%' placeholder='"+signature+"'></textarea></div>");
+    var bottomList1 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Nickname:&nbsp;&nbsp;&nbsp;<input id='proin1' style='line-height:30px;font-size:18px;' type='text' value='"+nickname+"'></input></div>");
+    var bottomList2 = $("<div class='user_bottom_lists' style='height:70px;'><div style='float:left;'>&nbsp;&nbsp;&nbsp;Signature:&nbsp;&nbsp;&nbsp;&nbsp;</div><textarea id='proin2' type='text' style='float:left;font-size:15px;height:60px;line-height:30px;width:60%' >"+signature+"</textarea></div>");
     userBottom.append(bottomList0);
     userBottom.append(bottomList1);
     userBottom.append(bottomList2);
@@ -1221,16 +1410,16 @@ document.addEventListener('init', function (event) {
     for(index in currentuser.myTopics){
       var topicindex;
       for(index in allTopics){
-        if(allTopics[index].topicId == currentuser.myTopics[index].topicId){
+        if(parseInt(allTopics[index].topicId) == parseInt(currentuser.myTopics[index].topicId)){
           topicindex = index;
+          break;
         }
       }
-      var listitem = $("<ons-list-item style='height:75px;'></ons-list-item>");
+      var listitem = $("<ons-list-item style='margin:12px;width:94%;background-color:white;height:85px;border-radius:8px;'></ons-list-item>");
       var listitemLeft = $("<div class='left'></div>");
-      listitemLeft.append("<img class='list-item__thumbnail' src='"+allTopics[parseInt(topicindex)].topicPic +"'>");
+      listitemLeft.append("<img class='list-item__thumbnail' style='height:60px;width:60px;' src='"+allTopics[parseInt(topicindex)].topicPic +"'>");
       var listitemCenter = $("<div class='center'></div>");
-      listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+allTopics[parseInt(topicindex)].topicTitle+"</span>");
-      listitemCenter.append("<span class='list-item__subtitle'>"+ allTopics[parseInt(topicindex)].subscribeNum+" members</span>");
+      listitemCenter.append("<span style='display:block;float:left;font-size:18px;' class='list-item__title'>"+allTopics[parseInt(topicindex)].topicTitle+"</span>");
       listitem.append(listitemLeft);
       listitem.append(listitemCenter);
       $("#tem").append(listitem);
@@ -1320,10 +1509,13 @@ document.addEventListener('init', function (event) {
     }
   }
 
+
+
   // ****************************************
   //  WEB APPLICATION LOAD
   // ****************************************
   $(document).ready(function(){
+
     var username = window.localStorage.getItem("Username");
     var password = window.localStorage.getItem("Password");
 

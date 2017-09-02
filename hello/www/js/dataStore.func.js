@@ -420,6 +420,7 @@ function addMyPost(postauthor,topicid,postid){
 
 function deleteMyPost(postauthor,topicid,postid){
   var dataChanged;
+
   $.ajax({
     type: "GET",
     url: baseUrl,
