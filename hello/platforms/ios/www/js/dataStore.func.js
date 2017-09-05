@@ -35,13 +35,13 @@ function userExist(){
 }
 
 function addUser(userName,passWord){
-  var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":"Please input your signature","headpic":null,"myTopics":[],"myPosts":[]});
+  var newUser=JSON.stringify([{"username":userName,"password":passWord,"nickname":userName,"signature":null,"headpic":null,"myTopics":[],"myPosts":[]}]);
 
   $.ajax({
     type: "POST",
     url: baseUrl,
     data: {
-      action: "append",
+      action: "save",
       appid: baseAppid ,
       objectid: "users",
       data: newUser
@@ -98,6 +98,7 @@ function followTopic(currentUser,topicid){
 
 function isFollow(username,topicId){
   var follow = false;
+
   $.ajax({
     type: "GET",
     url: baseUrl,
@@ -110,10 +111,12 @@ function isFollow(username,topicId){
     async : false,
     success: function(data) {
       for(var i = 0; i < data.length; i ++){
-        if(data[i].username  = username){
-          for(var j=0; j <data[i].myTopics.length;j++){
-            if(data[i].myTopics[j].topicId == topicId){
-              follow = true;
+        if(data[i].username  == username){
+          if(data[i].myTopics.length != 0){
+            for(var j=0; j <data[i].myTopics.length;j++){
+              if(data[i].myTopics[j].topicId == topicId){
+                follow = true;
+              }
             }
           }
         }
@@ -238,7 +241,53 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
 }
 
 
-function addReply(topicID,postID,commenttext,commenauthor,commentDate){
+function editPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
+  var dataChanged;
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "load",
+      appid: baseAppid ,
+      objectid: "topics",
+    },
+    dataType: "json",
+    async : false,
+    success: function(data) {
+      for(var i=0; i < data.length; i++){
+        if(data[i].topicId == topicID){
+          for(var j=0; j < data[i].posts.length; j++){
+            if(data[i].posts[j].postId == postid){
+              data[i].posts.splice(j,1);
+              data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":""+postdate+"","postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":[]});
+            }
+          }
+        }
+      }
+      dataChanged = JSON.stringify(data);
+    },
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+
+  $.ajax({
+    type: "POST",
+    url: baseUrl,
+    data: {
+      action: "save",
+      appid: baseAppid ,
+      objectid: "topics",
+      data: dataChanged
+    },
+    dataType: "json",
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+}
+
+function addReply(topicID,postID,commentid,commenttext,commenauthor,commentDate){
   var dataChanged;
   $.ajax({
     type: "GET",
@@ -255,7 +304,7 @@ function addReply(topicID,postID,commenttext,commenauthor,commentDate){
         if(data[i].topicId == topicID){
           for(var j=0; j < data[i].posts.length ; j++){
             if(data[i].posts[j].postId == postID){
-              data[i].posts[j].comments.push({"commentText":""+commenttext+"","commentAuthor":""+commenauthor+"","commentDate":""+commentDate+""});
+              data[i].posts[j].comments.push({"commentId":""+commentid+"","commentText":""+commenttext+"","commentAuthor":""+commenauthor+"","commentDate":""+commentDate+""});
             }
           }
         }
@@ -371,6 +420,7 @@ function addMyPost(postauthor,topicid,postid){
 
 function deleteMyPost(postauthor,topicid,postid){
   var dataChanged;
+
   $.ajax({
     type: "GET",
     url: baseUrl,

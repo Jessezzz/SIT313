@@ -17,10 +17,9 @@
 * under the License.
 */
 
-/**[contenteditable] {
--webkit-user-select: auto !important;
-}*/
-
+*[contenteditable] {
+-webkit-user-select: auto;
+}
 
 .search-bar {
   width: 100%;
@@ -130,10 +129,23 @@
 
 #main_post{
   border-bottom: 1px solid #DBDBDB;
+  font-size: 17px;
 }
-#main_post img{
-  width:94%;
-  margin:12px;
+
+#main_post ul li{
+  margin-left: 20px;
+  list-style: disc;
+}
+#main_post div *{
+  line-height:20px;
+}
+#main_post a{
+  color:#3A9FED;
+}
+
+#main_post ol li{
+  margin-left: 20px;
+  list-style: decimal;
 }
 #main_post p{
   margin: 17px;
@@ -250,7 +262,14 @@
   line-height: 50px;
 }
 
-
+#postTitle{
+  height: 25px;
+  font-size: 23px;
+}
+#postTitle2{
+  height: 25px;
+  font-size: 23px;
+}
 
 
 .toolbar {
@@ -274,19 +293,66 @@
   color: #adb5b9;
 }
 
-/*#editor {
+#editor {
 max-width: 100%;
 width: 90%;
 height: auto;
 resize: both;
 overflow: auto;
 font-family: Helvetica, sans-serif;
-font-size: 12px;
+font-size: 16px;
 border-radius: 0 0 3px 3px;
-height:200px;
+height:400px;
 color:#999999;
 margin-left:5%;
-}*/
+-webkit-user-select:auto;
+float: left;
+text-align: left;
+padding-top: 10px;
+}
+
+#editor a{
+    color:#3A9FED;
+}
+
+#editor ul li{
+  list-style: disc;
+}
+
+#editor ol li{
+  list-style: decimal;
+}
+
+
+#editor2 {
+max-width: 100%;
+width: 90%;
+height: auto;
+resize: both;
+overflow: auto;
+font-family: Helvetica, sans-serif;
+font-size: 16px;
+border-radius: 0 0 3px 3px;
+height:400px;
+color:#999999;
+margin-left:5%;
+-webkit-user-select:auto;
+float: left;
+text-align: left;
+padding-top: 10px;
+}
+
+#editor2 a{
+    color:#3A9FED;
+}
+
+#editor2 ul li{
+  list-style: disc;
+}
+
+#editor2 ol li{
+  list-style: decimal;
+}
 
 .suggest{width:375px; background-color:#fff;position:absolute;margin:0;padding:0;border-width:1px;border-style:solid;border-color: #999;}
 .suggest ul{list-style:none;display:block;margin:0;padding:0}

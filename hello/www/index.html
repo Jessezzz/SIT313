@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="css/jquery.qtip.min.css">
 
   <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-  <!-- <script type="text/javascript" src="cordova.js"></script> -->
+  <script type="text/javascript" src="cordova.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
   <script type="text/javascript" src="js/dataStore.func.js"></script>
   <script src="js/onsenui.min.js"></script>
@@ -129,67 +129,89 @@
       <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
         <div style="text-align: center;">
           <p>
-            <ons-input style="margin-top:6px;width:90%;" id="postTitle" modifier="underbar" placeholder="Title" float></ons-input>
+            <input style="margin-top:6px;width:90%;" id="postTitle" modifier="underbar" placeholder="Title" float></input>
           </p>
-          <p>
-            <ons-input style="margin-top:6px;width:90%;" id="editor"  placeholder="You can input richText here" float></ons-input>
-          </p>
-          <!-- <div class="toolbar">
-          <a href="#" data-command='undo'><i class='fa fa-undo'></i></a>
-          <a href="#" data-command='redo'><i class='fa fa-repeat'></i></a>
+
+        <div class="toolbar">
           <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
           <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
           <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
-
+          <a href="#" ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
           <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
           <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
-
           <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
           <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
         </div>
-        <div id='editor' contenteditable='true'>
-      </div> -->
+        <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input rich text here...</div>
+      </div>
+    </ons-page>
+  </template>
+
+  <ons-popover direction="down" id="popover">
+    <div style="padding: 10px; text-align: center;">
+      <div>
+        <img src="img/0fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/0fix@2x.png')">
+        <img src="img/1fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/1fix@2x.png')">
+        <img src="img/2fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/2fix@2x.png')">
+        <img src="img/3fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/3fix@2x.png')">
+        <img src="img/4fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/4fix@2x.png')">
+        <img src="img/5fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/5fix@2x.png')">
+        <img src="img/6fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/6fix@2x.png')">
+      </div>
+      <div>
+        <img src="img/7fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/7fix@2x.png')">
+        <img src="img/8fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/8fix@2x.png')">
+        <img src="img/9fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/9fix@2x.png')">
+        <img src="img/10fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/10fix@2x.png')">
+        <img src="img/11fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/11fix@2x.png')">
+        <img src="img/12fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/12fix@2x.png')">
+        <img src="img/13fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/13fix@2x.png')">
+      </div>
+      <div>
+        <img src="img/14fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/14fix@2x.png')">
+        <img src="img/15fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/15fix@2x.png')">
+        <img src="img/16fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/16fix@2x.png')">
+        <img src="img/18fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/18fix@2x.png')">
+        <img src="img/54fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/54fix@2x.png')">
+        <img src="img/55fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/55fix@2x.png')">
+        <img src="img/56fix@2x.png" style="width:25px;height:25px" onclick = "addEmoj('img/56fix@2x.png')">
+      </div>
+      <div></div>
+      <div></div>
+    </div>
+  </ons-popover>
+
+  <!-- Here starts edit post page-->
+  <template id="editapost.html">
+    <ons-page id="editapost">
+      <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="color:#FFFFFF;"></ons-back-button>
+        </div>
+        <div class="right" style="font-size:18px;" id="barofEditpost">
+        </div>
+      </ons-toolbar>
+      <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
+        <div style="text-align: center;">
+          <p>
+            <input style="margin-top:6px;width:90%;" id="postTitle2" modifier="underbar" placeholder="Title" float></input>
+          </p>
+
+        <div class="toolbar">
+          <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
+          <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
+          <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
+          <a href="#" ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
+          <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
+          <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
+          <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
+          <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
+        </div>
+        <div id='editor2' onfocus="clearEditor(this)" contenteditable='true'>you can input rich text here...</div>
+      </div>
 
     </div>
   </ons-page>
-</template>
-
-<!-- Here starts edit post page-->
-<template id="editapost.html">
-  <ons-page id="editapost">
-    <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="color:#FFFFFF;"></ons-back-button>
-      </div>
-      <div class="right" style="font-size:18px;" id="barofEditpost">
-      </div>
-    </ons-toolbar>
-    <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
-      <div style="text-align: center;">
-        <p>
-          <ons-input style="margin-top:6px;width:90%;" id="postTitle2" modifier="underbar" float></ons-input>
-        </p>
-        <p>
-          <ons-input style="margin-top:6px;width:90%;" id="editor2" float></ons-input>
-        </p>
-        <!-- <div class="toolbar">
-        <a href="#" data-command='undo'><i class='fa fa-undo'></i></a>
-        <a href="#" data-command='redo'><i class='fa fa-repeat'></i></a>
-        <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
-        <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
-        <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
-
-        <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
-        <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
-
-        <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
-        <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
-      </div>
-      <div id='editor' contenteditable='true'>
-    </div> -->
-
-  </div>
-</ons-page>
 </template>
 
 <!-- Here starts a post page -->

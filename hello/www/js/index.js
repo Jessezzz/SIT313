@@ -372,8 +372,8 @@ function keywordSearch(str){
     function findTopicTitle(topicId){
       for(var i=0; i< allTopics.length; i++){
         if(allTopics[i].topicId == topicId){
-            topicTitle = allTopics[i].topicTitle;
-              return topicTitle;
+          topicTitle = allTopics[i].topicTitle;
+          return topicTitle;
         }
       }
     }
@@ -381,8 +381,8 @@ function keywordSearch(str){
     function findTopicPic(topicId){
       for(var i=0; i< allTopics.length; i++){
         if(allTopics[i].topicId == topicId){
-            topicPic = allTopics[i].topicPic;
-              return topicPic;
+          topicPic = allTopics[i].topicPic;
+          return topicPic;
         }
       }
     }
@@ -465,7 +465,28 @@ function keywordSearch(str){
 }
 
 
+var  showEmoj = function(target) {
+  document
+    .getElementById('popover')
+    .show(target);
+};
 
+var hidePopover = function() {
+  document
+    .getElementById('popover')
+    .hide();
+};
+
+function addEmoj(str){
+  document.getElementById('popover').hide();
+    $('#editor').append('<img width="20px" src='+str+'>');
+}
+
+function clearEditor(){
+  if($("#editor").html() == "you can input rich text here..."){
+    $("#editor").html("");
+  }
+}
 
 function login () {
   var userName = document.getElementById('_account').value;
@@ -843,6 +864,7 @@ document.addEventListener('init', function (event) {
   This function shows all topics that are in the "topics" variable.
   */
   function showTopic(topicID){
+
     var allTopics = getTopics();
     var topicBannerContent = $("<div id='ban_con'></div>");
     var topicindex;
@@ -980,17 +1002,23 @@ document.addEventListener('init', function (event) {
   }
 
   function richText(){
-
     $('.toolbar a').click(function(e) {
       var command = $(this).data('command');
-
       document.getElementById("editor").focus();
-
-      console.log(command);
+      if (command == 'bold' || command == 'italic'|| command == 'italic' || command == 'underline' || command == 'insertUnorderedList' || command == 'insertOrderedList') {
+        if($(this).css("color") == "rgb(30, 136, 229)"){
+          $(this).css("color","#adb5b9");
+        }else{
+          $(this).css("color","#1E88E5");
+        }
+      }
       if (command == 'createlink' || command == 'insertimage') {
         url = prompt('Enter the link here: ', 'http:\/\/');
         document.execCommand($(this).data('command'), false, url);
-      } else document.execCommand($(this).data('command'), false, null);
+      }
+      else {
+        document.execCommand($(this).data('command'), false, null);
+      }
     });
 
   }
@@ -1012,7 +1040,7 @@ document.addEventListener('init', function (event) {
     var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
     $("#barofAddpost").append(addclick);
 
-    //richText();
+    richText();
 
     addclick.on("click",function(){
       //If the biggest id of post is a, and the new id is a+1
@@ -1024,8 +1052,8 @@ document.addEventListener('init', function (event) {
       }
       var postid = max+1;
       var posttitle = document.getElementById('postTitle').value;
-      var posttext = document.getElementById('editor').value;
-      alert(posttext);
+      var posttext = document.getElementById('editor').innerHTML;
+      console.log(posttext);
       var postdate = "10 minutes ago";
       var postpic = "";
 
@@ -1073,7 +1101,7 @@ document.addEventListener('init', function (event) {
     var addclick = $("<p style='margin-right:35px;margin-bottom:5px;font-weight:500;width:40px;'>Change</p>");
     $("#barofEditpost").append(addclick);
     $("#postTitle2").val(allTopics[topicindex].posts[postindex].postTitle);
-    $("#editor2").val(allTopics[topicindex].posts[postindex].postText);
+    $("#editor2").html(allTopics[topicindex].posts[postindex].postText);
 
     //richText();
 
@@ -1201,10 +1229,10 @@ document.addEventListener('init', function (event) {
 
     var responsePost = $("<div id='main_post'></div>");
     responsePage.append(responsePost);
-    responsePost.append("<img src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+    responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
 
-    responsePost.append("<p style='font-size:17px;'>"+allTopics[topicindex].posts[postindex].postText+"");
-    responsePost.append("<p style='font-size:16px;color:#999999; margin-left:20px;'>"+currentAuthor.signature+"");
+    responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+allTopics[topicindex].posts[postindex].postText+"</div>");
+    responsePost.append("<p style='font-size:16px;color:#999999; '>"+currentAuthor.signature+"</p>");
 
     for(index in allTopics[topicindex].posts[postindex].comments){
       var currentAuthor = getUser(allTopics[topicindex].posts[postindex].comments[index].commentAuthor);
@@ -1292,7 +1320,7 @@ document.addEventListener('init', function (event) {
     })
     userBottom2.append(bottomList5);
     var userBottom3 = $("<div id='user_bottom'></div>");
-    var bottomList6 = $("<div style='text-align:center;color:#247ABA;font-size:20px;font-weight:bold;' class='user_bottom_lists' >Log out</div>");
+    var bottomList6 = $("<div style='height:50px;line-height:50px;text-align:center;color:#247ABA;font-size:20px;font-weight:bold;' class='user_bottom_lists' >Log out</div>");
     userBottom3.append(bottomList6);
     $("#usermainpage").append(userTop);
     $("#usermainpage").append(userBottom1);
@@ -1335,7 +1363,7 @@ document.addEventListener('init', function (event) {
     $("#contentofp").append(userBottom);
 
     var userBottom2 = $("<div id='user_bottom'></div>");
-    var bottomList6 = $("<div style='font-size:20px;text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Save</div>");
+    var bottomList6 = $("<div style='height:50px;line-height:50px;font-size:20px;text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Save</div>");
     userBottom2.append(bottomList6);
     $("#contentofp").append(userBottom2);
     bottomList6.on("click",function(){

@@ -35,13 +35,13 @@ function userExist(){
 }
 
 function addUser(userName,passWord){
-  var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":null,"headpic":null,"myTopics":[],"myPosts":[]});
+  var newUser=JSON.stringify([{"username":userName,"password":passWord,"nickname":userName,"signature":null,"headpic":null,"myTopics":[],"myPosts":[]}]);
 
   $.ajax({
     type: "POST",
     url: baseUrl,
     data: {
-      action: "append",
+      action: "save",
       appid: baseAppid ,
       objectid: "users",
       data: newUser
