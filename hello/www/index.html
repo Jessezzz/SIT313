@@ -9,15 +9,19 @@
 
   <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="cordova.js"></script>
+  <script type="text/javascript" src="cordova_plugins.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
   <script type="text/javascript" src="js/dataStore.func.js"></script>
   <script src="js/onsenui.min.js"></script>
+  <script src="js/aes.js"></script>
+  <script src="js/aes-ctr.js"></script>
   <script type="text/javascript" src="js/sha256.js"></script>
 
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
 <body>
+
   <!-- Here starts the main structure - Navigator and Tabbar -->
   <ons-navigator id="myNavigator">
     <ons-page>
@@ -53,20 +57,19 @@
         </div>
         <div class="left">
           <div class="search-bar" style="width:83%;background-color:#3A9FED" onclick="">
-            <input type="search" onkeyup="keywordSearch(this.value)" id="search_input" class="search-input" style="background-color: white;width: 96%; margin: 50px 0 3px 6px;" placeholder="Search">
+            <input type="search" onkeyup="keywordSearch()" id="search_input" class="search-input" style="background-color: white;width: 96%; margin: 50px 0 3px 6px;" placeholder="Search">
           </div>
         </div>
       </ons-toolbar>
 
-
-      <ons-list-header class="list-header" style="font-size: 16px;line-height: 30px;">Search In</ons-list-header>
+      <ons-list-header class="list-header" style="background-color:#F9F9F9;font-size: 16px;line-height: 30px;">Search In</ons-list-header>
       <ons-list-item modifier="longdivider" class="list-item">
-        <ons-checkbox class="checkboxs"  style="margin: 15px;" id="checkTitle" checked="true"></ons-checkbox>
-        <span>Subject</span>
+        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin: 15px;" id="checkTitle" checked="true"></ons-checkbox>
+        <span style="margin:10px;">Subject</span>
       </ons-list-item>
       <ons-list-item modifier="longdivider" class="list-item">
-        <ons-checkbox class="checkboxs"  style="margin: 15px;" id="checkText" checked="true"></ons-checkbox>
-        <span>Post body</span>
+        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin: 15px;" id="checkText" checked="true"></ons-checkbox>
+        <span style="margin:10px;">Post body</span>
       </ons-list-item>
 
       <div class="suggest" id="search-suggest" style="border:none;display:none">
@@ -142,8 +145,12 @@
           <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
           <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
         </div>
-        <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input rich text here...</div>
+        <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input comment here...</div>
+        <div id="private" tappable onclick="addPasswordKey()"><ons-icon  style="margin:10px;margin-left:20px;" icon="ion-unlocked" size="17px"></ons-icon>Set it as private (lock)</div>
+        <div id="public" style="display:none" tappable onclick="deletePasswordKey()"><ons-icon  style="color:#3A9FED;margin:10px;margin-left:20px;" icon="ion-locked" size="17px"></ons-icon>Set it as public (unlock)</div>
+        <div id="passwordKey" style="display:none"></div>
       </div>
+    </div>
     </ons-page>
   </template>
 
@@ -207,7 +214,7 @@
           <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
           <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
         </div>
-        <div id='editor2' onfocus="clearEditor(this)" contenteditable='true'>you can input rich text here...</div>
+        <div id='editor' contenteditable='true'></div>
       </div>
 
     </div>
@@ -226,7 +233,9 @@
       <div class="right" id="topicbar3">
       </div>
     </ons-toolbar>
-    <div id="belowbar"></div>
+    <div id="belowbar">
+
+    </div>
   </ons-page>
 </template>
 
@@ -245,9 +254,10 @@
     </ons-toolbar>
     <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
       <div style="text-align: center;">
-        <p>
-          <ons-input style="width:90%;" id="commentText" placeholder="Input your thought here" float></ons-input>
-        </p>
+          <div id='commentText' onfocus="clearComment(this)" contenteditable='true'>you can input your reply here...</div>
+          <div class="toolbar" style="border-top:1px solid #E6E6E6;">
+            <a href="#" style="margin-left:10px;"><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
+          </div>
       </div>
     </div>
   </ons-page>

@@ -35,13 +35,13 @@ function userExist(){
 }
 
 function addUser(userName,passWord){
-  var newUser=JSON.stringify([{"username":userName,"password":passWord,"nickname":userName,"signature":null,"headpic":null,"myTopics":[],"myPosts":[]}]);
+  var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":"I haven't input my signature","headpic":null,"myTopics":[],"myPosts":[]});
 
   $.ajax({
     type: "POST",
     url: baseUrl,
     data: {
-      action: "save",
+      action: "append",
       appid: baseAppid ,
       objectid: "users",
       data: newUser
@@ -199,7 +199,7 @@ function getTopics(){
   return allTopics;
 }
 
-function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
+function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic,postkeyword){
   var dataChanged;
   $.ajax({
     type: "GET",
@@ -214,7 +214,59 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
     success: function(data) {
       for(var i=0; i < data.length; i++){
         if(data[i].topicId == topicID){
-          data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":""+postdate+"","postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":[]});
+          data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":""+postdate+"","postkeyword":""+postkeyword+"","polls":{"numAgree":"0","numObject":"0"},"postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":[]});
+        }
+      }
+      dataChanged = JSON.stringify(data);
+    },
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+
+  $.ajax({
+    type: "POST",
+    url: baseUrl,
+    data: {
+      action: "save",
+      appid: baseAppid ,
+      objectid: "topics",
+      data: dataChanged
+    },
+    dataType: "json",
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+}
+
+function AgreeOrObject(topicId,postId,m){
+  var dataChanged;
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "load",
+      appid: baseAppid ,
+      objectid: "topics",
+    },
+    dataType: "json",
+    async : false,
+    success: function(data) {
+      for(var i=0; i < data.length; i++){
+        if(data[i].topicId == topicId){
+          for(var j=0;j<data[i].posts.length;j++){
+            if(data[i].posts[j].postId == postId){
+              switch (m) {
+                case 1:
+                data[i].posts[j].polls.numAgree ++;
+                break;
+                case 3:
+                data[i].posts[j].polls.numObject ++;
+                break;
+              }
+            }
+          }
         }
       }
       dataChanged = JSON.stringify(data);
@@ -241,8 +293,10 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
 }
 
 
-function editPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic){
+function editPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic,postkeyword,agree,object,comments){
   var dataChanged;
+  console.log(posttext);
+  console.log("1111111111111");
   $.ajax({
     type: "GET",
     url: baseUrl,
@@ -259,7 +313,7 @@ function editPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic)
           for(var j=0; j < data[i].posts.length; j++){
             if(data[i].posts[j].postId == postid){
               data[i].posts.splice(j,1);
-              data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":""+postdate+"","postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":[]});
+              data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":""+postdate+"","postkeyword":""+postkeyword+"","polls":{"numAgree":agree,"numObject":object},"postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":comments});
             }
           }
         }

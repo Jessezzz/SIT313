@@ -47,6 +47,22 @@ var app = {
     receivedElement.setAttribute('style', 'display:block;');
 
     console.log('Received Event: ' + id);
+  },
+
+  onPrompt:function (results) {
+    console.log("121");
+    alert("You selected button number " + results.buttonIndex + " and entered " + results.input1);
+  },
+
+  showPrompt:function(){
+    console.log("1");
+    navigator.notification.prompt(
+      'Please enter your name',  // message
+      onPrompt,                  // callback to invoke
+      'Registration',            // title
+      ['Ok','Exit'],             // buttonLabels
+      'Jane Doe'                 // defaultText
+    );
   }
 };
 
@@ -56,8 +72,8 @@ app.deleteComment = function (topicID,postID,commentID) {
   ons.openActionSheet({
     cancelable: true,
     buttons: [
-      'Delete',
-      'Reply',
+      'Delete comment',
+      'Reply comment',
       {
         label: 'Cancel',
       }
@@ -87,7 +103,7 @@ app.replyComment = function (topicID,postID,index) {
   ons.openActionSheet({
     cancelable: true,
     buttons: [
-      'Reply',
+      'Reply to comment',
       {
         label: 'Cancel',
       }
@@ -99,7 +115,7 @@ app.othersPost = function (id1,id2) {
   ons.openActionSheet({
     cancelable: true,
     buttons: [
-      'Reply',
+      'Reply to post',
       {
         label: 'Cancel',
       }
@@ -127,9 +143,9 @@ app.myPost = function (id1,id2) {
   ons.openActionSheet({
     cancelable: true,
     buttons: [
-      'Edit',
-      'Delete',
-      'Reply',
+      'Edit post',
+      'Delete post',
+      'Reply to post',
       {
         label: 'Cancel',
       }
@@ -294,7 +310,8 @@ function deleteCmt(topicID,postID,commentID){
 }
 
 
-function keywordSearch(str){
+function keywordSearch(){
+  var str = $("#search_input").val();
   $("#search-result").html("");
   document.getElementById("search-suggest").style.display = "block";
 
@@ -302,9 +319,10 @@ function keywordSearch(str){
   var textCheck = document.getElementById("checkText").checked;
 
   if(str.length != 0 ){
-
     var input = str.trim().split(" ");
+    // array to store all keywords
     var results = new Array();
+    // each array[index] to store all results for each keyword
     var allTopics = new Array();
 
     for(index in input){
@@ -332,13 +350,31 @@ function keywordSearch(str){
               }
               if(!titleCheck && textCheck){
                 // only text search
-                if(data[i].posts[j].postText.indexOf(input[index])!=(-1)){
+                var posttext;
+                if(data[i].posts[j].postkeyword.length==0){
+                  posttext = data[i].posts[j].postText;
+                }else{
+                  posttext = AesCtr.decrypt(data[i].posts[j].postText,data[i].posts[j].postkeyword,256);
+                  //Decrypt post with a postkeyword
+                }
+                posttext = posttext.replace(/<.*?>/ig,"");
+                // Delete the html tag from rich text
+                if(posttext.indexOf(input[index])!=(-1)){
                   results[index].push([data[i].topicId,data[i].posts[j].postId]);
                 }
               }
               if(titleCheck && textCheck){
                 // both title and text search
-                if((data[i].posts[j].postTitle.indexOf(input[index])!=(-1))||(data[i].posts[j].postText.indexOf(input[index])!=(-1))){
+                var posttext;
+                if(data[i].posts[j].postkeyword.length==0){
+                  posttext = data[i].posts[j].postText;
+                }else{
+                  posttext = AesCtr.decrypt(data[i].posts[j].postText,data[i].posts[j].postkeyword,256);
+                  //Decrypt post with a postkeyword
+                }
+                posttext = posttext.replace(/<.*?>/ig,"");
+                // Delete the html tag from rich text
+                if((data[i].posts[j].postTitle.indexOf(input[index])!=(-1))||(posttext.indexOf(input[index])!=(-1))){
                   results[index].push([data[i].topicId,data[i].posts[j].postId]);
                 }
               }
@@ -369,15 +405,6 @@ function keywordSearch(str){
       }
     }
 
-    function findTopicTitle(topicId){
-      for(var i=0; i< allTopics.length; i++){
-        if(allTopics[i].topicId == topicId){
-          topicTitle = allTopics[i].topicTitle;
-          return topicTitle;
-        }
-      }
-    }
-
     function findTopicPic(topicId){
       for(var i=0; i< allTopics.length; i++){
         if(allTopics[i].topicId == topicId){
@@ -388,10 +415,10 @@ function keywordSearch(str){
     }
 
     if(input.length == 1){
+      // only one key word inputted by user
       for(index in results[0]){
         var topicId = results[0][index][0];
         var postId = results[0][index][1];
-        var topicTitle = findTopicTitle(topicId);
         var topicPic = findTopicPic(topicId);
         var postTitle = findPostTitle(topicId,postId);
 
@@ -404,7 +431,6 @@ function keywordSearch(str){
     //Start 2
     //End (total num of words)-1   results[]
     if(input.length >=2 ){
-
       var duplicate = new Array();
       duplicate[0] = new Array();
       for(index1 in results[0]){
@@ -439,7 +465,6 @@ function keywordSearch(str){
         for(index in duplicate[0]){
           var topicId = duplicate[0][index][0];
           var postId = duplicate[0][index][1];
-          var topicTitle = findTopicTitle(topicId);
           var topicPic = findTopicPic(topicId);
           var postTitle = findPostTitle(topicId,postId);
 
@@ -467,24 +492,31 @@ function keywordSearch(str){
 
 var  showEmoj = function(target) {
   document
-    .getElementById('popover')
-    .show(target);
+  .getElementById('popover')
+  .show(target);
 };
 
 var hidePopover = function() {
   document
-    .getElementById('popover')
-    .hide();
+  .getElementById('popover')
+  .hide();
 };
 
 function addEmoj(str){
   document.getElementById('popover').hide();
-    $('#editor').append('<img width="20px" src='+str+'>');
+  $('#editor').append('<img width="20px" src='+str+'>');
+  $('#commentText').append('<img width="20px" src='+str+'>');
 }
 
 function clearEditor(){
-  if($("#editor").html() == "you can input rich text here..."){
+  if($("#editor").html() == "you can input comment here..."){
     $("#editor").html("");
+  }
+}
+
+function clearComment(){
+  if($("#commentText").html() == "you can input your reply here..."){
+    $("#commentText").html("");
   }
 }
 
@@ -516,6 +548,14 @@ function login () {
         window.localStorage.topicTitle=" ";
         window.localStorage.subscribeNum = " ";
         window.localStorage.topicId = " ";
+        if(window.localStorage.getItem("myVoted") == null){
+          //haven't voted any post
+          window.localStorage.setItem("myVoted","[]");
+        }
+        if(window.localStorage.getItem("myInputed") == null){
+          //haven't Inputed any post password key
+          window.localStorage.setItem("myInputed","[]");
+        }
 
         updatePages1();
         updatePages3(currentUser);
@@ -660,6 +700,7 @@ document.addEventListener('init', function (event) {
   };
 
   function abstractsTOpost(node,topicID,postID){
+
     node.on("click",function(){
       window.localStorage.RecentTopicId = ""+topicID+" "+window.localStorage.RecentTopicId+"";
       window.localStorage.RecentPostId = ""+postID+" "+window.localStorage.RecentPostId+"";
@@ -1053,14 +1094,23 @@ document.addEventListener('init', function (event) {
       var postid = max+1;
       var posttitle = document.getElementById('postTitle').value;
       var posttext = document.getElementById('editor').innerHTML;
-      console.log(posttext);
+
+      var postkeyword = document.getElementById('passwordKey').innerHTML;
+
+      if(postkeyword.length!=0){
+        // encrypt with AES
+        console.log("post before encrypting: "+posttext);
+        var posttext = AesCtr.encrypt(posttext, postkeyword, 256);
+        console.log("post after encrypting: "+posttext);
+      }
+
       var postdate = "10 minutes ago";
       var postpic = "";
 
       showModal();
 
       setTimeout(function() {
-        addPost(topicID,postid,posttitle,posttext,window.localStorage.getItem("Username"),postdate,postpic);
+        addPost(topicID,postid,posttitle,posttext,window.localStorage.getItem("Username"),postdate,postpic,postkeyword);
         ons.notification.alert('Post successfully.');
         addMyPost(window.localStorage.getItem("Username"),topicID,postid);
         var currentUser = getUser(window.localStorage.getItem("Username"));
@@ -1101,21 +1151,26 @@ document.addEventListener('init', function (event) {
     var addclick = $("<p style='margin-right:35px;margin-bottom:5px;font-weight:500;width:40px;'>Change</p>");
     $("#barofEditpost").append(addclick);
     $("#postTitle2").val(allTopics[topicindex].posts[postindex].postTitle);
-    $("#editor2").html(allTopics[topicindex].posts[postindex].postText);
+    var text = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText,allTopics[topicindex].posts[postindex].postkeyword,256);
+    $("#editor").html(text);
 
-    //richText();
+    richText();
 
     addclick.on("click",function(){
       var postid = postID;
       var posttitle = document.getElementById('postTitle2').value;
-      var posttext = document.getElementById('editor2').value;
+      var posttext = AesCtr.encrypt($('#editor').html(),allTopics[topicindex].posts[postindex].postkeyword,256);
       var postdate = "10 minutes ago";
       var postpic = "";
+      var postkeyword = allTopics[topicindex].posts[postindex].postkeyword;
+      var agree = allTopics[topicindex].posts[postindex].polls.numAgree;
+      var object = allTopics[topicindex].posts[postindex].polls.numObject;
+      var comment = allTopics[topicindex].posts[postindex].comments;
 
       showModal();
 
       setTimeout(function() {
-        editPost(topicID,postid,posttitle,posttext,window.localStorage.getItem("Username"),postdate,postpic);
+        editPost(topicID,postid,posttitle,posttext,window.localStorage.getItem("Username"),postdate,postpic,postkeyword,agree,object,comment);
         ons.notification.alert('Edit successfully.');
         var currentUser = getUser(window.localStorage.getItem("Username"));
         updatePages3(currentUser);
@@ -1161,7 +1216,7 @@ document.addEventListener('init', function (event) {
         }
       }
       var commentid = max+1;
-      var commenttext = document.getElementById('commentText').value;
+      var commenttext = document.getElementById('commentText').innerHTML;
       var commentDate = "Just now"
       addReply(topicID,postID,commentid,commenttext,window.localStorage.getItem("Username"),commentDate);
 
@@ -1182,6 +1237,7 @@ document.addEventListener('init', function (event) {
   This function shows all posts that are in the "topics" variable.
   */
   function showPost(topicID,postID){
+
     var allTopics = getTopics();
     var topicindex;
     for(index in allTopics){
@@ -1198,15 +1254,18 @@ document.addEventListener('init', function (event) {
         break;
       }
     }
-
     var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
     var forMyPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.myPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
     var forOthersPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.othersPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
+
     if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
+
+
       $("#topicbar3").append(forMyPost);
     }else{
       $("#topicbar3").append(forOthersPost);
     }
+
     var responsePage = $("<div id='response_page'></div>");
     var responseTitle = $("<div id='response_title'></div>");
     responsePage.append(responseTitle);
@@ -1214,9 +1273,11 @@ document.addEventListener('init', function (event) {
     var counts = $("<div id='countss'></div>");
     counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
     counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
+
     counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
     counts.append("<span>"+allTopics[topicindex].posts[postindex].comments.length+"</span>");
     responseTitle.append(counts);
+
     var responseWriter = $("<div id='response_writer'></div>");
     responsePage.append(responseWriter);
     var responsePic = $("<div id='response_pic'></div>");
@@ -1229,10 +1290,95 @@ document.addEventListener('init', function (event) {
 
     var responsePost = $("<div id='main_post'></div>");
     responsePage.append(responsePost);
-    responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
 
-    responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+allTopics[topicindex].posts[postindex].postText+"</div>");
-    responsePost.append("<p style='font-size:16px;color:#999999; '>"+currentAuthor.signature+"</p>");
+    var polls = $("<div id='polls'></div>");
+    var poll1 = $("<ons-icon id='pollicon1' onclick='agreePost("+topicID+","+postID+")' icon='ion-thumbsup' size='35px'></ons-icon>");
+    var poll2 = $("<ons-icon id='pollicon2' onclick='objectPost("+topicID+","+postID+")' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+    polls.append(poll1);
+    polls.append(poll2);
+    polls.append("<span id='pollnum1'>"+allTopics[topicindex].posts[postindex].polls.numAgree+"</span>");
+    polls.append("<span id='pollnum2'>"+allTopics[topicindex].posts[postindex].polls.numObject+"</span>");
+
+    if(allTopics[topicindex].posts[postindex].postkeyword.length == 0){
+      responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+      responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+allTopics[topicindex].posts[postindex].postText+"</div>");
+      responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
+    }else{
+      //private post
+      console.log("post before decrypting: "+allTopics[topicindex].posts[postindex].postText);
+      var origText = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText, allTopics[topicindex].posts[postindex].postkeyword, 256);
+
+      console.log("post after decrypting: "+origText);
+      if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
+        //My post
+        responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+        responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
+        responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
+
+        var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
+        if(window.localStorage.getItem("myVoted").indexOf(str) != (-1)){
+          //if i have voted
+          var strAgree = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'","vote":"1"';
+          if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
+            //I agreed
+            var polls = $("<div id='polls'></div>");
+            var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+            polls.append(poll1);
+            responsePost.append(polls);
+          }
+          else{
+            // I objected
+            var polls = $("<div id='polls'></div>");
+            var poll2 = $("<ons-icon id='pollicon2' onclick='haveVoted()' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+            polls.append(poll2);
+            responsePost.append(polls);
+          }
+        }else{
+          //Else i haven't voted
+          responsePost.append(polls);
+        }
+
+      }else{
+        //not my post
+        var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
+        if(window.localStorage.getItem("myInputed").indexOf(str) == (-1)){
+          //I haven't input password before
+          var lockpost = $("<div id='lockPost'></div>");
+          lockpost.append("<ons-icon id='lockIcon' icon='ion-locked' size='17px'></ons-icon>");
+          lockpost.append("This is a private post, you have to input the password to see all contents");
+          lockpost.append("<span style='color:#3A9FED;' onclick='inputPostkey("+allTopics[topicindex].posts[postindex].postkeyword+","+topicID+","+postID+")'> Unlock</span>");
+          responsePost.append(lockpost);
+        }else{
+          //I have input the password
+          responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+          responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
+          responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
+          responsePost.append(lockpost);
+          var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
+          if(window.localStorage.getItem("myVoted").indexOf(str) != (-1)){
+            //if i have voted
+            var strAgree = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'","vote":"1"';
+            if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
+              //I agreed
+              var polls = $("<div id='polls'></div>");
+              var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+              polls.append(poll1);
+              responsePost.append(polls);
+            }
+            else{
+              // I objected
+              var polls = $("<div id='polls'></div>");
+              var poll2 = $("<ons-icon id='pollicon2' onclick='haveVoted()' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+              polls.append(poll2);
+              responsePost.append(polls);
+            }
+          }else{
+            //Else i haven't voted
+            responsePost.append(polls);
+          }
+        }
+      }
+    }
 
     for(index in allTopics[topicindex].posts[postindex].comments){
       var currentAuthor = getUser(allTopics[topicindex].posts[postindex].comments[index].commentAuthor);
@@ -1267,6 +1413,69 @@ document.addEventListener('init', function (event) {
     $("#topicbar2").append(topicbartitle);
   };
 
+  function haveVoted(){
+    ons.notification.alert('You have voted before.');
+  }
+
+  function agreePost(id1,id2){
+    var follow = isFollow(window.localStorage.getItem("Username"),id1);
+
+    if(window.localStorage.getItem("Username") == null){
+      ons.notification.alert('You have to sign in.');
+    }else{
+      if(follow){
+        if($("#pollicon1").css("color") == "rgb(153, 153, 153)"){
+          //Have't clicked agree - agree
+          var thisVoted = {"user":""+window.localStorage.getItem("Nickname")+"","topicId":""+id1+"","postId":""+id2+"","vote":"1"};
+
+          var myVoted = window.localStorage.getItem("myVoted");
+          var myVotedDecoded = JSON.parse(myVoted);
+          myVotedDecoded.push(thisVoted);
+          var newMyVotedEncoded = JSON.stringify(myVotedDecoded);
+          window.localStorage.setItem("myVoted",newMyVotedEncoded);
+
+          AgreeOrObject(id1,id2,1);
+          $("#pollicon1").css("color","#3A9FED");
+          $("#pollicon2").css("display","none");
+          $("#pollnum1").css("display","none");
+          $("#pollnum2").css("display","none");
+        }
+      }else{
+        ons.notification.alert('You have to follow this topic firstly.');
+      }
+    }
+  }
+
+  function objectPost(id1,id2){
+    var follow = isFollow(window.localStorage.getItem("Username"),id1);
+
+    if(window.localStorage.getItem("Username") == null){
+      ons.notification.alert('You have to sign in.');
+    }else{
+      if(follow){
+        if($("#pollicon2").css("color") == "rgb(153, 153, 153)"){
+          var thisVoted = {"topicId":""+id1+"","postId":""+id2+"","vote":"0"};
+          var myVoted = window.localStorage.getItem("myVoted");
+          console.log(myVoted);
+          var myVotedDecoded = JSON.parse(myVoted);
+          console.log(myVotedDecoded);
+          myVotedDecoded.push(thisVoted);
+          var newMyVotedEncoded = JSON.stringify(myVotedDecoded);
+          console.log(newMyVotedEncoded);
+          window.localStorage.setItem("myVoted",newMyVotedEncoded);
+
+          AgreeOrObject(id1,id2,3);
+          $("#pollicon2").css("color","#3A9FED");
+          $("#pollicon1").css("display","none");
+          $("#pollnum1").css("display","none");
+          $("#pollnum2").css("display","none");
+        }
+      }else{
+        ons.notification.alert('You have to follow this topic firstly.');
+      }
+    }
+  }
+
   /*
   This function shows user page
   In project 1, we are using static data.
@@ -1287,7 +1496,7 @@ document.addEventListener('init', function (event) {
     var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='"+headpic+"'>");
     var userTopCenter = $("<div id='user_top_center'></div>");
     userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+nickname+"</span><br/>");
-    userTopCenter.append("<span style='display:block;margin-top:10px;font-size:16px;'>"+signature+"</span><br/>");
+    userTopCenter.append("<div style='display:block;margin-top:10px;font-size:16px;'>"+signature+"</div><br/>");
     var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
     userTop.append(userTopLeft);
     userTop.append(userTopCenter);
@@ -1355,8 +1564,8 @@ document.addEventListener('init', function (event) {
     });
     var userBottom = $("<div id='user_bottom'></div>");
     var bottomList0 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Username:&nbsp;&nbsp;&nbsp;<input style='line-height:30px;font-size:20px;' readOnly='true' placeholder='"+username+"'></input></div>");
-    var bottomList1 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Nickname:&nbsp;&nbsp;&nbsp;<input id='proin1' style='line-height:30px;font-size:18px;' type='text' value='"+nickname+"'></input></div>");
-    var bottomList2 = $("<div class='user_bottom_lists' style='height:70px;'><div style='float:left;'>&nbsp;&nbsp;&nbsp;Signature:&nbsp;&nbsp;&nbsp;&nbsp;</div><textarea id='proin2' type='text' style='float:left;font-size:15px;height:60px;line-height:30px;width:60%' >"+signature+"</textarea></div>");
+    var bottomList1 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Nickname:&nbsp;&nbsp;&nbsp;<input id='proin1'  style='line-height:30px;font-size:18px;' maxlength='15' type='text' value='"+nickname+"'></input></div>");
+    var bottomList2 = $("<div class='user_bottom_lists' style='height:70px;'><div style='float:left;'>&nbsp;&nbsp;&nbsp;Signature:&nbsp;&nbsp;&nbsp;&nbsp;</div><textarea id='proin2' maxlength='55' type='text' style='float:left;font-size:15px;height:60px;line-height:30px;width:60%' >"+signature+"</textarea></div>");
     userBottom.append(bottomList0);
     userBottom.append(bottomList1);
     userBottom.append(bottomList2);
@@ -1435,11 +1644,11 @@ document.addEventListener('init', function (event) {
   function showMyteams(currentuser){
     var allTopics = getTopics();
 
-    for(index in currentuser.myTopics){
+    for(index1 in currentuser.myTopics){
       var topicindex;
-      for(index in allTopics){
-        if(parseInt(allTopics[index].topicId) == parseInt(currentuser.myTopics[index].topicId)){
-          topicindex = index;
+      for(index2 in allTopics){
+        if(parseInt(allTopics[index2].topicId) == parseInt(currentuser.myTopics[index1].topicId)){
+          topicindex = index2;
           break;
         }
       }
@@ -1537,12 +1746,98 @@ document.addEventListener('init', function (event) {
     }
   }
 
+  function addPasswordKey(){
+    ons.notification.prompt({message: 'Input your post password key'})
+    .then(function(password) {
+      $("#private").css("display","none");
+      $("#public").css("display","block");
+      $("#passwordKey").html(password);
+    });
+  }
 
+  function deletePasswordKey(){
+    $("#private").css("display","block");
+    $("#public").css("display","none");
+    $("#passwordKey").html("");
+  }
+
+  function inputPostkey(correctPassword,topicID,postID){
+    var allTopics = getTopics();
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+        break;
+      }
+    }
+
+    var postindex;
+    for(index in allTopics[topicindex].posts){
+      if(allTopics[topicindex].posts[index].postId == postID){
+        postindex = index;
+        break;
+      }
+    }
+
+    var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
+
+    ons.notification.prompt({message: 'Input post password key'})
+    .then(function(password) {
+      if(correctPassword == password){
+        console.log("post before decrypting: "+allTopics[topicindex].posts[postindex].postText);
+        var origText = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText, allTopics[topicindex].posts[postindex].postkeyword, 256);
+        console.log("post after decrypting: "+origText);
+        $("#lockPost").css("display","none");
+        $("#main_post").append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+        $("#main_post").append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
+        $("#main_post").append("<p style='font-size:16px;color:#999999; '>"+currentAuthor.signature+"</p>");
+          var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
+        if(window.localStorage.getItem("myVoted").indexOf(str) != (-1)){
+          //if i have voted
+          var strAgree = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'","vote":"1"';
+          if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
+            //I agreed
+            var polls = $("<div id='polls'></div>");
+            var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+            polls.append(poll1);
+            $("#main_post").append(polls);
+            }
+          else{
+            // I objected
+            var polls = $("<div id='polls'></div>");
+            var poll2 = $("<ons-icon id='pollicon2' onclick='haveVoted()' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+            polls.append(poll2);
+            $("#main_post").append(polls);
+          }
+        }else{
+          //Else i haven't voted
+          var polls = $("<div id='polls'></div>");
+          var poll1 = $("<ons-icon id='pollicon1' onclick='agreePost("+topicID+","+postID+")' icon='ion-thumbsup' size='35px'></ons-icon>");
+          var poll2 = $("<ons-icon id='pollicon2' onclick='objectPost("+topicID+","+postID+")' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+          polls.append(poll1);
+          polls.append(poll2);
+          polls.append("<span id='pollnum1'>"+allTopics[topicindex].posts[postindex].polls.numAgree+"</span>");
+          polls.append("<span id='pollnum2'>"+allTopics[topicindex].posts[postindex].polls.numObject+"</span>");
+          $("#main_post").append(polls);
+        }
+        var thisInputed = {"user":""+window.localStorage.getItem("Nickname")+"","topicId":""+topicID+"","postId":""+postID+""};
+
+        var myInputed = window.localStorage.getItem("myInputed");
+        var myInputedDecoded = JSON.parse(myInputed);
+        myInputedDecoded.push(thisInputed);
+        var newMyInputedEncoded = JSON.stringify(myInputedDecoded);
+        window.localStorage.setItem("myInputed",newMyInputedEncoded);
+      }else{
+        ons.notification.alert('Incorrect password key');
+      }
+    });
+  }
 
   // ****************************************
   //  WEB APPLICATION LOAD
   // ****************************************
   $(document).ready(function(){
+    // showPrompt();
 
     var username = window.localStorage.getItem("Username");
     var password = window.localStorage.getItem("Password");
