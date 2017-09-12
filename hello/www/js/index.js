@@ -1,28 +1,3 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one
-* or more contributor license agreements.  See the NOTICE file
-* distributed with this work for additional information
-* regarding copyright ownership.  The ASF licenses this file
-* to you under the Apache License, Version 2.0 (the
-* "License"); you may not use this file except in compliance
-* with the License.  You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
-
-/****************************************
-JS below are from onsen UI
-****************************************/
-
-
-
 var app = {
   // Application Constructor
   initialize: function() {
@@ -68,6 +43,14 @@ var app = {
 
 app.initialize();
 
+
+/******************************************************************************************
+BLOCK 1. app.xxx  - Action sheet
+All of the functions below are related to the OnsenUI-actionsheet
+Onsen UI provides <ons-action-sheet> and <ons-action-sheet-button> elements.
+Use them to create a dialog that slides from the bottom of the screen to give user options.
+It includes: Actions about comments + Actions about posts
+******************************************************************************************/
 app.deleteComment = function (topicID,postID,commentID) {
   ons.openActionSheet({
     cancelable: true,
@@ -111,6 +94,11 @@ app.replyComment = function (topicID,postID,index) {
   })
 };
 
+/*******************************************************
+There are 2 different action sheets
+If the post is other's post (I cannot delete the post)
+If the post is my post, I can delete, edit and reply
+**********************************************************/
 app.othersPost = function (id1,id2) {
   ons.openActionSheet({
     cancelable: true,
@@ -123,17 +111,7 @@ app.othersPost = function (id1,id2) {
   }).then(
     function (index) {
       if(index===0){
-        var follow = isFollow(window.localStorage.getItem("Username"),id1);
-
-        if(window.localStorage.getItem("Username") == null){
-          ons.notification.alert('You have to sign in.');
-        }else{
-          if(follow){
-            myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
-          }else{
-            ons.notification.alert('You have to follow this topic firstly.');
-          }
-        }
+        check_Isfollowed_Islogined("addreply",id1,id2);
       }
     }
   )
@@ -153,17 +131,7 @@ app.myPost = function (id1,id2) {
   }).then(
     function (index) {
       if(index == 0){
-        var follow = isFollow(window.localStorage.getItem("Username"),id1);
-
-        if(window.localStorage.getItem("Username") == null){
-          ons.notification.alert('You have to sign in.');
-        }else{
-          if(follow){
-            myNavigator.pushPage("editapost.html",{data:{topicId:id1,postId:id2}});
-          }else{
-            ons.notification.alert('You have to follow this topic firstly.');
-          }
-        }
+        check_Isfollowed_Islogined("editpost",id1,id2);
       }
       else if(index==1){
         if(window.localStorage.getItem("Username") == null){
@@ -193,332 +161,17 @@ app.myPost = function (id1,id2) {
         }
       }
       else if(index===2){
-        var follow = isFollow(window.localStorage.getItem("Username"),id1);
-
-        if(window.localStorage.getItem("Username") == null){
-          ons.notification.alert('You have to sign in.');
-        }else{
-          if(follow){
-            myNavigator.pushPage("addareply.html",{data:{tid:id1,pid:id2}});
-          }else{
-            ons.notification.alert('You have to follow this topic firstly.');
-          }
-        }
+        check_Isfollowed_Islogined("addreply",id1,id2);
       }
     }
   )
 };
 
-
-/****************************************
-JS below are created by Jesse
-****************************************/
-
-function unFollowTopic(currentUser,topicid){
-  var dataChanged;
-  $.ajax({
-    type: "GET",
-    url: "http://introtoapps.com/datastore.php",
-    data: {
-      action: "load",
-      appid: "216036612" ,
-      objectid: "users",
-    },
-    dataType: "json",
-    async : false,
-    success: function(data) {
-      for(var i=0; i < data.length; i++){
-        if(data[i].username == currentUser.username){
-          for(var j=0; j<data[i].myTopics.length; j++){
-            if(data[i].myTopics[j].topicId == topicid){
-              data[i].myTopics.splice(j,1);
-            }
-          }
-        }
-      }
-      dataChanged = JSON.stringify(data);
-    },
-    fail: function(jqXHR){
-      console.log(jqXHR.status);
-    },
-  });
-
-  $.ajax({
-    type: "POST",
-    url: "http://introtoapps.com/datastore.php",
-    data: {
-      action: "save",
-      appid: "216036612" ,
-      objectid: "users",
-      data: dataChanged
-    },
-    dataType: "json",
-    fail: function(jqXHR){
-      console.log(jqXHR.status);
-    },
-  });
-}
-
-
-function deleteCmt(topicID,postID,commentID){
-  var dataChanged;
-  $.ajax({
-    type: "GET",
-    url: baseUrl,
-    data: {
-      action: "load",
-      appid: baseAppid ,
-      objectid: "topics",
-    },
-    dataType: "json",
-    async : false,
-    success: function(data) {
-      for(var i=0; i < data.length; i++){
-        if(data[i].topicId == topicID){
-          for(var j=0; j<data[i].posts.length; j++){
-            if(data[i].posts[j].postId == postID){
-              for(var k=0; k<data[i].posts[j].comments.length; k++){
-                if(data[i].posts[j].comments[k].commentId == commentID){
-                  data[i].posts[j].comments.splice(k,1);
-                }
-              }
-            }
-          }
-        }
-      }
-      dataChanged = JSON.stringify(data);
-    },
-    fail: function(jqXHR){
-      console.log(jqXHR.status);
-    },
-  });
-
-  $.ajax({
-    type: "POST",
-    url: baseUrl,
-    data: {
-      action: "save",
-      appid: baseAppid ,
-      objectid: "topics",
-      data: dataChanged
-    },
-    dataType: "json",
-    fail: function(jqXHR){
-      console.log(jqXHR.status);
-    },
-  });
-}
-
-
-function keywordSearch(){
-  var str = $("#search_input").val();
-  $("#search-result").html("");
-  document.getElementById("search-suggest").style.display = "block";
-
-  var titleCheck = document.getElementById("checkTitle").checked;
-  var textCheck = document.getElementById("checkText").checked;
-
-  if(str.length != 0 ){
-    var input = str.trim().split(" ");
-    // array to store all keywords
-    var results = new Array();
-    // each array[index] to store all results for each keyword
-    var allTopics = new Array();
-
-    for(index in input){
-      results[index] = new Array();
-
-      $.ajax({
-        type: "GET",
-        url: baseUrl,
-        data: {
-          action: "load",
-          appid: baseAppid ,
-          objectid: "topics",
-        },
-        dataType: "json",
-        async : false,
-        success: function(data) {
-          allTopics = data;
-          for(var i=0; i< data.length; i++){
-            for(var j=0;j<data[i].posts.length;j++){
-              if(titleCheck && !textCheck){
-                // only title search
-                if(data[i].posts[j].postTitle.indexOf(input[index])!=(-1)){
-                  results[index].push([data[i].topicId,data[i].posts[j].postId]);
-                }
-              }
-              if(!titleCheck && textCheck){
-                // only text search
-                var posttext;
-                if(data[i].posts[j].postkeyword.length==0){
-                  posttext = data[i].posts[j].postText;
-                }else{
-                  posttext = AesCtr.decrypt(data[i].posts[j].postText,data[i].posts[j].postkeyword,256);
-                  //Decrypt post with a postkeyword
-                }
-                posttext = posttext.replace(/<.*?>/ig,"");
-                // Delete the html tag from rich text
-                if(posttext.indexOf(input[index])!=(-1)){
-                  results[index].push([data[i].topicId,data[i].posts[j].postId]);
-                }
-              }
-              if(titleCheck && textCheck){
-                // both title and text search
-                var posttext;
-                if(data[i].posts[j].postkeyword.length==0){
-                  posttext = data[i].posts[j].postText;
-                }else{
-                  posttext = AesCtr.decrypt(data[i].posts[j].postText,data[i].posts[j].postkeyword,256);
-                  //Decrypt post with a postkeyword
-                }
-                posttext = posttext.replace(/<.*?>/ig,"");
-                // Delete the html tag from rich text
-                if((data[i].posts[j].postTitle.indexOf(input[index])!=(-1))||(posttext.indexOf(input[index])!=(-1))){
-                  results[index].push([data[i].topicId,data[i].posts[j].postId]);
-                }
-              }
-              if(!titleCheck && !textCheck){
-                // no search
-                break;
-              }
-
-            }
-          }
-        },
-        fail: function(jqXHR){
-          console.log(jqXHR.status);
-        },
-      });
-    }
-
-    function findPostTitle(topicId,postId){
-      for(var i=0; i< allTopics.length; i++){
-        if(allTopics[i].topicId == topicId){
-          for(var j=0;j<allTopics[i].posts.length;j++){
-            if(allTopics[i].posts[j].postId == postId){
-              postTitle = allTopics[i].posts[j].postTitle;
-              return postTitle;
-            }
-          }
-        }
-      }
-    }
-
-    function findTopicPic(topicId){
-      for(var i=0; i< allTopics.length; i++){
-        if(allTopics[i].topicId == topicId){
-          topicPic = allTopics[i].topicPic;
-          return topicPic;
-        }
-      }
-    }
-
-    if(input.length == 1){
-      // only one key word inputted by user
-      for(index in results[0]){
-        var topicId = results[0][index][0];
-        var postId = results[0][index][1];
-        var topicPic = findTopicPic(topicId);
-        var postTitle = findPostTitle(topicId,postId);
-
-        var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
-        $("#search-result").append(hint);
-      }
-    }
-
-    //Find the common post of different results
-    //Start 2
-    //End (total num of words)-1   results[]
-    if(input.length >=2 ){
-      var duplicate = new Array();
-      duplicate[0] = new Array();
-      for(index1 in results[0]){
-        for(index2 in results[1]){
-          if(results[0][index1][0] == results[1][index2][0]){
-            if(results[0][index1][1] == results[1][index2][1]){
-              // console.log("Finding first 2 " + results[0][index1]);
-              duplicate[0].push(results[0][index1]);
-            }
-          }
-        }
-      }
-
-      var resultsThanTwo = new Array();
-      for(var i=2; i <= input.length -1; i++){
-        duplicate[i-1] = new Array();
-        for(index1 in duplicate[i-2]){
-          for(index2 in results[i]){
-            if(duplicate[i-2][index1][0] == results[i][index2][0]){
-              if(duplicate[i-2][index1][1] == results[i][index2][1]){
-                // console.log("Finding 3 common " + duplicate[i-2][index1]);
-                duplicate[i-1].push(duplicate[i-2][index1]);
-                resultsThanTwo = duplicate[i-1];
-              }
-            }
-          }
-        }
-      }
-
-
-      if(input.length == 2){
-        for(index in duplicate[0]){
-          var topicId = duplicate[0][index][0];
-          var postId = duplicate[0][index][1];
-          var topicPic = findTopicPic(topicId);
-          var postTitle = findPostTitle(topicId,postId);
-
-          var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
-          $("#search-result").append(hint);
-        }
-      }else{
-        if(resultsThanTwo.length == 0){
-          console.log("No results");
-        }else{
-          for(index in resultsThanTwo){
-            var topicId = resultsThanTwo[index][0];
-            var postId = resultsThanTwo[index][1];
-            var postTitle = findPostTitle(topicId,postId);
-
-            var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'>"+postTitle+"</li>");
-            $("#search-result").append(hint);
-          }
-        }
-      }
-    }
-  }
-}
-
-
-var  showEmoj = function(target) {
-  document
-  .getElementById('popover')
-  .show(target);
-};
-
-var hidePopover = function() {
-  document
-  .getElementById('popover')
-  .hide();
-};
-
-function addEmoj(str){
-  document.getElementById('popover').hide();
-  $('#editor').append('<img width="20px" src='+str+'>');
-  $('#commentText').append('<img width="20px" src='+str+'>');
-}
-
-function clearEditor(){
-  if($("#editor").html() == "you can input comment here..."){
-    $("#editor").html("");
-  }
-}
-
-function clearComment(){
-  if($("#commentText").html() == "you can input your reply here..."){
-    $("#commentText").html("");
-  }
-}
+/**********************************************************************************
+BLOCK 3. login + logout + register
+All of the functions below are related to user's frequent actions
+It also will implement the function of caching common items in local storage
+*************************************************************************************/
 
 function login () {
   var userName = document.getElementById('_account').value;
@@ -623,34 +276,6 @@ function register(){
   }
 }
 
-function showModal() {
-  var modal = document.querySelector('ons-modal');
-
-  modal.show();
-  setTimeout(function() {
-    modal.hide();
-  }, 1000);
-}
-
-var exception = [];
-function throwException(){
-  try {
-    throw "Test exception";
-  } catch (err) {
-    exception[exception.length] = err;
-  }
-}
-
-function addException(){
-  if(exception.length==0){
-    var items = $("<ons-list-item>No Exception</ons-list-item>");
-    $("#exceptio").append(items);
-  }
-  for (index in exception){
-    var items = $("<ons-list-item>ex"+parseInt(index+1)+"&nbsp;"+exception[index]+"</ons-list-item>");
-    $("#exceptio").append(items);
-  }
-}
 
 /****************************************
 EventListener
@@ -689,9 +314,15 @@ document.addEventListener('init', function (event) {
   });
 
 
-  //****************************************
-  //  FUNCTIONS
-  //****************************************
+  /******************************************************************************************
+  BLOCK 3. showUIComponents()
+  functions in this part are all related to created UI components
+  All these functions are called showXXX()
+  The components only include dynamic nodes, all the toolbar are written in the html document
+  The data are from cloud database  http://introtoapps.com/datastore.php
+  Except the post page, all the other page has been created using a pattern(js/ui.js)
+  The post page will be changed in future (time not enough)
+  ********************************************************************************************/
 
   function topicslistTOtopic(node,topicID){
     node.on("click",function(){
@@ -700,7 +331,6 @@ document.addEventListener('init', function (event) {
   };
 
   function abstractsTOpost(node,topicID,postID){
-
     node.on("click",function(){
       window.localStorage.RecentTopicId = ""+topicID+" "+window.localStorage.RecentTopicId+"";
       window.localStorage.RecentPostId = ""+postID+" "+window.localStorage.RecentPostId+"";
@@ -713,7 +343,7 @@ document.addEventListener('init', function (event) {
   }
 
   function joinTeam(node,currentUser,topicId) {
-    if(node.html() == " &nbsp;&nbsp;Join&nbsp;&nbsp; "){
+    if(node.html() == "&nbsp;&nbsp;Join&nbsp;&nbsp;"){
       node.on("click",function(){
         followTopic(currentUser,topicId);
         ons.notification.alert('You have joined this topic');
@@ -744,48 +374,15 @@ document.addEventListener('init', function (event) {
     });
   }
 
-  //Refresh pages which do not need parameters
-  function updatePages1(){
-    $("#onslist").html(" ");
-    showTopicsList();
-    $("#allpostabstrcts").html(" ");
-    showHotPostAbstracts();
-  }
-
-  //Refresh pages which only need topicId
-  function updatePages2(topicId){
-    $("#topic_banner").html(" ");
-    $("#postabstrcts").html(" ");
-    $("#topicbar").html(" ");
-    showTopic(topicId);
-  }
-
-  //Refresh pages which only need object-currentUser
-  function updatePages3(currentUser){
-    $("#usermainpage").html(" ");
-    showUserpage(currentUser);
-    $("#postofmine").html(" ");
-    showMyposts(currentUser);
-  }
-
-  //Refresh pages which only need both id of topic and post
-  function updatePages4(topicId,postId){
-    $("#belowbar").html(" ");
-    $("#topicbar3").html(" ");
-    $("#topicbar2").html(" ");
-    showPost(topicId,postId);
-  }
-
   /*
   This function shows forum topics list
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all topics that are in the "topics" variable.
   */
   function showTopicsList(){
     var join;
     var allTopics = getTopics();
     //Cache current list of topics in local storage
-
 
     if(window.localStorage.topicPic == " "){
       for(index in allTopics){
@@ -849,106 +446,112 @@ document.addEventListener('init', function (event) {
   }
 
   function showTopicListLogined(topicPic,topicTitle,subscribeNum,topicId,currentUser){
-    var listitem = $(ons._util.createElement("<ons-list-item style='margin:12px;width:94%;background-color:white;height:85px;border-radius:8px;'></ons-list-item>"));
-    var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
-    listitemLeft.append("<img class='list-item__thumbnail' style='height:60px;width:60px;' src='"+topicPic +"'>");
-    var listitemCenter = $(ons._util.createElement("<div style='margin-left:10px;' class='center'></div>"));
-    listitemCenter.append("<span style='display:block;float:left;font-size:18px;font-size:18px;' class='list-item__title'>"+topicTitle+"</span>");
-    listitemCenter.append("<span class='list-item__subtitle'>"+ subscribeNum+" members</span>");
-    var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
-    var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
-    var join = $("<ons-button id='onsbutton1' style='padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+    var join = $("<ons-button id='onsbutton1'>&nbsp;&nbsp;Join&nbsp;&nbsp;</ons-button>");
+    //default join button
 
+    //To judge if the user follow the topic
     for(myIndex in currentUser.myTopics){
       if(currentUser.myTopics[myIndex].topicId == topicId){
-        join = $("<ons-button id='onsbutton1' style='padding:0;color:#ADADAE;font-size:14px;background-color:white;border:1px solid #ADADAE'> &nbsp;&nbsp;Joined&nbsp;&nbsp; </ons-button>");
+        join = $("<ons-button id='onsbutton2'>&nbsp;&nbsp;Joined&nbsp;&nbsp;</ons-button>");
       }
     }
-    listitemRight.append(listitemRightSection);
-    listitemRightSection.append(join);
-    listitem.append(listitemLeft);
-    listitem.append(listitemCenter);
-    listitem.append(listitemRight);
-    $("#onslist").append(listitem);
 
+    var topiclistNode = $("<ons-list-item/>").attr("id","topiclist");
+
+    //Using topiclistNode i have created in ui.js to create the topiclist
+    var leftitem = window.topiclist(
+      topicTitle,
+      topicPic
+    );
+
+    topiclistNode.append(leftitem);
+
+    var buttonNode = $("<div/>").attr("class","right");
+    buttonNode.append(join);
+
+    topiclistNode.append(buttonNode);
+
+    $("#onslist").append(topiclistNode);
+
+    //Follow or Unfollow if the user click the button join/joined
     joinTeam(join,currentUser,topicId);
-    topicslistTOtopic(listitemCenter,topicId);
+
+    //jump to each topic page when click different topic
+    topicslistTOtopic(leftitem,topicId);
   }
 
   function showTopicListNoLogin(topicPic,topicTitle,subscribeNum,topicId){
-    var listitem = $(ons._util.createElement("<ons-list-item style='margin:12px;width:94%;background-color:white;height:85px;border-radius:8px;'></ons-list-item>"));
-    var listitemLeft = $(ons._util.createElement("<div class='left'></div>"));
-    listitemLeft.append("<img class='list-item__thumbnail' style='height:60px;width:60px;' src='"+topicPic +"'>");
-    var listitemCenter = $(ons._util.createElement("<div class='center' style='margin-left:10px;'></div>"));
-    listitemCenter.append("<span style='display:block;float:left;' class='list-item__title'>"+topicTitle+"</span>");
-    listitemCenter.append("<span class='list-item__subtitle'>"+ subscribeNum+" members</span>");
-    var listitemRight = $(ons._util.createElement("<div class='right'></div>"));
-    var listitemRightSection = $(ons._util.createElement("<section style='margin: 4px;'></section>"));
-    var join = $("<ons-button id='onsbutton1' style='display:block; padding:0 4px;color:#0060AA;background-color:white;border:1px solid #3CA0EC'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
-    listitemRight.append(listitemRightSection);
-    listitemRightSection.append(join);
-    listitem.append(listitemLeft);
-    listitem.append(listitemCenter);
-    listitem.append(listitemRight);
-    $("#onslist").append(listitem);
-    join.on("click",function(){
+    var join = $("<ons-button id='onsbutton1'> &nbsp;&nbsp;Join&nbsp;&nbsp; </ons-button>");
+
+    var topiclistNode = $("<ons-list-item/>").attr("id","topiclist");
+
+    //Using topiclistNode i have created in ui.js to create the topiclist
+    var leftitem = window.topiclist(
+      topicTitle,
+      topicPic
+    );
+
+    topiclistNode.append(leftitem);
+
+    var buttonNode = $("<div/>").attr("class","right");
+    buttonNode.append(join);
+
+    topiclistNode.append(buttonNode);
+
+    $("#onslist").append(topiclistNode);
+
+    buttonNode.on("click",function(){
       ons.notification.alert('You have to sign in');
     })
     if(navigator.onLine){
-      topicslistTOtopic(listitemCenter,topicId);
+      topicslistTOtopic(leftitem,topicId);
     }
   }
 
   /*
   This function shows one topic
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all topics that are in the "topics" variable.
   */
   function showTopic(topicID){
-
+    //locate the topic in database
     var allTopics = getTopics();
-    var topicBannerContent = $("<div id='ban_con'></div>");
     var topicindex;
     for(index in allTopics){
       if(allTopics[index].topicId == topicID){
-        topicindex = index;
-        break;
+        topicindex =  index;
       }
     }
-    topicBannerContent.append("<img src='"+allTopics[topicindex].topicPic+"'>");
-    var topicBannerWords = $("<div id='ban_words'></div>");
-    topicBannerContent.append(topicBannerWords);
-    topicBannerWords.append("<span id='topic'>"+allTopics[topicindex].topicTitle+"</span><br/>");
-    var lab = $("<div class='lab'></div>");
-    topicBannerWords.append(lab);
-    lab.append("<span style='font-weight:normal;'>Members</span>&nbsp;"+allTopics[topicindex].subscribeNum+"&nbsp;&nbsp;");
-    lab.append("<span style='font-weight:normal;'>Posts</span>&nbsp;"+allTopics[topicindex].posts.length+"")
-    $("#topic_banner").append(topicBannerContent);
-    var addpost = $("#addpost");
+
+    //Using topicNode i have created in ui.js to create the topic
+    $("#topic_banner").append(
+      window.topic(
+        allTopics[topicindex].topicTitle,
+        allTopics[topicindex].topicPic,
+        allTopics[topicindex].subscribeNum,
+        allTopics[topicindex].posts.length
+      )
+    );
+
+    showPostAbstracts(topicID);
+    //using the function to show postAbstracts
+
     var topicbartitle=$("<span>"+allTopics[topicindex].topicTitle+"</span>");
     $("#topicbar").append(topicbartitle);
-    showPostAbstracts(topicID);
+    //Different topic display different title in the top bar
 
-    var follow = isFollow(window.localStorage.getItem("Username"),topicID);
+    var addpost = $("#addpost");
+    //Get the addpost button
 
-    if(window.localStorage.getItem("Username") == null){
-      addpost.on("click",function(){
-        ons.notification.alert('You have to sign in');
-      })
-    }else{
-      addpost.on("click",function(){
-        if(follow){
-          myNavigator.pushPage('addapost.html',{data:{id:topicID}});
-        }else{
-          ons.notification.alert('You have to follow this topic firstly.');
-        }
-      })
-    }
+    addpost.on("click",function(){
+      check_Isfollowed_Islogined("addpost",topicID,null);
+    });
+    //Only logined and followed topic can add post
   };
 
   /*
   This function shows all forum post abstracts
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all post abstracts that are in the "topics" variable.
   */
   function showPostAbstracts(topicID){
@@ -964,25 +567,18 @@ document.addEventListener('init', function (event) {
     for(index in allTopics[topicindex].posts){
       var article = $("<div id='articles'></div>");
       var currentAuthor = getUser(allTopics[topicindex].posts[index].postAuthor);
-      var postAbstract = $("<div class='contents'></div>");
-      var mainContent = $("<div class='bod'></div>");
-      mainContent.append("<div class='title'>"+ allTopics[topicindex].posts[index].postTitle +"</div>");
-      mainContent.append("<div class='pics'><img src="+ allTopics[topicindex].posts[index].postPic + "></div>");
-      var footContent = $("<div class='footer'></div>");
-      footContent.append("<a>"+ currentAuthor.nickname +"&nbsp;</a>");
-      footContent.append("<span>"+ allTopics[topicindex].topicTitle +"</span>");
-      var counts = $("<div style='margin-top:0px;' id='countss'></div>");
-      counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
-      counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
-      counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-      counts.append("<span>"+allTopics[topicindex].posts[index].comments.length+"</span>");
-      footContent.append(counts);
-      // footContent.append("<div id='counts'></div>");
-      // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
-      // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
-      postAbstract.append(mainContent);
-      postAbstract.append(footContent);
+
+      //Using postAbstractNode i have created in ui.js to create the postAbstract
+      var postAbstract = window.postabstract(
+        allTopics[topicindex].posts[index].postTitle,
+        allTopics[topicindex].posts[index].postPic,
+        allTopics[topicindex].topicTitle,
+        allTopics[topicindex].posts[index].comments.length,
+        currentAuthor.nickname
+      )
+
       article.append(postAbstract);
+
       abstractsTOpost(postAbstract,topicID,allTopics[topicindex].posts[index].postId);
       $("#postabstrcts").append(article);
     }
@@ -990,12 +586,13 @@ document.addEventListener('init', function (event) {
 
   /*
   This function shows HOT forum post abstracts into recommended page
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all post abstracts that are in the "topics" variable.
   */
   function showHotPostAbstracts(){
     var allTopics = getTopics();
 
+    //Choose the hottest post for each topic and find the position of them
     for(index1 in allTopics){
       var hot = 0;
       var topic = 0;
@@ -1015,58 +612,29 @@ document.addEventListener('init', function (event) {
           }
         }
       }
-      var currentUser = getUser(allTopics[topic].posts[post].postAuthor);
-
       var article = $("<div id='articles'></div>");
-      var postAbstract = $("<div class='contents'></div>");
-      var mainContent = $("<div class='bod'></div>");
-      mainContent.append("<div class='title'>"+ allTopics[topic].posts[post].postTitle +"</div>");
-      mainContent.append("<div class='pics'><img src="+ allTopics[topic].posts[post].postPic + "></div>");
-      var footContent = $("<div class='footer'></div>");
-      //footContent.append("<a>"+ currentUser.nickname +"&nbsp;</a>");
-      footContent.append("<span>"+ allTopics[topic].topicTitle +"</span>");
-      var counts = $("<div style='margin-top:0px;' id='countss'></div>");
-      counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
-      counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
-      counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
-      counts.append("<span>"+allTopics[topic].posts[post].comments.length+"</span>");
-      footContent.append(counts);
-      // footContent.append("<div id='counts'></div>");
-      // footContent.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;<span>257</span>&nbsp;&nbsp;&nbsp;")
-      // footContent.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;<span>303</span>");
-      postAbstract.append(mainContent);
-      postAbstract.append(footContent);
+
+      var currentAuthor = getUser(allTopics[topic].posts[post].postAuthor);
+
+      //Using postAbstractNode i have created in ui.js to create the postAbstract
+      var postAbstract = window.postabstract(
+        allTopics[topic].posts[post].postTitle,
+        allTopics[topic].posts[post].postPic,
+        allTopics[topic].topicTitle,
+        allTopics[topic].posts[post].comments.length,
+        currentAuthor.nickname
+      )
+
       article.append(postAbstract);
+
       abstractsTOpost(postAbstract,allTopics[topic].topicId,allTopics[topic].posts[post].postId);
       $("#allpostabstrcts").append(article);
     }
   }
 
-  function richText(){
-    $('.toolbar a').click(function(e) {
-      var command = $(this).data('command');
-      document.getElementById("editor").focus();
-      if (command == 'bold' || command == 'italic'|| command == 'italic' || command == 'underline' || command == 'insertUnorderedList' || command == 'insertOrderedList') {
-        if($(this).css("color") == "rgb(30, 136, 229)"){
-          $(this).css("color","#adb5b9");
-        }else{
-          $(this).css("color","#1E88E5");
-        }
-      }
-      if (command == 'createlink' || command == 'insertimage') {
-        url = prompt('Enter the link here: ', 'http:\/\/');
-        document.execCommand($(this).data('command'), false, url);
-      }
-      else {
-        document.execCommand($(this).data('command'), false, null);
-      }
-    });
-
-  }
-
   /*
   This function shows a add post page and finish the add post function
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all posts that are in the "topics" variable.
   */
   function showAddPost(topicID){
@@ -1078,7 +646,7 @@ document.addEventListener('init', function (event) {
         break;
       }
     }
-    var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Add</p>");
+    var addclick = $("<p class='addclick' >Add</p>");
     $("#barofAddpost").append(addclick);
 
     richText();
@@ -1122,12 +690,9 @@ document.addEventListener('init', function (event) {
     })
   }
 
-
-
-
   /*
   This function shows a edit post page and finish the edit post function
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all posts that are in the "topics" variable.
   */
   function showEditPost(topicID,postID){
@@ -1148,11 +713,17 @@ document.addEventListener('init', function (event) {
       }
     }
 
-    var addclick = $("<p style='margin-right:35px;margin-bottom:5px;font-weight:500;width:40px;'>Change</p>");
+    var addclick = $("<p id='addclick'>Change</p>");
     $("#barofEditpost").append(addclick);
+
     $("#postTitle2").val(allTopics[topicindex].posts[postindex].postTitle);
-    var text = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText,allTopics[topicindex].posts[postindex].postkeyword,256);
-    $("#editor").html(text);
+
+    if(allTopics[topicindex].posts[postindex].postkeyword.length != 0){
+      var text = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText,allTopics[topicindex].posts[postindex].postkeyword,256);
+      $("#editor").html(text);
+    }else{
+      $("#editor").html(allTopics[topicindex].posts[postindex].postText);
+    }
 
     richText();
 
@@ -1184,7 +755,7 @@ document.addEventListener('init', function (event) {
 
   /*
   This function shows a add reply page and finish the add reply function
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all posts that are in the "topics" variable.
   */
   function showaAddReply(topicID,postID){
@@ -1196,7 +767,7 @@ document.addEventListener('init', function (event) {
         break;
       }
     }
-    var addclick = $("<p style='margin-right:15px;margin-bottom:5px;font-weight:500;width:40px;'>Reply</p>");
+    var addclick = $("<p class='addclick'>Reply</p>");
     $("#barofAddreply").append(addclick);
     addclick.on("click",function(){
 
@@ -1233,7 +804,7 @@ document.addEventListener('init', function (event) {
 
   /*
   This function shows a post content page
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all posts that are in the "topics" variable.
   */
   function showPost(topicID,postID){
@@ -1259,8 +830,6 @@ document.addEventListener('init', function (event) {
     var forOthersPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.othersPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
 
     if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
-
-
       $("#topicbar3").append(forMyPost);
     }else{
       $("#topicbar3").append(forOthersPost);
@@ -1270,9 +839,7 @@ document.addEventListener('init', function (event) {
     var responseTitle = $("<div id='response_title'></div>");
     responsePage.append(responseTitle);
     responseTitle.append("<span>" + allTopics[topicindex].posts[postindex].postTitle + "</span><br/>");
-    var counts = $("<div id='countss'></div>");
-    counts.append("<ons-icon icon='ion-eye'></ons-icon>&nbsp;");
-    counts.append("<span>159</span>&nbsp;&nbsp;&nbsp;");
+    var counts = $("<div id='countss' style='margin-top:30px;'></div>");
 
     counts.append("<ons-icon icon='ion-chatbox-working'></ons-icon>&nbsp;");
     counts.append("<span>"+allTopics[topicindex].posts[postindex].comments.length+"</span>");
@@ -1413,72 +980,9 @@ document.addEventListener('init', function (event) {
     $("#topicbar2").append(topicbartitle);
   };
 
-  function haveVoted(){
-    ons.notification.alert('You have voted before.');
-  }
-
-  function agreePost(id1,id2){
-    var follow = isFollow(window.localStorage.getItem("Username"),id1);
-
-    if(window.localStorage.getItem("Username") == null){
-      ons.notification.alert('You have to sign in.');
-    }else{
-      if(follow){
-        if($("#pollicon1").css("color") == "rgb(153, 153, 153)"){
-          //Have't clicked agree - agree
-          var thisVoted = {"user":""+window.localStorage.getItem("Nickname")+"","topicId":""+id1+"","postId":""+id2+"","vote":"1"};
-
-          var myVoted = window.localStorage.getItem("myVoted");
-          var myVotedDecoded = JSON.parse(myVoted);
-          myVotedDecoded.push(thisVoted);
-          var newMyVotedEncoded = JSON.stringify(myVotedDecoded);
-          window.localStorage.setItem("myVoted",newMyVotedEncoded);
-
-          AgreeOrObject(id1,id2,1);
-          $("#pollicon1").css("color","#3A9FED");
-          $("#pollicon2").css("display","none");
-          $("#pollnum1").css("display","none");
-          $("#pollnum2").css("display","none");
-        }
-      }else{
-        ons.notification.alert('You have to follow this topic firstly.');
-      }
-    }
-  }
-
-  function objectPost(id1,id2){
-    var follow = isFollow(window.localStorage.getItem("Username"),id1);
-
-    if(window.localStorage.getItem("Username") == null){
-      ons.notification.alert('You have to sign in.');
-    }else{
-      if(follow){
-        if($("#pollicon2").css("color") == "rgb(153, 153, 153)"){
-          var thisVoted = {"topicId":""+id1+"","postId":""+id2+"","vote":"0"};
-          var myVoted = window.localStorage.getItem("myVoted");
-          console.log(myVoted);
-          var myVotedDecoded = JSON.parse(myVoted);
-          console.log(myVotedDecoded);
-          myVotedDecoded.push(thisVoted);
-          var newMyVotedEncoded = JSON.stringify(myVotedDecoded);
-          console.log(newMyVotedEncoded);
-          window.localStorage.setItem("myVoted",newMyVotedEncoded);
-
-          AgreeOrObject(id1,id2,3);
-          $("#pollicon2").css("color","#3A9FED");
-          $("#pollicon1").css("display","none");
-          $("#pollnum1").css("display","none");
-          $("#pollnum2").css("display","none");
-        }
-      }else{
-        ons.notification.alert('You have to follow this topic firstly.');
-      }
-    }
-  }
-
   /*
   This function shows user page
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all data that are in the "users" variable.
   */
   function showUserpage(currentUser){
@@ -1542,7 +1046,7 @@ document.addEventListener('init', function (event) {
 
   /*
   This function shows profile page
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all data that are in the "users" variable.
   */
   function showProfile(currentuser){
@@ -1592,53 +1096,9 @@ document.addEventListener('init', function (event) {
   }
 
 
-  function editProfile(currentuser,nickName,signature){
-    var dataChanged;
-    var newUser={"username":currentuser.username,"password":currentuser.password,"nickname":nickName,"signature":signature,"headpic":null,"myTopics":currentuser.myTopics,"myPosts":currentuser.myPosts};
-
-    $.ajax({
-      type: "GET",
-      url: baseUrl,
-      data: {
-        action: "load",
-        appid: baseAppid ,
-        objectid: "users",
-      },
-      dataType: "json",
-      async : false,
-      success: function(data) {
-        for(var i=0; i < data.length; i++){
-          if(data[i].username == currentuser.username){
-            data.splice(i,1);
-            data.push(newUser);
-          }
-        }
-        dataChanged = JSON.stringify(data);
-      },
-      fail: function(jqXHR){
-        console.log(jqXHR.status);
-      },
-    });
-
-    $.ajax({
-      type: "POST",
-      url: baseUrl,
-      data: {
-        action: "save",
-        appid: baseAppid ,
-        objectid: "users",
-        data: dataChanged
-      },
-      dataType: "json",
-      fail: function(jqXHR){
-        console.log(jqXHR.status);
-      },
-    });
-  }
-
   /*
   This function shows myteams page
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all data that are in the "users" variable.
   */
   function showMyteams(currentuser){
@@ -1666,7 +1126,7 @@ document.addEventListener('init', function (event) {
 
   /*
   This function shows myposts page
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all data that are in the "users" variable.
   */
   function showMyposts(currentuser){
@@ -1706,7 +1166,7 @@ document.addEventListener('init', function (event) {
 
   /*
   This function shows my Recentviewing
-  In project 1, we are using static data.
+  All of the data from cloud database
   This function shows all data that are in the "users" variable.
   */
   function showRecentviewing(){
@@ -1746,91 +1206,507 @@ document.addEventListener('init', function (event) {
     }
   }
 
-  function addPasswordKey(){
-    ons.notification.prompt({message: 'Input your post password key'})
-    .then(function(password) {
-      $("#private").css("display","none");
-      $("#public").css("display","block");
-      $("#passwordKey").html(password);
+
+  /******************************************************************************************
+  BLOCK 4. rich text
+  All of the functions below are related to the text input and emoj append
+  I created my own rich text (most advanced)
+  The functions includes bold text, Itelic text, underline, bullet points, URL hyperlinks.
+  It can also add emoj and include other languages but not English
+  ******************************************************************************************/
+  function richText(){
+    $('.toolbar a').click(function(e) {
+      var command = $(this).data('command');
+      document.getElementById("editor").focus();
+      if (command == 'bold' || command == 'italic'|| command == 'italic' || command == 'underline' || command == 'insertUnorderedList' || command == 'insertOrderedList') {
+        if($(this).css("color") == "rgb(30, 136, 229)"){
+          $(this).css("color","#adb5b9");
+        }else{
+          $(this).css("color","#1E88E5");
+        }
+      }
+      if (command == 'createlink' || command == 'insertimage') {
+        url = prompt('Enter the link here: ', 'http:\/\/');
+        document.execCommand($(this).data('command'), false, url);
+      }
+      else {
+        document.execCommand($(this).data('command'), false, null);
+      }
     });
   }
 
-  function deletePasswordKey(){
-    $("#private").css("display","block");
-    $("#public").css("display","none");
-    $("#passwordKey").html("");
+
+  var  showEmoj = function(target) {
+    document
+    .getElementById('popover')
+    .show(target);
+  };
+
+  var hidePopover = function() {
+    document
+    .getElementById('popover')
+    .hide();
+  };
+
+  function addEmoj(str){
+    document.getElementById('popover').hide();
+    $('#editor').append('<img width="20px" src='+str+'>');
+    $('#commentText').append('<img width="20px" src='+str+'>');
   }
 
-  function inputPostkey(correctPassword,topicID,postID){
-    var allTopics = getTopics();
-    var topicindex;
-    for(index in allTopics){
-      if(allTopics[index].topicId == topicID){
-        topicindex = index;
-        break;
+  function clearEditor(){
+    if($("#editor").html() == "you can input comment here..."){
+      $("#editor").html("");
+    }
+  }
+
+  function clearComment(){
+    if($("#commentText").html() == "you can input your reply here..."){
+      $("#commentText").html("");
+    }
+  }
+
+  /***************************************************************
+  BLOCK 5. polls
+  This app include Polls as discussion posts
+  And all user's choices will be saved into the cloud DataStore.
+  *****************************************************************/
+
+  function haveVoted(){
+    ons.notification.alert('You have voted before.');
+  }
+
+  function agreePost(id1,id2){
+    var follow = isFollow(window.localStorage.getItem("Username"),id1);
+
+    if(window.localStorage.getItem("Username") == null){
+      ons.notification.alert('You have to sign in.');
+    }else{
+      if(follow){
+        if($("#pollicon1").css("color") == "rgb(153, 153, 153)"){
+          //Have't clicked agree - agree
+          var thisVoted = {"user":""+window.localStorage.getItem("Nickname")+"","topicId":""+id1+"","postId":""+id2+"","vote":"1"};
+
+          var myVoted = window.localStorage.getItem("myVoted");
+          var myVotedDecoded = JSON.parse(myVoted);
+          myVotedDecoded.push(thisVoted);
+          var newMyVotedEncoded = JSON.stringify(myVotedDecoded);
+          window.localStorage.setItem("myVoted",newMyVotedEncoded);
+
+          AgreeOrObject(id1,id2,1);
+          $("#pollicon1").css("color","#3A9FED");
+          $("#pollicon2").css("display","none");
+          $("#pollnum1").css("display","none");
+          $("#pollnum2").css("display","none");
+        }
+      }else{
+        ons.notification.alert('You have to follow this topic firstly.');
       }
     }
+  }
 
-    var postindex;
-    for(index in allTopics[topicindex].posts){
-      if(allTopics[topicindex].posts[index].postId == postID){
-        postindex = index;
-        break;
+  function objectPost(id1,id2){
+    var follow = isFollow(window.localStorage.getItem("Username"),id1);
+
+    if(window.localStorage.getItem("Username") == null){
+      ons.notification.alert('You have to sign in.');
+    }else{
+      if(follow){
+        if($("#pollicon2").css("color") == "rgb(153, 153, 153)"){
+          var thisVoted = {"topicId":""+id1+"","postId":""+id2+"","vote":"0"};
+          var myVoted = window.localStorage.getItem("myVoted");
+          var myVotedDecoded = JSON.parse(myVoted);
+          myVotedDecoded.push(thisVoted);
+          var newMyVotedEncoded = JSON.stringify(myVotedDecoded);
+          window.localStorage.setItem("myVoted",newMyVotedEncoded);
+
+          AgreeOrObject(id1,id2,3);
+          $("#pollicon2").css("color","#3A9FED");
+          $("#pollicon1").css("display","none");
+          $("#pollnum1").css("display","none");
+          $("#pollnum2").css("display","none");
+        }
+      }else{
+        ons.notification.alert('You have to follow this topic firstly.');
       }
     }
+  }
 
-    var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
+  /***************************************************************
+  BLOCK 6. Encrypt a post
+  This app can optionally lock & encrypt a post to those with a password key
+  All key word will be encrypted with AES (library in js document)
+  *****************************************************************/
 
-    ons.notification.prompt({message: 'Input post password key'})
-    .then(function(password) {
-      if(correctPassword == password){
-        console.log("post before decrypting: "+allTopics[topicindex].posts[postindex].postText);
-        var origText = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText, allTopics[topicindex].posts[postindex].postkeyword, 256);
-        console.log("post after decrypting: "+origText);
-        $("#lockPost").css("display","none");
-        $("#main_post").append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
-        $("#main_post").append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
-        $("#main_post").append("<p style='font-size:16px;color:#999999; '>"+currentAuthor.signature+"</p>");
+    function addPasswordKey(){
+      ons.notification.prompt({message: 'Input your post password key'})
+      .then(function(password) {
+        $("#private").css("display","none");
+        $("#public").css("display","block");
+        $("#passwordKey").html(password);
+      });
+    }
+
+    function deletePasswordKey(){
+      $("#private").css("display","block");
+      $("#public").css("display","none");
+      $("#passwordKey").html("");
+    }
+
+    function inputPostkey(correctPassword,topicID,postID){
+      var allTopics = getTopics();
+      var topicindex;
+      for(index in allTopics){
+        if(allTopics[index].topicId == topicID){
+          topicindex = index;
+          break;
+        }
+      }
+
+      var postindex;
+      for(index in allTopics[topicindex].posts){
+        if(allTopics[topicindex].posts[index].postId == postID){
+          postindex = index;
+          break;
+        }
+      }
+
+      var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
+
+      ons.notification.prompt({message: 'Input post password key'})
+      .then(function(password) {
+        if(correctPassword == password){
+          console.log("post before decrypting: "+allTopics[topicindex].posts[postindex].postText);
+          var origText = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText, allTopics[topicindex].posts[postindex].postkeyword, 256);
+          console.log("post after decrypting: "+origText);
+          $("#lockPost").css("display","none");
+          $("#main_post").append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+          $("#main_post").append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
+          $("#main_post").append("<p style='font-size:16px;color:#999999; '>"+currentAuthor.signature+"</p>");
           var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
-        if(window.localStorage.getItem("myVoted").indexOf(str) != (-1)){
-          //if i have voted
-          var strAgree = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'","vote":"1"';
-          if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
-            //I agreed
-            var polls = $("<div id='polls'></div>");
-            var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
-            polls.append(poll1);
-            $("#main_post").append(polls);
+          if(window.localStorage.getItem("myVoted").indexOf(str) != (-1)){
+            //if i have voted
+            var strAgree = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'","vote":"1"';
+            if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
+              //I agreed
+              var polls = $("<div id='polls'></div>");
+              var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+              polls.append(poll1);
+              $("#main_post").append(polls);
             }
-          else{
-            // I objected
+            else{
+              // I objected
+              var polls = $("<div id='polls'></div>");
+              var poll2 = $("<ons-icon id='pollicon2' onclick='haveVoted()' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+              polls.append(poll2);
+              $("#main_post").append(polls);
+            }
+          }else{
+            //Else i haven't voted
             var polls = $("<div id='polls'></div>");
-            var poll2 = $("<ons-icon id='pollicon2' onclick='haveVoted()' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+            var poll1 = $("<ons-icon id='pollicon1' onclick='agreePost("+topicID+","+postID+")' icon='ion-thumbsup' size='35px'></ons-icon>");
+            var poll2 = $("<ons-icon id='pollicon2' onclick='objectPost("+topicID+","+postID+")' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+            polls.append(poll1);
             polls.append(poll2);
+            polls.append("<span id='pollnum1'>"+allTopics[topicindex].posts[postindex].polls.numAgree+"</span>");
+            polls.append("<span id='pollnum2'>"+allTopics[topicindex].posts[postindex].polls.numObject+"</span>");
             $("#main_post").append(polls);
           }
-        }else{
-          //Else i haven't voted
-          var polls = $("<div id='polls'></div>");
-          var poll1 = $("<ons-icon id='pollicon1' onclick='agreePost("+topicID+","+postID+")' icon='ion-thumbsup' size='35px'></ons-icon>");
-          var poll2 = $("<ons-icon id='pollicon2' onclick='objectPost("+topicID+","+postID+")' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
-          polls.append(poll1);
-          polls.append(poll2);
-          polls.append("<span id='pollnum1'>"+allTopics[topicindex].posts[postindex].polls.numAgree+"</span>");
-          polls.append("<span id='pollnum2'>"+allTopics[topicindex].posts[postindex].polls.numObject+"</span>");
-          $("#main_post").append(polls);
-        }
-        var thisInputed = {"user":""+window.localStorage.getItem("Nickname")+"","topicId":""+topicID+"","postId":""+postID+""};
+          var thisInputed = {"user":""+window.localStorage.getItem("Nickname")+"","topicId":""+topicID+"","postId":""+postID+""};
 
-        var myInputed = window.localStorage.getItem("myInputed");
-        var myInputedDecoded = JSON.parse(myInputed);
-        myInputedDecoded.push(thisInputed);
-        var newMyInputedEncoded = JSON.stringify(myInputedDecoded);
-        window.localStorage.setItem("myInputed",newMyInputedEncoded);
-      }else{
-        ons.notification.alert('Incorrect password key');
+          var myInputed = window.localStorage.getItem("myInputed");
+          var myInputedDecoded = JSON.parse(myInputed);
+          myInputedDecoded.push(thisInputed);
+          var newMyInputedEncoded = JSON.stringify(myInputedDecoded);
+          window.localStorage.setItem("myInputed",newMyInputedEncoded);
+        }else{
+          ons.notification.alert('Incorrect password key');
+        }
+      });
+    }
+
+  /********************************************************
+  BLOCK 7. keywordSearch()
+  Here is a huge function to implement the search function
+  It includes both post and title retrieved
+  It dosenot matter if the kew word is consistent
+  Post includeing all key word will be responsed
+  ********************************************************/
+
+  function keywordSearch(){
+    var str = $("#search_input").val();
+    $("#search-result").html("");
+    document.getElementById("search-suggest").style.display = "block";
+
+    var titleCheck = document.getElementById("checkTitle").checked;
+    var textCheck = document.getElementById("checkText").checked;
+
+    if(str.length != 0 ){
+      var input = str.trim().split(" ");
+      // array to store all keywords
+      var results = new Array();
+      // each array[index] to store all results for each keyword
+      var allTopics = new Array();
+
+      for(index in input){
+        results[index] = new Array();
+
+        $.ajax({
+          type: "GET",
+          url: baseUrl,
+          data: {
+            action: "load",
+            appid: baseAppid ,
+            objectid: "topics",
+          },
+          dataType: "json",
+          async : false,
+          success: function(data) {
+            allTopics = data;
+            for(var i=0; i< data.length; i++){
+              for(var j=0;j<data[i].posts.length;j++){
+                if(titleCheck && !textCheck){
+                  // only title search
+                  if(data[i].posts[j].postTitle.indexOf(input[index])!=(-1)){
+                    results[index].push([data[i].topicId,data[i].posts[j].postId]);
+                  }
+                }
+                if(!titleCheck && textCheck){
+                  // only text search
+                  var posttext;
+                  if(data[i].posts[j].postkeyword.length==0){
+                    posttext = data[i].posts[j].postText;
+                  }else{
+                    posttext = AesCtr.decrypt(data[i].posts[j].postText,data[i].posts[j].postkeyword,256);
+                    //Decrypt post with a postkeyword
+                  }
+                  posttext = posttext.replace(/<.*?>/ig,"");
+                  // Delete the html tag from rich text
+                  if(posttext.indexOf(input[index])!=(-1)){
+                    results[index].push([data[i].topicId,data[i].posts[j].postId]);
+                  }
+                }
+                if(titleCheck && textCheck){
+                  // both title and text search
+                  var posttext;
+                  if(data[i].posts[j].postkeyword.length==0){
+                    posttext = data[i].posts[j].postText;
+                  }else{
+                    posttext = AesCtr.decrypt(data[i].posts[j].postText,data[i].posts[j].postkeyword,256);
+                    //Decrypt post with a postkeyword
+                  }
+                  posttext = posttext.replace(/<.*?>/ig,"");
+                  // Delete the html tag from rich text
+                  if((data[i].posts[j].postTitle.indexOf(input[index])!=(-1))||(posttext.indexOf(input[index])!=(-1))){
+                    results[index].push([data[i].topicId,data[i].posts[j].postId]);
+                  }
+                }
+                if(!titleCheck && !textCheck){
+                  // no search
+                  break;
+                }
+
+              }
+            }
+          },
+          fail: function(jqXHR){
+            console.log(jqXHR.status);
+          },
+        });
       }
-    });
+
+      function findPostTitle(topicId,postId){
+        for(var i=0; i< allTopics.length; i++){
+          if(allTopics[i].topicId == topicId){
+            for(var j=0;j<allTopics[i].posts.length;j++){
+              if(allTopics[i].posts[j].postId == postId){
+                postTitle = allTopics[i].posts[j].postTitle;
+                return postTitle;
+              }
+            }
+          }
+        }
+      }
+
+      function findTopicPic(topicId){
+        for(var i=0; i< allTopics.length; i++){
+          if(allTopics[i].topicId == topicId){
+            topicPic = allTopics[i].topicPic;
+            return topicPic;
+          }
+        }
+      }
+
+      if(input.length == 1){
+        // only one key word inputted by user
+        for(index in results[0]){
+          var topicId = results[0][index][0];
+          var postId = results[0][index][1];
+          var topicPic = findTopicPic(topicId);
+          var postTitle = findPostTitle(topicId,postId);
+
+          var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
+          $("#search-result").append(hint);
+        }
+      }
+
+      //Find the common post of different results
+      //Start 2
+      //End (total num of words)-1   results[]
+      if(input.length >=2 ){
+        var duplicate = new Array();
+        duplicate[0] = new Array();
+        for(index1 in results[0]){
+          for(index2 in results[1]){
+            if(results[0][index1][0] == results[1][index2][0]){
+              if(results[0][index1][1] == results[1][index2][1]){
+                // console.log("Finding first 2 " + results[0][index1]);
+                duplicate[0].push(results[0][index1]);
+              }
+            }
+          }
+        }
+
+        var resultsThanTwo = new Array();
+        for(var i=2; i <= input.length -1; i++){
+          duplicate[i-1] = new Array();
+          for(index1 in duplicate[i-2]){
+            for(index2 in results[i]){
+              if(duplicate[i-2][index1][0] == results[i][index2][0]){
+                if(duplicate[i-2][index1][1] == results[i][index2][1]){
+                  // console.log("Finding 3 common " + duplicate[i-2][index1]);
+                  duplicate[i-1].push(duplicate[i-2][index1]);
+                  resultsThanTwo = duplicate[i-1];
+                }
+              }
+            }
+          }
+        }
+
+
+        if(input.length == 2){
+          for(index in duplicate[0]){
+            var topicId = duplicate[0][index][0];
+            var postId = duplicate[0][index][1];
+            var topicPic = findTopicPic(topicId);
+            var postTitle = findPostTitle(topicId,postId);
+
+            var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
+            $("#search-result").append(hint);
+          }
+        }else{
+          if(resultsThanTwo.length == 0){
+            console.log("No results");
+          }else{
+            for(index in resultsThanTwo){
+              var topicId = resultsThanTwo[index][0];
+              var postId = resultsThanTwo[index][1];
+              var postTitle = findPostTitle(topicId,postId);
+
+              var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'>"+postTitle+"</li>");
+              $("#search-result").append(hint);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /************************************************************************
+  BLOCK 8. updatePages()
+  All of the functions below are related to update pages when data changed
+  There four different function since the paremeter is different
+  *************************************************************************/
+
+  //Refresh pages which do not need parameters
+  function updatePages1(){
+    $("#onslist").html(" ");
+    showTopicsList();
+    $("#allpostabstrcts").html(" ");
+    showHotPostAbstracts();
+  }
+
+  //Refresh pages which only need topicId
+  function updatePages2(topicId){
+    $("#topic_banner").html(" ");
+    $("#postabstrcts").html(" ");
+    $("#topicbar").html(" ");
+    showTopic(topicId);
+  }
+
+  //Refresh pages which only need object-currentUser
+  function updatePages3(currentUser){
+    $("#usermainpage").html(" ");
+    showUserpage(currentUser);
+    $("#postofmine").html(" ");
+    showMyposts(currentUser);
+  }
+
+  //Refresh pages which only need both id of topic and post
+  function updatePages4(topicId,postId){
+    $("#belowbar").html(" ");
+    $("#topicbar3").html(" ");
+    $("#topicbar2").html(" ");
+    showPost(topicId,postId);
+  }
+
+  function check_Isfollowed_Islogined(type,topicId,postId){
+    var follow = isFollow(window.localStorage.getItem("Username"),topicId);
+    //checked if the user followed this topic
+
+    if(window.localStorage.getItem("Username") == null){
+      //Check id the user has logined
+      ons.notification.alert('You have to sign in');
+    }else{
+      if(follow){
+        //user logined and followed this topic
+        switch (type){
+          case "addpost":
+          myNavigator.pushPage('addapost.html',{data:{id:topicId}});
+          break;
+
+          case "addreply":
+          myNavigator.pushPage("addareply.html",{data:{tid:topicId,pid:postId}});
+          break;
+
+          case "editpost":
+          myNavigator.pushPage("editapost.html",{data:{topicId:topicId,postId:postId}});
+          break;
+        }
+      }else{
+        //user logined but not followed this topic
+        ons.notification.alert('You have to follow this topic firstly.');
+      }
+    }
+  }
+
+  function showModal() {
+    var modal = document.querySelector('ons-modal');
+
+    modal.show();
+    setTimeout(function() {
+      modal.hide();
+    }, 1000);
+  }
+
+  var exception = [];
+  function throwException(){
+    try {
+      throw "Test exception";
+    } catch (err) {
+      exception[exception.length] = err;
+    }
+  }
+
+  function addException(){
+    if(exception.length==0){
+      var items = $("<ons-list-item>No Exception</ons-list-item>");
+      $("#exceptio").append(items);
+    }
+    for (index in exception){
+      var items = $("<ons-list-item>ex"+parseInt(index+1)+"&nbsp;"+exception[index]+"</ons-list-item>");
+      $("#exceptio").append(items);
+    }
   }
 
   // ****************************************
@@ -1838,6 +1714,15 @@ document.addEventListener('init', function (event) {
   // ****************************************
   $(document).ready(function(){
     // showPrompt();
+
+    var today=new Date();
+    var year=today.getFullYear();
+    var month=today.getMonth()+1;
+    var day=today.getDate();
+    console.log(today);
+    console.log(year);
+    console.log(month);
+    console.log(day);
 
     var username = window.localStorage.getItem("Username");
     var password = window.localStorage.getItem("Password");
