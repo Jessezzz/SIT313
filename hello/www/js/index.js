@@ -672,7 +672,20 @@ document.addEventListener('init', function (event) {
         console.log("post after encrypting: "+posttext);
       }
 
-      var postdate = "10 minutes ago";
+      var today=new Date();
+      var currentYear=today.getFullYear();
+      var currentMonth=today.getMonth()+1;
+      var currentDay=today.getDate();
+      var currentHours=today.getHours();
+
+      var postdate  =
+      {
+        year : currentYear,
+        month : currentMonth,
+        day : currentDay,
+        Hours: currentHours
+      };
+
       var postpic = "";
 
       showModal();
@@ -731,7 +744,7 @@ document.addEventListener('init', function (event) {
       var postid = postID;
       var posttitle = document.getElementById('postTitle2').value;
       var posttext = AesCtr.encrypt($('#editor').html(),allTopics[topicindex].posts[postindex].postkeyword,256);
-      var postdate = "10 minutes ago";
+      var postdate = allTopics[topicindex].posts[postindex].postDate;
       var postpic = "";
       var postkeyword = allTopics[topicindex].posts[postindex].postkeyword;
       var agree = allTopics[topicindex].posts[postindex].polls.numAgree;
@@ -825,6 +838,13 @@ document.addEventListener('init', function (event) {
         break;
       }
     }
+
+    //Get the date gap of post date to current
+    var postDate = allTopics[topicindex].posts[postindex].postDate;
+    var postFormatedDate = new Date(postDate.year+"-"+postDate.month+"-"+postDate.day+"-"+postDate.Hours+":00");
+
+    var dateString = getDateGap(postFormatedDate);
+
     var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
     var forMyPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.myPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
     var forOthersPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.othersPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
@@ -851,7 +871,8 @@ document.addEventListener('init', function (event) {
     responsePic.append("<img src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
     var responseUser = $("<div id='response_user'></div>");
     responseUser.append("<span style='font-size:18px;color:#0060AA;margin-bottm:20px;'>"+currentAuthor.nickname+"</span><br/>");
-    responseUser.append("<span style='font-size:14px;'>"+allTopics[topicindex].posts[postindex].postDate+"</span>");
+
+    responseUser.append("<span style='font-size:14px;'>"+dateString+"</span>");
     responseWriter.append(responsePic);
     responseWriter.append(responseUser);
 
@@ -997,7 +1018,7 @@ document.addEventListener('init', function (event) {
     var headpic = window.localStorage.getItem("Headpic");
 
     var userTop = $("<div id='user_top'></div>");
-    var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:80px;height:80px;' src='"+headpic+"'>");
+    var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:100px;height:100px;' src='img/124.png'>");
     var userTopCenter = $("<div id='user_top_center'></div>");
     userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+nickname+"</span><br/>");
     userTopCenter.append("<div style='display:block;margin-top:10px;font-size:16px;'>"+signature+"</div><br/>");
@@ -1027,13 +1048,13 @@ document.addEventListener('init', function (event) {
     userBottom1.append(bottomList2);
     userBottom1.append(bottomList3);
     var userBottom2 = $("<div id='user_bottom'></div>");
-    var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;App Info<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+    var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;About<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
     bottomList5.on("click",function(){
       myNavigator.pushPage("appinfo.html");
     })
     userBottom2.append(bottomList5);
     var userBottom3 = $("<div id='user_bottom'></div>");
-    var bottomList6 = $("<div style='height:50px;line-height:50px;text-align:center;color:#247ABA;font-size:20px;font-weight:bold;' class='user_bottom_lists' >Log out</div>");
+    var bottomList6 = $("<div id='logb'  class='user_bottom_lists' >Log out</div>");
     userBottom3.append(bottomList6);
     $("#usermainpage").append(userTop);
     $("#usermainpage").append(userBottom1);
@@ -1059,9 +1080,9 @@ document.addEventListener('init', function (event) {
     }
     var username = window.localStorage.getItem("Username");
 
-    var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:80px;height:80px;' src='"+currentuser.headpic+"'></div>");
+    var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:100px;height:100px;' src='img/124.png'></div>");
     $("#contentofp").append(head);
-    var changehead = $("<span style='text-align:center;font-size:17px;display:block;color:#3A9FED;margin:10px auto;'>Change Profile Photo<span>");
+    var changehead = $("<span id='changePho'>Change Profile Photo<span>");
     $("#contentofp").append(changehead);
     changehead.on("click",function(){
 
@@ -1076,8 +1097,8 @@ document.addEventListener('init', function (event) {
     $("#contentofp").append(userBottom);
 
     var userBottom2 = $("<div id='user_bottom'></div>");
-    var bottomList6 = $("<div style='height:50px;line-height:50px;font-size:20px;text-align:center;color:#247ABA;font-weight:bold;' class='user_bottom_lists' >Save</div>");
-    userBottom2.append(bottomList6);
+    var bottomList6 = $("<div id='savebu'  class='user_bottom_lists' >Save</div>");
+    $("#contentofp").append(bottomList6);
     $("#contentofp").append(userBottom2);
     bottomList6.on("click",function(){
       showModal();
@@ -1141,13 +1162,17 @@ document.addEventListener('init', function (event) {
           for(index3 in allTopics[index2].posts){
             if(allTopics[index2].posts[index3].postId == currentuser.myPosts[index].postId){
               postTitle = allTopics[index2].posts[index3].postTitle;
-              postDate = allTopics[index2].posts[index3].postDate;
+              //Get the date gap of post date to current
+              var postDate = allTopics[index2].posts[index3].postDate;
+              var postFormatedDate = new Date(postDate.year+"-"+postDate.month+"-"+postDate.day+"-"+postDate.Hours+":00");
+
+              var dateString = getDateGap(postFormatedDate);
             }
           }
         }
       }
 
-      var responseComment = $("<div style='background-color:white;' id='comments'></div>");
+      var responseComment = $("<div style='background-color:white;' id='commentsss'></div>");
       responseComment.append("<p style='font-size:18px;padding-top:10px;'>"+postTitle+"");
       var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
       responseComment.append(commentWriter);
@@ -1155,7 +1180,7 @@ document.addEventListener('init', function (event) {
       commentPic.append("<img src='img/head.jpg'>");
       var commentUser = $("<div id='response_user'></div>");
       commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+window.localStorage.getItem("Nickname")+"</span>&nbsp;&nbsp;&nbsp;");
-      commentUser.append("<span style='font-size:14px;'>"+postDate+"</span>");
+      commentUser.append("<span style='font-size:14px;'>"+dateString+"</span>");
       commentWriter.append(commentPic);
       commentWriter.append(commentUser);
       $("#postofmine").append(responseComment);
@@ -1183,12 +1208,16 @@ document.addEventListener('init', function (event) {
             for(index3 in allTopics[index2].posts){
               if(allTopics[index2].posts[index3].postId == postId[index1]){
                 postTitle = allTopics[index2].posts[index3].postTitle;
-                postDate = allTopics[index2].posts[index3].postDate;
+                //Get the date gap of post date to current
+                var postDate = allTopics[index2].posts[index3].postDate;
+                var postFormatedDate = new Date(postDate.year+"-"+postDate.month+"-"+postDate.day+"-"+postDate.Hours+":00");
+
+                var dateString = getDateGap(postFormatedDate);
               }
             }
           }
         }
-        var responseComment = $("<div style='background-color:white;' id='comments'></div>");
+        var responseComment = $("<div style='background-color:white;' id='commentsss'></div>");
         responseComment.append("<p style='font-size:18px;padding-top:10px;'>"+postTitle+"");
         var commentWriter = $("<div style='margin-bottom:0px;' id='response_writer'></div>");
         responseComment.append(commentWriter);
@@ -1196,7 +1225,7 @@ document.addEventListener('init', function (event) {
         commentPic.append("<img src='img/head.jpg'>");
         var commentUser = $("<div id='response_user'></div>");
         commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+window.localStorage.getItem("Nickname")+"</span>&nbsp;&nbsp;&nbsp;");
-        commentUser.append("<span style='font-size:14px;'>"+postDate+"</span>");
+        commentUser.append("<span style='font-size:14px;'>"+dateString+"</span>");
         commentWriter.append(commentPic);
         commentWriter.append(commentUser);
         $("#recentView").append(responseComment);
@@ -1709,20 +1738,33 @@ document.addEventListener('init', function (event) {
     }
   }
 
+  function getDateGap(postDate){
+    var date2=new Date();
+    //date now
+    var date3=date2.getTime()-postDate.getTime();
+    //day gap
+    var days=Math.floor(date3/(24*3600*1000));
+
+    //hours gap
+    var leave1=date3%(24*3600*1000);
+    var hours=Math.floor(leave1/(3600*1000));
+
+    if(days > 0){
+      return days+" days ago";
+    }else{
+      if(hours == 0 ){
+        return "Just now";
+      }else{
+        return hours + " hours ago";
+      }
+    }
+  }
+
   // ****************************************
   //  WEB APPLICATION LOAD
   // ****************************************
   $(document).ready(function(){
     // showPrompt();
-
-    var today=new Date();
-    var year=today.getFullYear();
-    var month=today.getMonth()+1;
-    var day=today.getDate();
-    console.log(today);
-    console.log(year);
-    console.log(month);
-    console.log(day);
 
     var username = window.localStorage.getItem("Username");
     var password = window.localStorage.getItem("Password");

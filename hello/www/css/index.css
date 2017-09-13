@@ -217,26 +217,62 @@
   height:160px;
 
 }
+#recentView{
+  width:96%;
+}
+#commentsss{
+  border-bottom: 1px solid #DBDBDB;
+  border-radius:8px;
+
+}
+#commentsss p{
+  margin: 16px;
+  line-height: 25px;
+}
+#postofmine{
+  width:96%;
+}
 #user_top_left{
   margin: 13px;
   margin-top:20px;
   border-radius:50%;
   overflow:hidden;
-  width:80px;height:80px;
+  width:100px;height:100px;
   border:1px solid #DBDBDB;
   line-height: 70px;
 }
 #user_top_center{
   margin-top:30px;
-  width:60%;
+  width:55%;
   float:left;
   height:20%;
+  margin-left: 10px;
+}
+#logb{
+  height:50px;line-height:50px;text-align:center;color:white;font-size:20px;font-weight:bold;
+  background-color: #3A9FED;
 }
 #user_top_right{
   float:right;
   margin:50px 15px 0 0;
   color:#999999;
+  font-size: 20px;
 }
+
+#contentofp{
+  background-color: white;
+  margin-top: -20px;
+  padding-top: 20px;
+}
+#changePho{
+text-align:center;font-size:17px;display:block;color:#247ABA;margin:10px auto;
+}
+
+#savebu{
+height:50px;line-height:50px;font-size:20px;text-align:center;color:white;font-weight:bold;
+background-color: #3A9FED;margin-top: 20px;
+}
+
 #user_bottom{
   background-color: white;
   margin-top:15px;
@@ -253,6 +289,12 @@
   float:right;
   margin-right:15px;
   margin-top:15px;
+}
+
+.iconarrow2{
+  color:#999999;
+  float:right;
+  margin-right:15px;
 }
 .iconthem{
   margin-left:25px;

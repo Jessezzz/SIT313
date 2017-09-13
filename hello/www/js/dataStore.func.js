@@ -258,7 +258,7 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic,p
     success: function(data) {
       for(var i=0; i < data.length; i++){
         if(data[i].topicId == topicID){
-          data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":""+postdate+"","postkeyword":""+postkeyword+"","polls":{"numAgree":"0","numObject":"0"},"postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":[]});
+          data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":postdate,"postkeyword":""+postkeyword+"","polls":{"numAgree":"0","numObject":"0"},"postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":[]});
         }
       }
       dataChanged = JSON.stringify(data);
