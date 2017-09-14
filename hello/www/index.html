@@ -64,13 +64,15 @@
       </ons-toolbar>
 
       <ons-list-header class="list-header" style="font-weight:normal;background-color:white;font-size: 16px;line-height: 30px;">Search In</ons-list-header>
-      <ons-list-item modifier="longdivider" class="list-item">
-        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin: 15px;" id="checkTitle" checked="true"></ons-checkbox>
-        <span style="margin:10px;">Subject</span>
+
+      <ons-list-item modifier="longdivider" class="list-item" style="height:50px">
+        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin:0;padding:0;top:-20px;" id="checkTitle" checked="true"></ons-checkbox>
+        <span style="margin:0;padding-bottom:40px;top:0;">Subject</span>
       </ons-list-item>
-      <ons-list-item modifier="longdivider" class="list-item">
-        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin: 15px;" id="checkText" checked="true"></ons-checkbox>
-        <span style="margin:10px;">Post body</span>
+
+      <ons-list-item modifier="longdivider" class="list-item" style="height:50px">
+        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin:0;padding:0;top:-20px;" id="checkText" checked="true"></ons-checkbox>
+        <span style="margin:0;padding-bottom:40px;top:0;">Post body</span>
       </ons-list-item>
 
       <div class="suggest" id="search-suggest" style="border:none;display:none">
@@ -144,11 +146,12 @@
             <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
             <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
             <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
-            <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
+            <a href="javascript:getPic()"><i class='fa fa-image'></i></a>
           </div>
           <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input comment here...</div>
           <div id="private" tappable onclick="addPasswordKey()"><ons-icon  style="margin:10px;margin-left:20px;" icon="ion-unlocked" size="17px"></ons-icon>Set it as private (lock)</div>
           <div id="public" style="display:none" tappable onclick="deletePasswordKey()"><ons-icon  style="color:#3A9FED;margin:10px;margin-left:20px;" icon="ion-locked" size="17px"></ons-icon>Set it as public (unlock)</div>
+          <div id="postpic"></div>
           <div id="passwordKey" style="display:none"></div>
         </div>
       </div>
@@ -275,13 +278,7 @@
           </ons-toolbar-button>
         </div>
       </ons-toolbar>
-      <div id="beforelogin" style="display:block;">
-        <span style="text-align:center;color:#999999;font-size:18px;width:100%;display:block;margin:250px auto 20px auto;">After signing in, all of your favourite teams, published and sbuscribed posts will be displayed here</span>
-        <section style="padding: 8px">
-          <ons-button onclick = "myNavigator.pushPage('login.html')" style="background-color:#3A9FED;"modifier="large">Sign in for more functions</ons-button>
-        </section>
-      </div>
-      <div id="usermainpage" style="display:none;" style="width:100%;height:100%;">
+      <div id="usermainpage"  style="width:100%;height:100%;">
       </div>
     </ons-page>
   </template>
@@ -289,7 +286,7 @@
   <!-- Here starts the login page -->
   <template id="login.html">
     <ons-page id="login" >
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="position:fixed;background-color:#3A9FED;color:#FFFFFF">
         <div class="left">
           <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
         </div>
@@ -301,10 +298,10 @@
       </header>
       <ul class="form-con reg-ul">
         <li class="success">
-          <ons-input style="margin-top:5px;" class="logint" placeholder="Username"  id="_account" type="text"></ons-input>
+          <ons-input  class="logint1" placeholder="Username"  id="_account" type="text"></ons-input>
         </li>
         <li>
-          <ons-input style="margin-top:5px;"class="logint" placeholder="Password" id="_pwd" type="password"></ons-input>
+          <ons-input class="logint2" placeholder="Password" id="_pwd" type="password"></ons-input>
         </li>
       </ul>
       <div class="form-btn">
@@ -331,10 +328,10 @@
       </header>
       <ul class="form-con reg-ul">
         <li class="success">
-          <ons-input style="margin-top:5px;" class="logint" placeholder="Username"  id="_accountt" type="text"></ons-input>
+          <ons-input  class="logint1" placeholder="Username"  id="_accountt" type="text"></ons-input>
         </li>
         <li>
-          <ons-input style="margin-top:5px;"class="logint" placeholder="Password" id="_pwdd" type="password"></ons-input>
+          <ons-input class="logint2" placeholder="Password" id="_pwdd" type="password"></ons-input>
         </li>
       </ul>
       <div class="form-btn">
@@ -395,7 +392,7 @@
       <ons-list>
         <ons-list-header>App</ons-list-header>
         <ons-list-item>Name: NBA Bar</ons-list-item>
-        <ons-list-item>Description: Used for discussing between fans from different teams</ons-list-item>
+        <ons-list-item>A forum and the topic is related team</ons-list-item>
       </ons-list>
 
       <ons-list>
@@ -455,6 +452,7 @@
         </ons-list-item>
         <ons-list-item tappable onclick="myNavigator.pushPage('about.html')" >Legal<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
         <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="setLockPassword()">Set lock password<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
       </ons-list>
     </ons-page>
   </template>

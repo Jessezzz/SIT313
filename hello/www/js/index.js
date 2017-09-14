@@ -14,6 +14,8 @@ var app = {
 
   // Update DOM on a Received Event
   receivedEvent: function(id) {
+    // showPrompt();
+
     var parentElement = document.getElementById(id);
     var listeningElement = parentElement.querySelector('.listening');
     var receivedElement = parentElement.querySelector('.received');
@@ -23,25 +25,39 @@ var app = {
 
     console.log('Received Event: ' + id);
   },
-
-  onPrompt:function (results) {
-    console.log("121");
-    alert("You selected button number " + results.buttonIndex + " and entered " + results.input1);
-  },
-
-  showPrompt:function(){
-    console.log("1");
-    navigator.notification.prompt(
-      'Please enter your name',  // message
-      onPrompt,                  // callback to invoke
-      'Registration',            // title
-      ['Ok','Exit'],             // buttonLabels
-      'Jane Doe'                 // defaultText
-    );
-  }
 };
 
 app.initialize();
+
+function onPrompt(results) {
+  if(results.buttonIndex == 2){
+    navigator.notification.alert("You select to Exit");
+    navigator.app.exitApp();
+  }else{
+    var lockpassword = sha256_digest(results.input1);
+    if(lockpassword === window.localStorage.getItem("lockPassword")){
+    }else{
+      navigator.notification.alert(
+        '"The password is not correct. Please input it again!"',  // message
+        showPrompt,         // callback
+        'Error',            // title
+        'Done'                  // buttonName
+      );
+    }
+  }
+}
+
+function showPrompt(){
+  if(window.localStorage.getItem("lockPassword")!= null){
+    navigator.notification.prompt(
+      'Your app is locked. Please input password to unlock it',  // message
+      onPrompt,                  // callback to invoke
+      'Unlock',            // title
+      ['Unlock','Exit'],             // buttonLabels
+      ''                 // defaultText
+    );
+  }
+}
 
 
 /******************************************************************************************
@@ -187,9 +203,6 @@ function login () {
       showModal();
 
       setTimeout(function() {
-        document.getElementById("beforelogin").style.display="none";
-        document.getElementById("usermainpage").style.display="block";
-
         window.localStorage.setItem("Username",currentUser.username);
         window.localStorage.setItem("Password",currentUser.password);
         window.localStorage.setItem("Nickname",currentUser.nickname);
@@ -223,9 +236,6 @@ function login () {
 }
 
 function logout () {
-  document.getElementById("beforelogin").style.display="block";
-  document.getElementById("usermainpage").style.display="none";
-
   window.localStorage.removeItem("Username");
   window.localStorage.removeItem("Password");
   window.localStorage.removeItem("Nickname");
@@ -233,6 +243,9 @@ function logout () {
   window.localStorage.removeItem("Headpic");
   window.localStorage.removeItem("RecentTopicId");
   window.localStorage.removeItem("RecentPostId");
+
+  // myNavigator.pushPage('userPage.html');
+  showUserpage();
 
   updatePages1();
 };
@@ -294,7 +307,7 @@ document.addEventListener('init', function (event) {
     }else if(event.target.id === 'addapost'){
       showAddPost(event.target.data.id);
     }else if(event.target.id === 'myteams'){
-      showMyteams(event.target.data.currentuser);
+      showMyteams();
     }else if(event.target.id === 'myposts'){
       showMyposts(event.target.data.currentuser);
     }else if(event.target.id === 'profile'){
@@ -304,6 +317,8 @@ document.addEventListener('init', function (event) {
       showHotPostAbstracts();
     }else if(event.target.id === 'viewing'){
       showRecentviewing();
+    }else if(event.target.id === 'userPage'){
+      showUserpage();
     }else if(event.target.id === 'addareply'){
       showaAddReply(event.target.data.tid,event.target.data.pid);
     }else if(event.target.id === 'exception'){
@@ -674,7 +689,7 @@ document.addEventListener('init', function (event) {
 
       var today=new Date();
       var currentYear=today.getFullYear();
-      var currentMonth=today.getMonth()+1;
+      var currentMonth=today.getMonth();
       var currentDay=today.getDate();
       var currentHours=today.getHours();
 
@@ -686,18 +701,27 @@ document.addEventListener('init', function (event) {
         Hours: currentHours
       };
 
-      var postpic = "";
+      // var postpic = "img/1.jpg";
+      var postpic;
+      if($("#postpic") == null){
+        postpic = null;
+      }else{
+        // postpic = $("#postpic").attr("src");
+        postpic = window.localStorage.getItem("postpic");
+        // postpic = AesCtr.encrypt($("#postpic").attr("src"),"1",256);
+      }
+      // ons.notification.alert(postpic);
 
       showModal();
 
       setTimeout(function() {
         addPost(topicID,postid,posttitle,posttext,window.localStorage.getItem("Username"),postdate,postpic,postkeyword);
-        ons.notification.alert('Post successfully.');
         addMyPost(window.localStorage.getItem("Username"),topicID,postid);
         var currentUser = getUser(window.localStorage.getItem("Username"));
         updatePages3(currentUser);
         updatePages2(parseInt(topicID));
         updatePages1();
+        ons.notification.alert('Post successfully.');
         myNavigator.popPage();
       }, 300);
     })
@@ -821,7 +845,7 @@ document.addEventListener('init', function (event) {
   This function shows all posts that are in the "topics" variable.
   */
   function showPost(topicID,postID){
-
+    //GET the position of the post
     var allTopics = getTopics();
     var topicindex;
     for(index in allTopics){
@@ -841,11 +865,14 @@ document.addEventListener('init', function (event) {
 
     //Get the date gap of post date to current
     var postDate = allTopics[topicindex].posts[postindex].postDate;
-    var postFormatedDate = new Date(postDate.year+"-"+postDate.month+"-"+postDate.day+"-"+postDate.Hours+":00");
+    var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDate.Hours);
 
     var dateString = getDateGap(postFormatedDate);
 
+    //the postauthor is the nickname stored in the database, firstly find this user of this author
     var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
+
+    //Show different action sheet on the top right corner
     var forMyPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.myPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
     var forOthersPost = $("<ons-toolbar-button><ons-icon  style='color:#FFFFFF' icon='ion-more' onclick='app.othersPost("+topicID+","+postID+")'></ons-icon></ons-toolbar-button>");
 
@@ -855,6 +882,7 @@ document.addEventListener('init', function (event) {
       $("#topicbar3").append(forOthersPost);
     }
 
+    //show post page - writer + comments num
     var responsePage = $("<div id='response_page'></div>");
     var responseTitle = $("<div id='response_title'></div>");
     responsePage.append(responseTitle);
@@ -868,7 +896,9 @@ document.addEventListener('init', function (event) {
     var responseWriter = $("<div id='response_writer'></div>");
     responsePage.append(responseWriter);
     var responsePic = $("<div id='response_pic'></div>");
-    responsePic.append("<img src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+
+    responsePic.append("<img src='"+currentAuthor.headpic+"'>");
+
     var responseUser = $("<div id='response_user'></div>");
     responseUser.append("<span style='font-size:18px;color:#0060AA;margin-bottm:20px;'>"+currentAuthor.nickname+"</span><br/>");
 
@@ -876,9 +906,11 @@ document.addEventListener('init', function (event) {
     responseWriter.append(responsePic);
     responseWriter.append(responseUser);
 
+    //show post page - post + pic + text(different if the post is encrypted)
     var responsePost = $("<div id='main_post'></div>");
     responsePage.append(responsePost);
 
+    //show post page - polls
     var polls = $("<div id='polls'></div>");
     var poll1 = $("<ons-icon id='pollicon1' onclick='agreePost("+topicID+","+postID+")' icon='ion-thumbsup' size='35px'></ons-icon>");
     var poll2 = $("<ons-icon id='pollicon2' onclick='objectPost("+topicID+","+postID+")' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
@@ -887,10 +919,37 @@ document.addEventListener('init', function (event) {
     polls.append("<span id='pollnum1'>"+allTopics[topicindex].posts[postindex].polls.numAgree+"</span>");
     polls.append("<span id='pollnum2'>"+allTopics[topicindex].posts[postindex].polls.numObject+"</span>");
 
+    //show post page - post + pic + text (content)
+    var postppic = null;
+
     if(allTopics[topicindex].posts[postindex].postkeyword.length == 0){
-      responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+      //public post
+      responsePost.append("<img style='width:94%;margin:12px;' src='"+postppic+"'>");
       responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+allTopics[topicindex].posts[postindex].postText+"</div>");
       responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
+
+      var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
+      if(window.localStorage.getItem("myVoted").indexOf(str) != (-1)){
+        //if i have voted
+        var strAgree = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'","vote":"1"';
+        if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
+          //I agreed
+          var polls = $("<div id='polls'></div>");
+          var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+          polls.append(poll1);
+          responsePost.append(polls);
+        }
+        else{
+          // I objected
+          var polls = $("<div id='polls'></div>");
+          var poll2 = $("<ons-icon id='pollicon2' onclick='haveVoted()' icon='ion-thumbsdown' size='35px'></ons-icon><br>");
+          polls.append(poll2);
+          responsePost.append(polls);
+        }
+      }else{
+        //Else i haven't voted
+        responsePost.append(polls);
+      }
     }else{
       //private post
       console.log("post before decrypting: "+allTopics[topicindex].posts[postindex].postText);
@@ -899,7 +958,7 @@ document.addEventListener('init', function (event) {
       console.log("post after decrypting: "+origText);
       if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
         //My post
-        responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+        responsePost.append("<img style='  width:94%;margin:12px;' src='"+postppic+"'>");
         responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
         responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
 
@@ -938,7 +997,7 @@ document.addEventListener('init', function (event) {
           responsePost.append(lockpost);
         }else{
           //I have input the password
-          responsePost.append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+          responsePost.append("<img style='  width:94%;margin:12px;' src='"+postppic+"'>");
           responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
           responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
           responsePost.append(lockpost);
@@ -1006,63 +1065,82 @@ document.addEventListener('init', function (event) {
   All of the data from cloud database
   This function shows all data that are in the "users" variable.
   */
-  function showUserpage(currentUser){
-    var nickname = window.localStorage.getItem("Nickname");
-    var signature;
-    if(window.localStorage.getItem("Signature") == "null"){
-      signature = "Please input your signature (footer)"
+  function showUserpage(){
+    var username = window.localStorage.getItem("Username");
+    var currentUser = getUser(username);
+
+    if(username != null){
+      //user has logined before
+
+      var nickname = window.localStorage.getItem("Nickname");
+      var signature;
+      if(window.localStorage.getItem("Signature") == "null"){
+        signature = "Please input your signature (footer)"
+      }else{
+        signature = window.localStorage.getItem("Signature");
+      }
+
+      var headpic = window.localStorage.getItem("Headpic");
+
+      var userTop = $("<div id='user_top'></div>");
+      var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:100px;height:100px;' src='img/124.png'>");
+      var userTopCenter = $("<div id='user_top_center'></div>");
+      userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+nickname+"</span><br/>");
+      userTopCenter.append("<div style='display:block;margin-top:10px;font-size:16px;'>"+signature+"</div><br/>");
+      var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
+      userTop.append(userTopLeft);
+      userTop.append(userTopCenter);
+      userTop.append(userTopicRight);
+      var userBottom1 = $("<div id='user_bottom'></div>");
+      var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-android-favorite'></ons-icon>&nbsp;My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+      var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+      var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='21px' class='iconthem' icon='ion-eye'></ons-icon>&nbsp;Recent Viewing<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+      if(navigator.onLine){
+        userTop.on("click",function(){
+          myNavigator.pushPage("profile.html",{data:{currentuser:currentUser}});
+        })
+        bottomList1.on("click",function(){
+          myNavigator.pushPage("myteams.html",{data:{currentuser:currentUser}});
+        })
+        bottomList2.on("click",function(){
+          myNavigator.pushPage("myposts.html",{data:{currentuser:currentUser}});
+        })
+      }
+      bottomList3.on("click",function(){
+        myNavigator.pushPage("viewing.html");
+      })
+      userBottom1.append(bottomList1);
+      userBottom1.append(bottomList2);
+      userBottom1.append(bottomList3);
+      var userBottom2 = $("<div id='user_bottom'></div>");
+      var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;About<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
+      bottomList5.on("click",function(){
+        myNavigator.pushPage("appinfo.html");
+      })
+      userBottom2.append(bottomList5);
+      var userBottom3 = $("<div id='user_bottom'></div>");
+      var bottomList6 = $("<div id='logb'  class='user_bottom_lists' >Log out</div>");
+      userBottom3.append(bottomList6);
+      $("#usermainpage").append(userTop);
+      $("#usermainpage").append(userBottom1);
+      $("#usermainpage").append(userBottom2);
+      $("#usermainpage").append(userBottom3);
+      bottomList6.on("click",function(){
+        logout();
+      })
     }else{
-      signature = window.localStorage.getItem("Signature");
-    }
+      $("#usermainpage").html("");
+      var str = "After signing in, you can follow topic, add and reply to post. Besides, you can use more functions like voting, inputting rich text etc."
+      var toSign = $("<span/>").attr("id","signnwo").html(str);
+      $("#usermainpage").append(toSign);
 
-    var headpic = window.localStorage.getItem("Headpic");
-
-    var userTop = $("<div id='user_top'></div>");
-    var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:100px;height:100px;' src='img/124.png'>");
-    var userTopCenter = $("<div id='user_top_center'></div>");
-    userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+nickname+"</span><br/>");
-    userTopCenter.append("<div style='display:block;margin-top:10px;font-size:16px;'>"+signature+"</div><br/>");
-    var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
-    userTop.append(userTopLeft);
-    userTop.append(userTopCenter);
-    userTop.append(userTopicRight);
-    var userBottom1 = $("<div id='user_bottom'></div>");
-    var bottomList1 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-android-favorite'></ons-icon>&nbsp;My Teams<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-    var bottomList2 = $("<div class='user_bottom_lists' ><ons-icon size='25px' class='iconthem' icon='ion-document-text'></ons-icon>&nbsp;&nbsp;My Posts<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-    var bottomList3 = $("<div class='user_bottom_lists' ><ons-icon size='21px' class='iconthem' icon='ion-eye'></ons-icon>&nbsp;Recent Viewing<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-    if(navigator.onLine){
-      userTop.on("click",function(){
-        myNavigator.pushPage("profile.html",{data:{currentuser:currentUser}});
-      })
-      bottomList1.on("click",function(){
-        myNavigator.pushPage("myteams.html",{data:{currentuser:currentUser}});
-      })
-      bottomList2.on("click",function(){
-        myNavigator.pushPage("myposts.html",{data:{currentuser:currentUser}});
-      })
+      var onsBu = $("<ons-button/>").attr("id","onsb").html("Sign in for more functions");
+      onsBu.attr("modifier","large");
+      onsBu.on("click",function(){
+        myNavigator.pushPage('login.html');
+      });
+      $("#usermainpage").append(onsBu);
     }
-    bottomList3.on("click",function(){
-      myNavigator.pushPage("viewing.html");
-    })
-    userBottom1.append(bottomList1);
-    userBottom1.append(bottomList2);
-    userBottom1.append(bottomList3);
-    var userBottom2 = $("<div id='user_bottom'></div>");
-    var bottomList5 = $("<div class='user_bottom_lists' ><ons-icon size='23px' class='iconthem' icon='ion-information-circled'></ons-icon>&nbsp;About<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></div>");
-    bottomList5.on("click",function(){
-      myNavigator.pushPage("appinfo.html");
-    })
-    userBottom2.append(bottomList5);
-    var userBottom3 = $("<div id='user_bottom'></div>");
-    var bottomList6 = $("<div id='logb'  class='user_bottom_lists' >Log out</div>");
-    userBottom3.append(bottomList6);
-    $("#usermainpage").append(userTop);
-    $("#usermainpage").append(userBottom1);
-    $("#usermainpage").append(userBottom2);
-    $("#usermainpage").append(userBottom3);
-    bottomList6.on("click",function(){
-      logout();
-    })
   }
 
   /*
@@ -1088,10 +1166,8 @@ document.addEventListener('init', function (event) {
 
     });
     var userBottom = $("<div id='user_bottom'></div>");
-    var bottomList0 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Username:&nbsp;&nbsp;&nbsp;<input style='line-height:30px;font-size:20px;' readOnly='true' placeholder='"+username+"'></input></div>");
-    var bottomList1 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Nickname:&nbsp;&nbsp;&nbsp;<input id='proin1'  style='line-height:30px;font-size:18px;' maxlength='15' type='text' value='"+nickname+"'></input></div>");
-    var bottomList2 = $("<div class='user_bottom_lists' style='height:70px;'><div style='float:left;'>&nbsp;&nbsp;&nbsp;Signature:&nbsp;&nbsp;&nbsp;&nbsp;</div><textarea id='proin2' maxlength='55' type='text' style='float:left;font-size:15px;height:60px;line-height:30px;width:60%' >"+signature+"</textarea></div>");
-    userBottom.append(bottomList0);
+    var bottomList1 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Nickname:&nbsp;&nbsp;&nbsp;<input id='proin1'  style='line-height:30px;font-size:18px;border:none;' maxlength='15' type='text' value='"+nickname+"'></input></div>");
+    var bottomList2 = $("<div class='user_bottom_lists' style='height:70px;'><div style='float:left;'>&nbsp;&nbsp;&nbsp;Signature:&nbsp;&nbsp;&nbsp;&nbsp;</div><textarea id='proin2' maxlength='55' type='text' style='border:none;float:left;font-size:15px;height:60px;line-height:30px;width:60%' >"+signature+"</textarea></div>");
     userBottom.append(bottomList1);
     userBottom.append(bottomList2);
     $("#contentofp").append(userBottom);
@@ -1122,8 +1198,9 @@ document.addEventListener('init', function (event) {
   All of the data from cloud database
   This function shows all data that are in the "users" variable.
   */
-  function showMyteams(currentuser){
+  function showMyteams(){
     var allTopics = getTopics();
+    var currentuser = getUser(window.localStorage.getItem("Username"));
 
     for(index1 in currentuser.myTopics){
       var topicindex;
@@ -1164,8 +1241,7 @@ document.addEventListener('init', function (event) {
               postTitle = allTopics[index2].posts[index3].postTitle;
               //Get the date gap of post date to current
               var postDate = allTopics[index2].posts[index3].postDate;
-              var postFormatedDate = new Date(postDate.year+"-"+postDate.month+"-"+postDate.day+"-"+postDate.Hours+":00");
-
+var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDate.Hours);
               var dateString = getDateGap(postFormatedDate);
             }
           }
@@ -1210,8 +1286,7 @@ document.addEventListener('init', function (event) {
                 postTitle = allTopics[index2].posts[index3].postTitle;
                 //Get the date gap of post date to current
                 var postDate = allTopics[index2].posts[index3].postDate;
-                var postFormatedDate = new Date(postDate.year+"-"+postDate.month+"-"+postDate.day+"-"+postDate.Hours+":00");
-
+var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDate.Hours);
                 var dateString = getDateGap(postFormatedDate);
               }
             }
@@ -1254,7 +1329,7 @@ document.addEventListener('init', function (event) {
           $(this).css("color","#1E88E5");
         }
       }
-      if (command == 'createlink' || command == 'insertimage') {
+      if (command == 'createlink') {
         url = prompt('Enter the link here: ', 'http:\/\/');
         document.execCommand($(this).data('command'), false, url);
       }
@@ -1292,6 +1367,52 @@ document.addEventListener('init', function (event) {
   function clearComment(){
     if($("#commentText").html() == "you can input your reply here..."){
       $("#commentText").html("");
+    }
+  }
+
+  function getPic(){
+    // Open the pic library
+    navigator.camera.getPicture(onSuccess, onFail, {
+      quality: 50,
+      sourceType : Camera.PictureSourceType.SAVEDPHOTOALBUM,
+      destinationType: Camera.DestinationType.FILE_URI       // back file URI
+    });
+
+    function onSuccess(imageURI) {
+      $('#postpic').append('<img id="postimg" width="100px" height:"60px" src='+imageURI+'>');
+
+      upload(imageURI);
+
+      //set the key of the postpic in datebase
+      window.localStorage.setItem("postpic",imageURI.substr(imageURI.lastIndexOf('/')+1));
+    }
+
+    function onFail(message) {
+      alert('Failed because: ' + message);
+    }
+
+    function upload(fileURL){
+      var success = function (r) {
+        alert("upload success! Code = " + r.responseCode);
+      }
+      var fail = function (error) {
+        alert("upload fail! Code = " + error.code);
+      }
+
+      var options = new FileUploadOptions();
+      options.fileKey = "file1";
+      options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+      //options.mimeType = "text/plain";
+
+      var params = {};
+      params.value1 = "test";
+      params.value2 = "param";
+      options.params = params;
+
+      var ft = new FileTransfer();
+
+      var SERVER = "http://introtoapps.com/datastore.php?action=save&appid=216036612&objectid=pics";
+      ft.upload(fileURL, encodeURI(SERVER), success, fail, options);
     }
   }
 
@@ -1361,50 +1482,72 @@ document.addEventListener('init', function (event) {
     }
   }
 
-  /***************************************************************
-  BLOCK 6. Encrypt a post
+  /********************************************************************************
+  BLOCK 6. Encrypt a post & app
   This app can optionally lock & encrypt a post to those with a password key
   All key word will be encrypted with AES (library in js document)
-  *****************************************************************/
+  Besides, this app can optionally lock the app with a hashed password using SHA256
+  **********************************************************************************/
 
-    function addPasswordKey(){
-      ons.notification.prompt({message: 'Input your post password key'})
-      .then(function(password) {
+  function addPasswordKey(){
+    navigator.notification.prompt(
+      'Input your post password key',  // message
+      inputedPassword,                  // callback to invoke
+      'Notification',            // title
+      ['Submit','Cancel'],             // buttonLabels
+      ''                 // defaultText
+    );
+
+    function inputedPassword(results) {
+      if(results.buttonIndex == 1){
         $("#private").css("display","none");
         $("#public").css("display","block");
-        $("#passwordKey").html(password);
-      });
+        $("#passwordKey").html(results.input1);
+      }
+    }
+  }
+
+  function deletePasswordKey(){
+    $("#private").css("display","block");
+    $("#public").css("display","none");
+    $("#passwordKey").html("");
+  }
+
+  function inputPostkey(correctPassword,topicID,postID){
+    var allTopics = getTopics();
+    var topicindex;
+    for(index in allTopics){
+      if(allTopics[index].topicId == topicID){
+        topicindex = index;
+        break;
+      }
     }
 
-    function deletePasswordKey(){
-      $("#private").css("display","block");
-      $("#public").css("display","none");
-      $("#passwordKey").html("");
+    var postindex;
+    for(index in allTopics[topicindex].posts){
+      if(allTopics[topicindex].posts[index].postId == postID){
+        postindex = index;
+        break;
+      }
     }
 
-    function inputPostkey(correctPassword,topicID,postID){
-      var allTopics = getTopics();
-      var topicindex;
-      for(index in allTopics){
-        if(allTopics[index].topicId == topicID){
-          topicindex = index;
-          break;
-        }
-      }
+    var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
 
-      var postindex;
-      for(index in allTopics[topicindex].posts){
-        if(allTopics[topicindex].posts[index].postId == postID){
-          postindex = index;
-          break;
-        }
-      }
+    showVerify();
 
-      var currentAuthor = getUser(allTopics[topicindex].posts[postindex].postAuthor);
-
-      ons.notification.prompt({message: 'Input post password key'})
-      .then(function(password) {
-        if(correctPassword == password){
+    function showVerify(){
+      navigator.notification.prompt(
+        'Input post password key',  // message
+        verifyPassword,                  // callback to invoke
+        'Notification',            // title
+        ['Unlock','Cancel'],             // buttonLabels
+        ''                 // defaultText
+      );
+    }
+    console.log(correctPassword.toString());
+    function verifyPassword(results) {
+      if(results.buttonIndex == 1){
+        if(results.input1 === correctPassword.toString()){
           console.log("post before decrypting: "+allTopics[topicindex].posts[postindex].postText);
           var origText = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText, allTopics[topicindex].posts[postindex].postkeyword, 256);
           console.log("post after decrypting: "+origText);
@@ -1449,11 +1592,47 @@ document.addEventListener('init', function (event) {
           var newMyInputedEncoded = JSON.stringify(myInputedDecoded);
           window.localStorage.setItem("myInputed",newMyInputedEncoded);
         }else{
-          ons.notification.alert('Incorrect password key');
+          navigator.notification.alert(
+            "Incorrect password key"
+          );
         }
-      });
+      }
+    }
+  }
+
+  function setLockPassword(){
+    function onSet(results) {
+      if(results.buttonIndex == 1){
+        var lockpassword = sha256_digest(results.input1);
+
+        window.localStorage.setItem("lockPassword",lockpassword);
+        navigator.notification.alert("Set password successfully!");
+      }
     }
 
+    function onConfirm(buttonIndex){
+      if(buttonIndex == 1){
+        window.localStorage.removeItem("lockPassword");
+      }
+    }
+
+    if(window.localStorage.getItem("lockPassword")!= null){
+      navigator.notification.confirm(
+        'You have set the password before, do you want to cancel it?',  // message
+        onConfirm,            // callback to invoke with index of button pressed
+        'Notification',           // title
+        ['Cancel','No']     // buttonLabels
+      );
+    }else{
+      navigator.notification.prompt(
+        'Please input the app unlock password in 4 digital numbers',  // message
+        onSet,                  // callback to invoke
+        'Notification',            // title
+        ['Set','Cancel'],             // buttonLabels
+        ''                 // defaultText
+      );
+    }
+  }
   /********************************************************
   BLOCK 7. keywordSearch()
   Here is a huge function to implement the search function
@@ -1666,7 +1845,7 @@ document.addEventListener('init', function (event) {
   //Refresh pages which only need object-currentUser
   function updatePages3(currentUser){
     $("#usermainpage").html(" ");
-    showUserpage(currentUser);
+    showUserpage();
     $("#postofmine").html(" ");
     showMyposts(currentUser);
   }
@@ -1740,6 +1919,7 @@ document.addEventListener('init', function (event) {
 
   function getDateGap(postDate){
     var date2=new Date();
+
     //date now
     var date3=date2.getTime()-postDate.getTime();
     //day gap
@@ -1764,34 +1944,18 @@ document.addEventListener('init', function (event) {
   //  WEB APPLICATION LOAD
   // ****************************************
   $(document).ready(function(){
-    // showPrompt();
+    // window.localStorage.clear();
+    if (navigator.onLine) {
+      //connect to the internet
+    } else {
+      //No internet
+      $("#usermainpage").html(" ");
+      showUserpage();
 
-    var username = window.localStorage.getItem("Username");
-    var password = window.localStorage.getItem("Password");
+      document.getElementById("beforelogin").style.display = "none";
+      document.getElementById("usermainpage").style.display = "block";
 
-    if(username != null){
-      if (navigator.onLine) {
-        //Connect to the Internet
-        var currentUser = getUser(username);
-        var correctPassword = currentUser.password;
-        if(password == correctPassword){
-          updatePages3(currentUser);
-
-          document.getElementById("beforelogin").style.display = "none";
-          document.getElementById("usermainpage").style.display = "block";
-        }else{
-          ons.notification.alert('Password has been changed, you have to sign in again.');
-        }
-      } else {
-        //No internet
-        $("#usermainpage").html(" ");
-        showUserpage(currentUser);
-
-        document.getElementById("beforelogin").style.display = "none";
-        document.getElementById("usermainpage").style.display = "block";
-
-        $("#onslist").html(" ");
-        showTopicsList();
-      }
+      $("#onslist").html(" ");
+      showTopicsList();
     }
   });

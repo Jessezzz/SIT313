@@ -308,13 +308,19 @@ background-color: #3A9FED;margin-top: 20px;
 #postTitle{
   height: 25px;
   font-size: 23px;
+  border: none;
 }
 #postTitle2{
   height: 25px;
   font-size: 23px;
+  border: none;
 }
-
-
+.logint1{
+  margin-top:5px;
+}
+.logint2{
+  margin-top:5px;
+}
 .toolbar {
   display: block;
   width: 100%;
@@ -401,6 +407,11 @@ padding-top: 10px;
   text-align: left;
 }
 
+#postpic{
+  float:left;
+  margin-left: 20px;
+}
+
 .suggest{width:375px; background-color:#fff;position:absolute;margin:0;padding:0;border-width:1px;border-style:solid;border-color: #999;}
 .suggest ul{list-style:none;display:block;margin:0;padding:0}
 .suggest ul li {padding:3px;line-height:40px;height: 40px;width:90%;font-size: 18px;color: #777;cursor: pointer;border-top: 1px solid #D1D1D1;padding:3px;}
@@ -485,6 +496,7 @@ margin:20px;
   height:60px;width:60px;
   float:left;
   margin-right: 30px;
+  line-height: 84px;
 }
 
 #topictitle{
@@ -512,6 +524,13 @@ margin:20px;
 }
 
 #ddd{
-  margin:10px;
+  margin-left: -5px;
   width:200px;
+}
+#onsb{
+  background-color:#3A9FED;
+  margin-top: 10px;
+}
+#signnwo{
+  text-align:center;color:#999999;font-size:18px;width:100%;display:block;margin:250px auto 20px auto;
 }

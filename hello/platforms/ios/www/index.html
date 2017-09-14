@@ -11,8 +11,11 @@
   <script type="text/javascript" src="cordova.js"></script>
   <script type="text/javascript" src="cordova_plugins.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/ui.js"></script>
   <script type="text/javascript" src="js/dataStore.func.js"></script>
   <script src="js/onsenui.min.js"></script>
+  <script src="js/aes.js"></script>
+  <script src="js/aes-ctr.js"></script>
   <script type="text/javascript" src="js/sha256.js"></script>
 
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -55,20 +58,21 @@
         </div>
         <div class="left">
           <div class="search-bar" style="width:83%;background-color:#3A9FED" onclick="">
-            <input type="search" onkeyup="keywordSearch(this.value)" id="search_input" class="search-input" style="background-color: white;width: 96%; margin: 50px 0 3px 6px;" placeholder="Search">
+            <input type="search" onkeyup="keywordSearch()" id="search_input" class="search-input" style="background-color: white;width: 96%; margin: 50px 0 3px 6px;" placeholder="Search">
           </div>
         </div>
       </ons-toolbar>
 
+      <ons-list-header class="list-header" style="font-weight:normal;background-color:white;font-size: 16px;line-height: 30px;">Search In</ons-list-header>
 
-      <ons-list-header class="list-header" style="font-size: 16px;line-height: 30px;">Search In</ons-list-header>
-      <ons-list-item modifier="longdivider" class="list-item">
-        <ons-checkbox class="checkboxs"  style="margin: 15px;" id="checkTitle" checked="true"></ons-checkbox>
-        <span>Subject</span>
+      <ons-list-item modifier="longdivider" class="list-item" style="height:50px">
+        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin:0;padding:0;top:-20px;" id="checkTitle" checked="true"></ons-checkbox>
+        <span style="margin:0;padding-bottom:40px;top:0;">Subject</span>
       </ons-list-item>
-      <ons-list-item modifier="longdivider" class="list-item">
-        <ons-checkbox class="checkboxs"  style="margin: 15px;" id="checkText" checked="true"></ons-checkbox>
-        <span>Post body</span>
+
+      <ons-list-item modifier="longdivider" class="list-item" style="height:50px">
+        <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin:0;padding:0;top:-20px;" id="checkText" checked="true"></ons-checkbox>
+        <span style="margin:0;padding-bottom:40px;top:0;">Post body</span>
       </ons-list-item>
 
       <div class="suggest" id="search-suggest" style="border:none;display:none">
@@ -134,17 +138,22 @@
             <input style="margin-top:6px;width:90%;" id="postTitle" modifier="underbar" placeholder="Title" float></input>
           </p>
 
-        <div class="toolbar">
-          <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
-          <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
-          <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
-          <a href="#" ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
-          <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
-          <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
-          <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
-          <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
+          <div class="toolbar">
+            <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
+            <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
+            <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
+            <a href="#" ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
+            <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
+            <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
+            <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
+            <a href="javascript:getPic()"><i class='fa fa-image'></i></a>
+          </div>
+          <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input comment here...</div>
+          <div id="private" tappable onclick="addPasswordKey()"><ons-icon  style="margin:10px;margin-left:20px;" icon="ion-unlocked" size="17px"></ons-icon>Set it as private (lock)</div>
+          <div id="public" style="display:none" tappable onclick="deletePasswordKey()"><ons-icon  style="color:#3A9FED;margin:10px;margin-left:20px;" icon="ion-locked" size="17px"></ons-icon>Set it as public (unlock)</div>
+          <div id="postpic"></div>
+          <div id="passwordKey" style="display:none"></div>
         </div>
-        <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input rich text here...</div>
       </div>
     </ons-page>
   </template>
@@ -199,300 +208,316 @@
             <input style="margin-top:6px;width:90%;" id="postTitle2" modifier="underbar" placeholder="Title" float></input>
           </p>
 
-        <div class="toolbar">
-          <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
-          <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
-          <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
-          <a href="#" ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
-          <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
-          <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
-          <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
-          <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
+          <div class="toolbar">
+            <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
+            <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
+            <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
+            <a href="#" ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
+            <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
+            <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
+            <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
+            <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
+          </div>
+          <div id='editor' contenteditable='true'></div>
         </div>
-        <div id='editor2' onfocus="clearEditor(this)" contenteditable='true'>you can input rich text here...</div>
-      </div>
 
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts a post page -->
-<template id="postpage.html">
-  <ons-page id="postpage" >
-    <ons-toolbar id="postToolbar" style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left" >
-        <ons-back-button style="color:white;"></ons-back-button>
       </div>
-      <div class="center" id="topicbar2" style="width:250px;background-color:#3A9FED;color:#ECFDFD">
-      </div>
-      <div class="right" id="topicbar3">
-      </div>
-    </ons-toolbar>
-    <div id="belowbar"></div>
-  </ons-page>
-</template>
-
-
-<!-- Here starts add reply page-->
-<template id="addareply.html">
-  <ons-page id="addareply">
-    <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="color:#FFFFFF;"></ons-back-button>
-      </div>
-      <div class="center" style="color:#FFFFFF;">Edit
-      </div>
-      <div class="right" style="font-size:18px;" id="barofAddreply">
-      </div>
-    </ons-toolbar>
-    <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
-      <div style="text-align: center;">
-        <p>
-          <ons-input style="width:90%;" id="commentText" placeholder="Input your thought here" float></ons-input>
-        </p>
-      </div>
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts the third tab page for User -->
-<template id="userPage.html">
-  <ons-page id="userPage">
-    <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="center" style="color:#FFFFFF">Profile</div>
-      <div class="right" >
-        <ons-toolbar-button>
-          <ons-icon  style="color:#FFFFFF" icon="ion-gear-a" onclick="myNavigator.pushPage('setting.html')"></ons-icon>
-        </ons-toolbar-button>
-      </div>
-    </ons-toolbar>
-    <div id="beforelogin" style="display:block;">
-      <span style="text-align:center;color:#999999;font-size:18px;width:100%;display:block;margin:250px auto 20px auto;">After signing in, all of your favourite teams, published and sbuscribed posts will be displayed here</span>
-      <section style="padding: 8px">
-        <ons-button onclick = "myNavigator.pushPage('login.html')" style="background-color:#3A9FED;"modifier="large">Sign in for more functions</ons-button>
-      </section>
-    </div>
-    <div id="usermainpage" style="display:none;" style="width:100%;height:100%;">
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts the login page -->
-<template id="login.html">
-  <ons-page id="login" >
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
-      </div>
-    </ons-toolbar>
-    <header>
-      <div id="header" style="margin-top:100px;">
-        <img style="width:90px;height:90px;" src="img/nbalogo.png">
-      </div>
-    </header>
-    <ul class="form-con reg-ul">
-      <li class="success">
-        <ons-input style="margin-top:5px;" class="logint" placeholder="Username"  id="_account" type="text"></ons-input>
-      </li>
-      <li>
-        <ons-input style="margin-top:5px;"class="logint" placeholder="Password" id="_pwd" type="password"></ons-input>
-      </li>
-    </ul>
-    <div class="form-btn">
-      <button type="submit" onclick="login()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Sign in</button>
-    </div>
-    <span onclick="myNavigator.pushPage('register.html')" style="float:left;display:block;color:#757575;font-size:16px;margin-left:16px;margin-top:24px;">Register</span>
-    <span onclick="myNavigator.pushPage('#.html')" style="float:right;display:block;color:#757575;font-size:16px;margin-right:16px;margin-top:24px;">Forgot password</span>
-  </ons-page>
-</template>
-
-<!-- Here starts the register page -->
-<template id="register.html">
-  <ons-page id="register">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
-      </div>
-      <div class="center" style="color:#FFFFFF">Register</div>
-    </ons-toolbar>
-    <header>
-      <div id="header" style="margin-top:100px;">
-        <img style="width:90px;height:90px;" src="img/nbalogo.png">
-      </div>
-    </header>
-    <ul class="form-con reg-ul">
-      <li class="success">
-        <ons-input style="margin-top:5px;" class="logint" placeholder="Username"  id="_accountt" type="text"></ons-input>
-      </li>
-      <li>
-        <ons-input style="margin-top:5px;"class="logint" placeholder="Password" id="_pwdd" type="password"></ons-input>
-      </li>
-    </ul>
-    <div class="form-btn">
-      <button type="submit" onclick="register()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Register</button>
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts my teams page -->
-<template id="myteams.html">
-  <ons-page id="myteams">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-      <div class="center" style="color:#FFFFFF">My Teams</div>
-    </ons-toolbar>
-    <div id="tem"></div>
-  </ons-page>
-</template>
-
-<!-- Here starts my posts page -->
-<template id="myposts.html">
-  <ons-page id="myposts">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-      <div class="center" style="color:#FFFFFF">My Posts</div>
-    </ons-toolbar>
-    <div id="postofmine">
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts recent viewing page -->
-<template id="viewing.html">
-  <ons-page id="viewing">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-      <div class="center" style="color:#FFFFFF">Recent viewing</div>
-    </ons-toolbar>
-    <div id="recentView"></div>
-  </ons-page>
-</template>
-
-<!-- Here starts appinfo page -->
-<template id="appinfo.html">
-  <ons-page id="appinfo">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-    </ons-toolbar>
-    <div id="info" style="font-size:18px;margin-top:20px;">
-      <span>Name: NBA Bar</span><br/>
-      <span>Description: Used for discussing between fans from different teams</span><br/><br/>
-      <span>Created by: Yuanxi Zhang</span><br/>
-      <span>Student Number: 216036612</span><br/>
-      <span>Unit: SIT313 Mobile computing</span><br/>
-      <span>Unit chair: Henry Larkin</span><br/>
-    </div>
-  </ons-page>
-</template>
-
-<!-- Here starts setting page -->
-<template id="setting.html">
-  <ons-page id="setting">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-      <div class="center" style="font-size:18px;color:white">Setting</div>
-    </ons-toolbar>
-    <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
-    <ons-list style="font-size:16px;">
-      <ons-list-item tappable onclick="">Change Password<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      <ons-list-item tappable onclick="">Add Contact<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-    </ons-list>
-    <ons-list-header style="background-color:#F9F9F9;color:#999999">Settings</ons-list-header>
-    <ons-list style="font-size:17px;">
-      <ons-list-item tappable onclick="">
-        <div class="center">
-          Image Autoload
-        </div>
-        <div class="right">
-          <ons-switch checked></ons-switch>
-        </div>
-      </ons-list-item>
-      <ons-list-item tappable onclick="">Language<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      <ons-list-item tappable onclick="">
-        <div class="center">
-          Notification
-        </div>
-        <div class="right">
-          <ons-switch></ons-switch>
-        </div>
-      </ons-list-item>
-      <ons-list-item tappable onclick="myNavigator.pushPage('about.html')">About<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-      <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow' icon='ion-chevron-right'></ons-icon></ons-list-item>
-    </ons-list>
-  </ons-page>
-</template>
-
-<!-- Here starts about page -->
-<template id="about.html">
-  <ons-page id="about">
-    <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-      <div class="left">
-        <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
-      </div>
-    </ons-toolbar>
-    <div id="info" style="font-size:18px;margin-top:20px;">
-      <span>Legal - Public Domain media:</span><br/><br/><p style="font-size:15px;">
-        To make my app become more like a real-world app. This app used all information and images are from the Website http://www.sportingnews.com/au/nba<br/><br/>
-        For each post, both of the content and image are from the same article of the website above, <br/><br/>
-        Specific web pages used in app<br/>
-        1.http://www.sportingnews.com/au/nba-au/news/watch-james-hardens-insane-201617-mixtape-rockets/mr3aw1lcv7g31oe577nupe29n<br/>
-        2.http://www.sportingnews.com/au/nba-au/news/lonzo-lavar-ball-nba-summer-league-passes-highlights-video-stats-mvp-big-baller-brand-shoes/1jly0tdp9e1a81x10yo4akjuss<br/>
-        3. http://www.sportingnews.com/au/nba-au/news/rockets-for-sale-team-ceo-tad-brown/3phtp971fxu61d2sj8dajj6gi<br/>
-        4.http://www.sportingnews.com/au/nba-au/news/spurs-manu-ginobili-nba-rumors-new-contract-retirement-free-agency-news/ap9vt06dyzg1bsw5wmhfah9m<br/>
-        5.http://www.sportingnews.com/au/nba-au/news/carmelo-anthony-rumors-blazers-interest-cj-mccollum/kixt87jl3hub1cgqoc3m5fwp4<br/>
-      </p></div>
-      <br/><hr/><br/>
-      <ons-button onclick="throwException();ons.notification.alert('Exception has been throw')">Clik to throw a exception
-      </ons-button><br/><br/>
-      <ons-button onclick="myNavigator.pushPage('exception.html')">View Exception
-      </ons-button>
     </ons-page>
   </template>
 
-  <!-- Here starts through exception page -->
-  <template id="exception.html">
-    <ons-page id="exception">
+  <!-- Here starts a post page -->
+  <template id="postpage.html">
+    <ons-page id="postpage" >
+      <ons-toolbar id="postToolbar" style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left" >
+          <ons-back-button style="color:white;"></ons-back-button>
+        </div>
+        <div class="center" id="topicbar2" style="width:250px;background-color:#3A9FED;color:#ECFDFD">
+        </div>
+        <div class="right" id="topicbar3">
+        </div>
+      </ons-toolbar>
+      <div id="belowbar">
+
+      </div>
+    </ons-page>
+  </template>
+
+
+  <!-- Here starts add reply page-->
+  <template id="addareply.html">
+    <ons-page id="addareply">
+      <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="color:#FFFFFF;"></ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF;">Edit
+        </div>
+        <div class="right" style="font-size:18px;" id="barofAddreply">
+        </div>
+      </ons-toolbar>
+      <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
+        <div style="text-align: center;">
+          <div id='commentText' onfocus="clearComment(this)" contenteditable='true'>you can input your reply here...</div>
+          <div class="toolbar" style="border-top:1px solid #E6E6E6;">
+            <a href="#" style="margin-left:10px;"><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
+          </div>
+        </div>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts the third tab page for User -->
+  <template id="userPage.html">
+    <ons-page id="userPage">
+      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="center" style="color:#FFFFFF">Profile</div>
+        <div class="right" >
+          <ons-toolbar-button>
+            <ons-icon  style="color:#FFFFFF" icon="ion-gear-a" onclick="myNavigator.pushPage('setting.html')"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+      </ons-toolbar>
+      <div id="usermainpage"  style="width:100%;height:100%;">
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts the login page -->
+  <template id="login.html">
+    <ons-page id="login" >
+      <ons-toolbar  style="position:fixed;background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
+        </div>
+      </ons-toolbar>
+      <header>
+        <div id="header" style="margin-top:100px;">
+          <img style="width:90px;height:90px;" src="img/nbalogo.png">
+        </div>
+      </header>
+      <ul class="form-con reg-ul">
+        <li class="success">
+          <ons-input  class="logint1" placeholder="Username"  id="_account" type="text"></ons-input>
+        </li>
+        <li>
+          <ons-input class="logint2" placeholder="Password" id="_pwd" type="password"></ons-input>
+        </li>
+      </ul>
+      <div class="form-btn">
+        <button type="submit" onclick="login()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Sign in</button>
+      </div>
+      <span onclick="myNavigator.pushPage('register.html')" style="float:left;display:block;color:#757575;font-size:16px;margin-left:16px;margin-top:24px;">Register</span>
+      <span onclick="myNavigator.pushPage('#.html')" style="float:right;display:block;color:#757575;font-size:16px;margin-right:16px;margin-top:24px;">Forgot password</span>
+    </ons-page>
+  </template>
+
+  <!-- Here starts the register page -->
+  <template id="register.html">
+    <ons-page id="register">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">Register</div>
+      </ons-toolbar>
+      <header>
+        <div id="header" style="margin-top:100px;">
+          <img style="width:90px;height:90px;" src="img/nbalogo.png">
+        </div>
+      </header>
+      <ul class="form-con reg-ul">
+        <li class="success">
+          <ons-input  class="logint1" placeholder="Username"  id="_accountt" type="text"></ons-input>
+        </li>
+        <li>
+          <ons-input class="logint2" placeholder="Password" id="_pwdd" type="password"></ons-input>
+        </li>
+      </ul>
+      <div class="form-btn">
+        <button type="submit" onclick="register()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Register</button>
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts my teams page -->
+  <template id="myteams.html">
+    <ons-page id="myteams">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">My Teams</div>
+      </ons-toolbar>
+      <div id="tem"></div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts my posts page -->
+  <template id="myposts.html">
+    <ons-page id="myposts">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">My Posts</div>
+      </ons-toolbar>
+      <div id="postofmine">
+      </div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts recent viewing page -->
+  <template id="viewing.html">
+    <ons-page id="viewing">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+        <div class="center" style="color:#FFFFFF">Recent viewing</div>
+      </ons-toolbar>
+      <div id="recentView"></div>
+    </ons-page>
+  </template>
+
+  <!-- Here starts appinfo page -->
+  <template id="appinfo.html">
+    <ons-page id="appinfo">
       <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
         <div class="left">
           <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
         </div>
       </ons-toolbar>
-      <div id="exceptio" style="font-size:17px"></div>
+
+      <ons-list>
+        <ons-list-header>App</ons-list-header>
+        <ons-list-item>Name: NBA Bar</ons-list-item>
+        <ons-list-item>A forum and the topic is related team</ons-list-item>
+      </ons-list>
+
+      <ons-list>
+        <ons-list-header>Author</ons-list-header>
+        <ons-list-item>Email: yuanxiz@deakin.edu.au</ons-list-item>
+        <ons-list-item>Student Number: 216036612</ons-list-item>
+      </ons-list>
+
+      <ons-list>
+        <ons-list-header>Unit info</ons-list-header>
+        <ons-list-item>Unit: SIT313 Mobile computing</ons-list-item>
+        <ons-list-item>Ass: Assignment2</ons-list-item>
+        <ons-list-item>Unit chair: Henry Larkin</ons-list-item>
+      </ons-list>
+
+      <ons-list>
+        <ons-list-header>Legal</ons-list-header>
+        <ons-list-item>To make the app more like a realword app </ons-list-item>
+        <ons-list-item>All data and images are from the Website: </ons-list-item>
+        <ons-list-item>URL:http://www.sportingnews.com/au/nba</ons-list-item>
+      </ons-list>
+
     </ons-page>
   </template>
 
-  <!-- Here starts profile page -->
-  <template id="profile.html">
-    <ons-page id="profile">
-      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+  <!-- Here starts setting page -->
+  <template id="setting.html">
+    <ons-page id="setting">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
         <div class="left">
           <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
         </div>
-        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Edit Profile
-        </div>
+        <div class="center" style="font-size:18px;color:white">Setting</div>
       </ons-toolbar>
-      <div id="contentofp">
-      </div>
+      <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
+      <ons-list style="font-size:16px;">
+        <ons-list-item tappable onclick="">Change Password<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">Add Contact<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      </ons-list>
+      <ons-list-header style="background-color:#F9F9F9;color:#999999">Settings</ons-list-header>
+      <ons-list style="font-size:17px;">
+        <ons-list-item tappable onclick="">
+          <div class="center">
+            Image Autoload
+          </div>
+          <div class="right">
+            <ons-switch checked></ons-switch>
+          </div>
+        </ons-list-item>
+        <ons-list-item tappable onclick="">
+          <div class="center">
+            Notification
+          </div>
+          <div class="right">
+            <ons-switch></ons-switch>
+          </div>
+        </ons-list-item>
+        <ons-list-item tappable onclick="myNavigator.pushPage('about.html')" >Legal<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="">Privacy Policy<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
+        <ons-list-item tappable onclick="setLockPassword()">Set lock password<ons-icon size='23px' class='iconarrow2' icon='ion-chevron-right'></ons-icon></ons-list-item>
+      </ons-list>
     </ons-page>
   </template>
 
-  <!-- Here starts a modal page-->
-  <ons-modal direction="up">
-    <div style="text-align: center">
-      <p>
-        <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Waiting.....
-      </p>
-    </div>
-  </ons-modal>
-</body>
-</html>
+  <!-- Here starts about page -->
+  <template id="about.html">
+    <ons-page id="about">
+      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <div class="left">
+          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+        </div>
+      </ons-toolbar>
+      <div id="info" style="font-size:18px;margin-top:20px;">
+        <span>Legal - Public Domain media:</span><br/><br/><p style="font-size:15px;">
+          To make my app become more like a real-world app. This app used all information and images are from the Website http://www.sportingnews.com/au/nba<br/><br/>
+          For each post, both of the content and image are from the same article of the website above, <br/><br/>
+          Specific web pages used in app<br/>
+          1.http://www.sportingnews.com/au/nba-au/news/watch-james-hardens-insane-201617-mixtape-rockets/mr3aw1lcv7g31oe577nupe29n<br/>
+          2.http://www.sportingnews.com/au/nba-au/news/lonzo-lavar-ball-nba-summer-league-passes-highlights-video-stats-mvp-big-baller-brand-shoes/1jly0tdp9e1a81x10yo4akjuss<br/>
+          3. http://www.sportingnews.com/au/nba-au/news/rockets-for-sale-team-ceo-tad-brown/3phtp971fxu61d2sj8dajj6gi<br/>
+          4.http://www.sportingnews.com/au/nba-au/news/spurs-manu-ginobili-nba-rumors-new-contract-retirement-free-agency-news/ap9vt06dyzg1bsw5wmhfah9m<br/>
+          5.http://www.sportingnews.com/au/nba-au/news/carmelo-anthony-rumors-blazers-interest-cj-mccollum/kixt87jl3hub1cgqoc3m5fwp4<br/>
+        </p></div>
+        <br/><hr/><br/>
+        <ons-button onclick="throwException();ons.notification.alert('Exception has been throw')">Clik to throw a exception
+        </ons-button><br/><br/>
+        <ons-button onclick="myNavigator.pushPage('exception.html')">View Exception
+        </ons-button>
+      </ons-page>
+    </template>
+
+    <!-- Here starts through exception page -->
+    <template id="exception.html">
+      <ons-page id="exception">
+        <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+          <div class="left">
+            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          </div>
+        </ons-toolbar>
+        <div id="exceptio" style="font-size:17px"></div>
+      </ons-page>
+    </template>
+
+    <!-- Here starts profile page -->
+    <template id="profile.html">
+      <ons-page id="profile">
+        <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+          <div class="left">
+            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          </div>
+          <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Edit Profile
+          </div>
+        </ons-toolbar>
+        <div id="contentofp">
+        </div>
+      </ons-page>
+    </template>
+
+    <!-- Here starts a modal page-->
+    <ons-modal direction="up">
+      <div style="text-align: center">
+        <p>
+          <ons-icon icon="md-spinner" size="28px" spin></ons-icon> Waiting.....
+        </p>
+      </div>
+    </ons-modal>
+  </body>
+  </html>

@@ -36,7 +36,7 @@ function addUser(userName,passWord){
   var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":"I haven't input my signature","headpic":null,"myTopics":[],"myPosts":[]});
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "append",
@@ -78,7 +78,7 @@ function followTopic(currentUser,topicid){
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -124,7 +124,7 @@ function unFollowTopic(currentUser,topicid){
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: "http://introtoapps.com/datastore.php",
     data: {
       action: "save",
@@ -258,7 +258,7 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic,p
     success: function(data) {
       for(var i=0; i < data.length; i++){
         if(data[i].topicId == topicID){
-          data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":postdate,"postkeyword":""+postkeyword+"","polls":{"numAgree":"0","numObject":"0"},"postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":[]});
+          data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":postdate,"postkeyword":""+postkeyword+"","polls":{"numAgree":"0","numObject":"0"},"postPic":postpic,"comments":[]});
         }
       }
       dataChanged = JSON.stringify(data);
@@ -269,7 +269,7 @@ function addPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic,p
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -321,7 +321,7 @@ function AgreeOrObject(topicId,postId,m){
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -368,7 +368,7 @@ function editPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic,
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -413,7 +413,7 @@ function addReply(topicID,postID,commentid,commenttext,commenauthor,commentDate)
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -458,7 +458,7 @@ function deletePost(topicID,postID){
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -508,7 +508,7 @@ function deleteCmt(topicID,postID,commentID){
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -549,7 +549,7 @@ function addMyPost(postauthor,topicid,postid){
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -595,7 +595,7 @@ function deleteMyPost(postauthor,topicid,postid){
   });
 
   $.ajax({
-    type: "POST",
+    type: "GET",
     url: baseUrl,
     data: {
       action: "save",
@@ -640,7 +640,7 @@ function deleteMyPost(postauthor,topicid,postid){
     });
 
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: baseUrl,
       data: {
         action: "save",
