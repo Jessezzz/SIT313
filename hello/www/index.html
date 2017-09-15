@@ -37,12 +37,13 @@
   <!-- Here starts the first tab page called NBA -->
   <template id="mainPage.html">
     <ons-page id="mainPage">
-      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
-        <div class="left" style="color:#ECFDFD"><ons-icon onclick="myNavigator.pushPage('search.html')" style="margin-left:10px;" size="25px" icon="ion-ios-search-strong" ></ons-icon>
+      <ons-toolbar style="background-color:#424242;color:#D6D6D6;">
+        <div class="left"><ons-icon onclick="myNavigator.pushPage('search.html')" style="margin-left:10px;" size="25px" icon="ion-ios-search-strong" ></ons-icon>
         </div>
-        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Recommend
-        </div>
+    <div class="center" style="font-weight:bold;font-weight:bold;color:#D6D6D6;">Recommend</div>
       </ons-toolbar>
+
+
       <!-- Here starts post abstracts of the first tab page  -->
       <div  id="allpostabstrcts">
       </div>
@@ -52,18 +53,18 @@
   <!-- Here starts the search page when cilck the search bar of the first page -->
   <template id="search.html">
     <ons-page id="search">
-      <ons-toolbar style="background-color:#3A9FED">
+      <ons-toolbar style="background-color:#424242;color:#D6D6D6">
         <div class="right" style="margin-right:7px;">
-          <ons-back-button style="font-size:18px;color:white;">Cancel</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Cancel</ons-back-button>
         </div>
         <div class="left">
-          <div class="search-bar" style="width:83%;background-color:#3A9FED" onclick="">
-            <input type="search" onkeyup="keywordSearch()" id="search_input" class="search-input" style="background-color: white;width: 96%; margin: 50px 0 3px 6px;" placeholder="Search">
+          <div class="search-bar" style="width:83%;background-color:#424242;color:#D6D6D6" onclick="">
+            <input type="search" onkeyup="keywordSearch()" id="search_input" class="search-input" style="background-color:#424242;color:#D6D6D6;width: 96%; margin: 50px 0 3px 6px;" placeholder="Search">
           </div>
         </div>
       </ons-toolbar>
 
-      <ons-list-header class="list-header" style="font-weight:normal;background-color:white;font-size: 16px;line-height: 30px;">Search In</ons-list-header>
+      <ons-list-header class="list-header" style="font-weight:normal;background-color:#D6D6D6;font-size: 16px;line-height: 30px;">Search In</ons-list-header>
 
       <ons-list-item modifier="longdivider" class="list-item" style="height:50px">
         <ons-checkbox class="checkboxs"  onchange = "keywordSearch()" style="margin:0;padding:0;top:-20px;" id="checkTitle" checked="true"></ons-checkbox>
@@ -88,8 +89,8 @@
   <!-- Here starts the second tab page called Fourm -->
   <template id="topicLists.html" >
     <ons-page id="topicLists" >
-      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
-        <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Forum
+      <ons-toolbar style="background-color:#424242;color:#D6D6D6">
+        <div class="center" style="font-weight:bold;color:#D6D6D6">Forum
         </div>
       </ons-toolbar>
       <ons-list id="onslist">
@@ -103,11 +104,11 @@
       <ons-pull-hook>
         <ons-icon size="30px" spin icon="md-spinner"></ons-icon>
       </ons-pull-hook>
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6">
         <div class="left">
-          <ons-back-button style="color:white"></ons-back-button>
+          <ons-back-button style="color:#D6D6D6"></ons-back-button>
         </div>
-        <div class="center" id="topicbar" style="width:250px;background-color:#3A9FED;color:#ECFDFD">
+        <div class="center" id="topicbar" style="color:#D6D6D6;width:250px;">
         </div>
         <div class="right" id="addpostbutton">
           <ons-toolbar-button id="addpost"><ons-icon  style='color:#FFFFFF' icon='ion-compose'></ons-icon></ons-toolbar-button>
@@ -123,37 +124,42 @@
   <!-- Here starts add post page-->
   <template id="addapost.html">
     <ons-page id="addapost">
-      <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar   style="background-color:#424242;color:#D6D6D6">
         <div class="left">
-          <ons-back-button style="color:#FFFFFF;"></ons-back-button>
+          <ons-back-button style="color:#D6D6D6"></ons-back-button>
         </div>
-        <div class="center" style="color:#FFFFFF;">Edit
+        <div class="center" style="font-weight:bold;color:#D6D6D6">Edit
         </div>
         <div class="right" style="font-size:18px;" id="barofAddpost">
         </div>
       </ons-toolbar>
       <div id="post_content" style="width:100%;height:100%;background-color:#FFFFFF;">
-        <div style="text-align: center;">
-          <p>
-            <input style="margin-top:6px;width:90%;" id="postTitle" modifier="underbar" placeholder="Title" float></input>
-          </p>
+
+        <div id="postmain">
+            <!-- <input  id="postTitle3" modifier="underbar" placeholder="Title">
 
           <div class="toolbar">
-            <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
-            <a href="#" data-command='italic'><i class='fa fa-italic'></i></a>
-            <a href="#" data-command='underline'><i class='fa fa-underline'></i></a>
-            <a href="#" ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
-            <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
-            <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
-            <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
+            <a href="javascript:richText()" data-command='bold'><i class='fa fa-bold'></i></a>
+            <a href="javascript:richText()" data-command='italic'><i class='fa fa-italic'></i></a>
+            <a href="javascript:richText()" data-command='underline'><i class='fa fa-underline'></i></a>
+            <a href="javascript:richText()" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
+            <a href="javascript:richText()" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
+            <a href="javascript:richText()" data-command='createlink'><i class='fa fa-link'></i></a>
+            <a ><ons-icon  icon="ion-android-happy" size="17px" onclick="showEmoj(this)"></ons-icon></a>
             <a href="javascript:getPic()"><i class='fa fa-image'></i></a>
-          </div>
-          <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input comment here...</div>
-          <div id="private" tappable onclick="addPasswordKey()"><ons-icon  style="margin:10px;margin-left:20px;" icon="ion-unlocked" size="17px"></ons-icon>Set it as private (lock)</div>
-          <div id="public" style="display:none" tappable onclick="deletePasswordKey()"><ons-icon  style="color:#3A9FED;margin:10px;margin-left:20px;" icon="ion-locked" size="17px"></ons-icon>Set it as public (unlock)</div>
-          <div id="postpic"></div>
-          <div id="passwordKey" style="display:none"></div>
+          </div> -->
+          <!-- <div id='editor' onfocus="clearEditor(this)" contenteditable='true'>you can input comment here...</div> -->
         </div>
+        <div id="private" tappable onclick="addPasswordKey()"><ons-icon  style="margin:10px;margin-left:20px;" icon="ion-unlocked" size="17px"></ons-icon>Set it as private (lock)</div>
+        <div id="public" style="display:none" tappable onclick="deletePasswordKey()"><ons-icon  style="color:#424242;margin:10px;margin-left:20px;" icon="ion-locked" size="17px"></ons-icon>Set it as public (unlock)</div>
+        <div id="passwordKey" style="display:none"></div>
+
+          <form enctype="multipart/form-data" id="formaup"method="post"  action="http://introtoapps.com/datastore.php?action=upload&appid=216036612">
+            <ons-icon  icon="ion-image" size="17px"></ons-icon><a id="uploada" href="javascript:uploadPic()">Click here to upload picture</a><br/>
+              <input id="img" name="files" type="file" />
+          </form>
+          <div id="filename" style="display:none"></div>
+
       </div>
     </ons-page>
   </template>
@@ -195,9 +201,9 @@
   <!-- Here starts edit post page-->
   <template id="editapost.html">
     <ons-page id="editapost">
-      <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar   style="background-color:#424242;color:#D6D6D6">
         <div class="left">
-          <ons-back-button style="color:#FFFFFF;"></ons-back-button>
+          <ons-back-button style="color:#D6D6D6"></ons-back-button>
         </div>
         <div class="right" style="font-size:18px;" id="barofEditpost">
         </div>
@@ -216,7 +222,6 @@
             <a href="#" data-command='insertUnorderedList'><i class='fa fa-list-ul'></i></a>
             <a href="#" data-command='insertOrderedList'><i class='fa fa-list-ol'></i></a>
             <a href="#" data-command='createlink'><i class='fa fa-link'></i></a>
-            <a href="#" data-command='insertimage'><i class='fa fa-image'></i></a>
           </div>
           <div id='editor' contenteditable='true'></div>
         </div>
@@ -228,11 +233,11 @@
   <!-- Here starts a post page -->
   <template id="postpage.html">
     <ons-page id="postpage" >
-      <ons-toolbar id="postToolbar" style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar id="postToolbar" style="background-color:#424242;color:#D6D6D6">
         <div class="left" >
-          <ons-back-button style="color:white;"></ons-back-button>
+          <ons-back-button style="color:#D6D6D6"></ons-back-button>
         </div>
-        <div class="center" id="topicbar2" style="width:250px;background-color:#3A9FED;color:#ECFDFD">
+        <div class="center" id="topicbar2" style="width:250px;color:#D6D6D6">
         </div>
         <div class="right" id="topicbar3">
         </div>
@@ -247,11 +252,11 @@
   <!-- Here starts add reply page-->
   <template id="addareply.html">
     <ons-page id="addareply">
-      <ons-toolbar   style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar   style="background-color:#424242;color:#D6D6D6">
         <div class="left">
-          <ons-back-button style="color:#FFFFFF;"></ons-back-button>
+          <ons-back-button style="color:#D6D6D6"></ons-back-button>
         </div>
-        <div class="center" style="color:#FFFFFF;">Edit
+        <div class="center" style="font-weight:bold;color:#D6D6D6">Edit
         </div>
         <div class="right" style="font-size:18px;" id="barofAddreply">
         </div>
@@ -270,11 +275,11 @@
   <!-- Here starts the third tab page for User -->
   <template id="userPage.html">
     <ons-page id="userPage">
-      <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
-        <div class="center" style="color:#FFFFFF">Profile</div>
+      <ons-toolbar style="background-color:#424242;color:#D6D6D6">
+        <div class="center" style="font-weight:bold;color:#D6D6D6">Profile</div>
         <div class="right" >
           <ons-toolbar-button>
-            <ons-icon  style="color:#FFFFFF" icon="ion-gear-a" onclick="myNavigator.pushPage('setting.html')"></ons-icon>
+            <ons-icon  style="color:#D6D6D6;" icon="ion-gear-a" onclick="myNavigator.pushPage('setting.html')"></ons-icon>
           </ons-toolbar-button>
         </div>
       </ons-toolbar>
@@ -286,9 +291,9 @@
   <!-- Here starts the login page -->
   <template id="login.html">
     <ons-page id="login" >
-      <ons-toolbar  style="position:fixed;background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;position:fixed;">
         <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Cancel</ons-back-button>
         </div>
       </ons-toolbar>
       <header>
@@ -305,21 +310,20 @@
         </li>
       </ul>
       <div class="form-btn">
-        <button type="submit" onclick="login()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Sign in</button>
+        <button type="submit" onclick="login()" style="color:#D6D6D6;background-color:#424242" class="btn" name="login" value="yes">Sign in</button>
       </div>
       <span onclick="myNavigator.pushPage('register.html')" style="float:left;display:block;color:#757575;font-size:16px;margin-left:16px;margin-top:24px;">Register</span>
-      <span onclick="myNavigator.pushPage('#.html')" style="float:right;display:block;color:#757575;font-size:16px;margin-right:16px;margin-top:24px;">Forgot password</span>
     </ons-page>
   </template>
 
   <!-- Here starts the register page -->
   <template id="register.html">
     <ons-page id="register">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
-        <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Cancel</ons-back-button>
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
+        <div class="left" style="color:#D6D6D6">
+          <ons-back-button style="font-size:18px;color:#D6D6D6;">Cancel</ons-back-button>
         </div>
-        <div class="center" style="color:#FFFFFF">Register</div>
+        <div class="center" style="font-weight:bold;color:#D6D6D6;">Register</div>
       </ons-toolbar>
       <header>
         <div id="header" style="margin-top:100px;">
@@ -335,7 +339,7 @@
         </li>
       </ul>
       <div class="form-btn">
-        <button type="submit" onclick="register()" style="color:white;background-color:#3A9FED" class="btn" name="login" value="yes">Register</button>
+        <button type="submit" onclick="register()" style="color:#D6D6D6;background-color:#424242" class="btn" name="login" value="yes">Register</button>
       </div>
     </ons-page>
   </template>
@@ -343,11 +347,11 @@
   <!-- Here starts my teams page -->
   <template id="myteams.html">
     <ons-page id="myteams">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
         <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
         </div>
-        <div class="center" style="color:#FFFFFF">My Teams</div>
+        <div class="center" style="font-weight:bold;color:#D6D6D6;">My Teams</div>
       </ons-toolbar>
       <div id="tem"></div>
     </ons-page>
@@ -356,11 +360,11 @@
   <!-- Here starts my posts page -->
   <template id="myposts.html">
     <ons-page id="myposts">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
         <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
         </div>
-        <div class="center" style="color:#FFFFFF">My Posts</div>
+        <div class="center" style="font-weight:bold;color:#D6D6D6;">My Posts</div>
       </ons-toolbar>
       <div id="postofmine">
       </div>
@@ -370,11 +374,11 @@
   <!-- Here starts recent viewing page -->
   <template id="viewing.html">
     <ons-page id="viewing">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
         <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
         </div>
-        <div class="center" style="color:#FFFFFF">Recent viewing</div>
+        <div class="center" style="font-weight:bold;color:#D6D6D6;">Recent viewing</div>
       </ons-toolbar>
       <div id="recentView"></div>
     </ons-page>
@@ -383,9 +387,9 @@
   <!-- Here starts appinfo page -->
   <template id="appinfo.html">
     <ons-page id="appinfo">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
         <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
         </div>
       </ons-toolbar>
 
@@ -421,11 +425,11 @@
   <!-- Here starts setting page -->
   <template id="setting.html">
     <ons-page id="setting">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
         <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
         </div>
-        <div class="center" style="font-size:18px;color:white">Setting</div>
+        <div class="center" style="font-weight:bold;color:#D6D6D6;font-size:18px;">Setting</div>
       </ons-toolbar>
       <ons-list-header style="background-color:#F9F9F9;color:#999999">Account</ons-list-header>
       <ons-list style="font-size:16px;">
@@ -460,9 +464,9 @@
   <!-- Here starts about page -->
   <template id="about.html">
     <ons-page id="about">
-      <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+      <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
         <div class="left">
-          <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+          <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
         </div>
       </ons-toolbar>
       <div id="info" style="font-size:18px;margin-top:20px;">
@@ -487,9 +491,9 @@
     <!-- Here starts through exception page -->
     <template id="exception.html">
       <ons-page id="exception">
-        <ons-toolbar  style="background-color:#3A9FED;color:#FFFFFF">
+        <ons-toolbar  style="background-color:#424242;color:#D6D6D6;">
           <div class="left">
-            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+            <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
           </div>
         </ons-toolbar>
         <div id="exceptio" style="font-size:17px"></div>
@@ -499,11 +503,11 @@
     <!-- Here starts profile page -->
     <template id="profile.html">
       <ons-page id="profile">
-        <ons-toolbar style="background-color:#3A9FED;color:#FFFFFF">
+        <ons-toolbar style="background-color:#424242;color:#D6D6D6;">
           <div class="left">
-            <ons-back-button style="font-size:18px;color:white">Back</ons-back-button>
+            <ons-back-button style="color:#D6D6D6;font-size:18px;">Back</ons-back-button>
           </div>
-          <div class="center" style="background-color:#3A9FED;color:#ECFDFD">Edit Profile
+          <div class="center" style="font-weight:bold;color:#D6D6D6;">Edit Profile
           </div>
         </ons-toolbar>
         <div id="contentofp">

@@ -664,7 +664,86 @@ document.addEventListener('init', function (event) {
     var addclick = $("<p class='addclick' >Add</p>");
     $("#barofAddpost").append(addclick);
 
-    richText();
+    var titleNode = $("<input>").attr("id","postTitle3");
+    titleNode.attr("modifier","underbar");
+    titleNode.attr("placeholder","Title");
+    $("#postmain").append(titleNode);
+
+
+    var toolbar = $("<div/>").attr("class","toolbar");
+    $("#postmain").append(toolbar);
+
+    var tool1 = $("<a/>").attr("data-command","bold");
+    var tool1i = $("<i/>").attr("class","fa fa-bold");
+    tool1.append(tool1i);
+    toolbar.append(tool1);
+    tool1.on("click",function(){
+      richText(this);
+    });
+
+    var tool2 = $("<a/>").attr("data-command","italic");
+    var tool2i = $("<i/>").attr("class","fa fa-italic");
+    tool2.append(tool2i);
+    toolbar.append(tool2);
+    tool2.on("click",function(){
+      richText(this);
+    });
+
+    var tool3 = $("<a/>").attr("data-command","underline");
+    var tool3i = $("<i/>").attr("class","fa fa-underline");
+    tool3.append(tool3i);
+    toolbar.append(tool3);
+    tool3.on("click",function(){
+      richText(this);
+    });
+
+    var tool4 = $("<a/>").attr("data-command","insertUnorderedList");
+    var tool4i = $("<i/>").attr("class","fa fa-list-ul");
+    tool4.append(tool4i);
+    toolbar.append(tool4);
+    tool4.on("click",function(){
+      richText(this);
+    });
+
+    var tool5 = $("<a/>").attr("data-command","insertOrderedList");
+    var tool5i = $("<i/>").attr("class","fa fa-list-ol");
+    tool5.append(tool5i);
+    toolbar.append(tool5);
+    tool5.on("click",function(){
+      richText(this);
+    });
+
+    var tool6 = $("<a/>").attr("data-command","createlink");
+    var tool6i = $("<i/>").attr("class","fa fa-link");
+    tool6.append(tool6i);
+    toolbar.append(tool6);
+    tool6.on("click",function(){
+      richText(this);
+    });
+
+    var tool7 = $("<a/>");
+    var tool7i = $("<ons-icon/>").attr("icon","ion-android-happy");
+    tool7i.attr("size","17px");
+    tool7.append(tool7i);
+    toolbar.append(tool7);
+    tool7.on("click",function(){
+      showEmoj(this);
+    });
+
+    var editor = $("<div/>").attr("id","editor");
+    editor.attr("contenteditable","true");
+    $("#postmain").append(editor);
+    $("#postmain").append("<br/>");
+    editor.on("focus",function(){
+      var textbox = document.getElementById('editor');
+      var sel = window.getSelection();
+      var range = document.createRange();
+      range.selectNodeContents(textbox);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    })
+
 
     addclick.on("click",function(){
       //If the biggest id of post is a, and the new id is a+1
@@ -675,8 +754,10 @@ document.addEventListener('init', function (event) {
         }
       }
       var postid = max+1;
-      var posttitle = document.getElementById('postTitle').value;
+      var posttitle = document.getElementById('postTitle3').value;
       var posttext = document.getElementById('editor').innerHTML;
+
+      console.log(posttext);
 
       var postkeyword = document.getElementById('passwordKey').innerHTML;
 
@@ -701,16 +782,8 @@ document.addEventListener('init', function (event) {
         Hours: currentHours
       };
 
-      // var postpic = "img/1.jpg";
-      var postpic;
-      if($("#postpic") == null){
-        postpic = null;
-      }else{
-        // postpic = $("#postpic").attr("src");
-        postpic = window.localStorage.getItem("postpic");
-        // postpic = AesCtr.encrypt($("#postpic").attr("src"),"1",256);
-      }
-      // ons.notification.alert(postpic);
+      var postpic = $("#filename").html().toString();
+      console.log(postpic);
 
       showModal();
 
@@ -762,7 +835,6 @@ document.addEventListener('init', function (event) {
       $("#editor").html(allTopics[topicindex].posts[postindex].postText);
     }
 
-    richText();
 
     addclick.on("click",function(){
       var postid = postID;
@@ -920,11 +992,10 @@ document.addEventListener('init', function (event) {
     polls.append("<span id='pollnum2'>"+allTopics[topicindex].posts[postindex].polls.numObject+"</span>");
 
     //show post page - post + pic + text (content)
-    var postppic = null;
 
     if(allTopics[topicindex].posts[postindex].postkeyword.length == 0){
       //public post
-      responsePost.append("<img style='width:94%;margin:12px;' src='"+postppic+"'>");
+      responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
       responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+allTopics[topicindex].posts[postindex].postText+"</div>");
       responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
 
@@ -935,7 +1006,7 @@ document.addEventListener('init', function (event) {
         if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
           //I agreed
           var polls = $("<div id='polls'></div>");
-          var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+          var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#424242' icon='ion-thumbsup' size='35px'></ons-icon>");
           polls.append(poll1);
           responsePost.append(polls);
         }
@@ -958,7 +1029,7 @@ document.addEventListener('init', function (event) {
       console.log("post after decrypting: "+origText);
       if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
         //My post
-        responsePost.append("<img style='  width:94%;margin:12px;' src='"+postppic+"'>");
+        responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'>");
         responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
         responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
 
@@ -969,7 +1040,7 @@ document.addEventListener('init', function (event) {
           if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
             //I agreed
             var polls = $("<div id='polls'></div>");
-            var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+            var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#424242' icon='ion-thumbsup' size='35px'></ons-icon>");
             polls.append(poll1);
             responsePost.append(polls);
           }
@@ -993,11 +1064,11 @@ document.addEventListener('init', function (event) {
           var lockpost = $("<div id='lockPost'></div>");
           lockpost.append("<ons-icon id='lockIcon' icon='ion-locked' size='17px'></ons-icon>");
           lockpost.append("This is a private post, you have to input the password to see all contents");
-          lockpost.append("<span style='color:#3A9FED;' onclick='inputPostkey("+allTopics[topicindex].posts[postindex].postkeyword+","+topicID+","+postID+")'> Unlock</span>");
+          lockpost.append("<span style='color:#424242;' onclick='inputPostkey("+allTopics[topicindex].posts[postindex].postkeyword+","+topicID+","+postID+")'> Unlock</span>");
           responsePost.append(lockpost);
         }else{
           //I have input the password
-          responsePost.append("<img style='  width:94%;margin:12px;' src='"+postppic+"'>");
+          responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
           responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
           responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
           responsePost.append(lockpost);
@@ -1008,7 +1079,7 @@ document.addEventListener('init', function (event) {
             if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
               //I agreed
               var polls = $("<div id='polls'></div>");
-              var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+              var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#424242' icon='ion-thumbsup' size='35px'></ons-icon>");
               polls.append(poll1);
               responsePost.append(polls);
             }
@@ -1241,7 +1312,7 @@ document.addEventListener('init', function (event) {
               postTitle = allTopics[index2].posts[index3].postTitle;
               //Get the date gap of post date to current
               var postDate = allTopics[index2].posts[index3].postDate;
-var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDate.Hours);
+              var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDate.Hours);
               var dateString = getDateGap(postFormatedDate);
             }
           }
@@ -1286,7 +1357,7 @@ var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDa
                 postTitle = allTopics[index2].posts[index3].postTitle;
                 //Get the date gap of post date to current
                 var postDate = allTopics[index2].posts[index3].postDate;
-var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDate.Hours);
+                var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDate.Hours);
                 var dateString = getDateGap(postFormatedDate);
               }
             }
@@ -1318,25 +1389,45 @@ var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDa
   The functions includes bold text, Itelic text, underline, bullet points, URL hyperlinks.
   It can also add emoj and include other languages but not English
   ******************************************************************************************/
-  function richText(){
-    $('.toolbar a').click(function(e) {
-      var command = $(this).data('command');
-      document.getElementById("editor").focus();
-      if (command == 'bold' || command == 'italic'|| command == 'italic' || command == 'underline' || command == 'insertUnorderedList' || command == 'insertOrderedList') {
-        if($(this).css("color") == "rgb(30, 136, 229)"){
-          $(this).css("color","#adb5b9");
-        }else{
-          $(this).css("color","#1E88E5");
-        }
+  function getPic(){
+    navigator.camera.getPicture(onSuccess, onFail, {
+      quality: 50,                                       // 相片质量是50
+      sourceType : Camera.PictureSourceType.SAVEDPHOTOALBUM, // 设置从图片库获取
+      destinationType: Camera.DestinationType.DATA_URL       // 以base64返回
+    });
+    function onSuccess(imageData) {
+      console.log(imageData)
+      $("#postimg").attr("src","data:image/jpeg;base64," + imageData);
+
+      // $("#img").attr("value","data:image/jpeg;base64," + imageData);
+      $("#img").val("data:image/jpeg;base64," + imageData);
+    }
+    function onFail(message) {
+      alert('Failed because: ' + message);
+    }
+  }
+
+  function richText(node){
+    // $("#editor").focus();
+
+    var command = node.attributes[0].value;
+    if (command == 'bold' || command == 'italic'|| command == 'underline' || command == 'insertUnorderedList' || command == 'insertOrderedList') {
+      if(node.style.color == "rgb(30, 136, 229)"){
+        node.style.color = "#adb5b9";
+      }else{
+        node.style.color = "#1E88E5";
       }
+    }
+
+    $("#editor").on("keydown",function(){
       if (command == 'createlink') {
         url = prompt('Enter the link here: ', 'http:\/\/');
-        document.execCommand($(this).data('command'), false, url);
+        document.execCommand(command, true, url);
       }
       else {
-        document.execCommand($(this).data('command'), false, null);
+        document.execCommand(command, true, null);
       }
-    });
+    })
   }
 
 
@@ -1370,52 +1461,6 @@ var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDa
     }
   }
 
-  function getPic(){
-    // Open the pic library
-    navigator.camera.getPicture(onSuccess, onFail, {
-      quality: 50,
-      sourceType : Camera.PictureSourceType.SAVEDPHOTOALBUM,
-      destinationType: Camera.DestinationType.FILE_URI       // back file URI
-    });
-
-    function onSuccess(imageURI) {
-      $('#postpic').append('<img id="postimg" width="100px" height:"60px" src='+imageURI+'>');
-
-      upload(imageURI);
-
-      //set the key of the postpic in datebase
-      window.localStorage.setItem("postpic",imageURI.substr(imageURI.lastIndexOf('/')+1));
-    }
-
-    function onFail(message) {
-      alert('Failed because: ' + message);
-    }
-
-    function upload(fileURL){
-      var success = function (r) {
-        alert("upload success! Code = " + r.responseCode);
-      }
-      var fail = function (error) {
-        alert("upload fail! Code = " + error.code);
-      }
-
-      var options = new FileUploadOptions();
-      options.fileKey = "file1";
-      options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-      //options.mimeType = "text/plain";
-
-      var params = {};
-      params.value1 = "test";
-      params.value2 = "param";
-      options.params = params;
-
-      var ft = new FileTransfer();
-
-      var SERVER = "http://introtoapps.com/datastore.php?action=save&appid=216036612&objectid=pics";
-      ft.upload(fileURL, encodeURI(SERVER), success, fail, options);
-    }
-  }
-
   /***************************************************************
   BLOCK 5. polls
   This app include Polls as discussion posts
@@ -1444,7 +1489,7 @@ var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDa
           window.localStorage.setItem("myVoted",newMyVotedEncoded);
 
           AgreeOrObject(id1,id2,1);
-          $("#pollicon1").css("color","#3A9FED");
+          $("#pollicon1").css("color","#424242");
           $("#pollicon2").css("display","none");
           $("#pollnum1").css("display","none");
           $("#pollnum2").css("display","none");
@@ -1471,7 +1516,7 @@ var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDa
           window.localStorage.setItem("myVoted",newMyVotedEncoded);
 
           AgreeOrObject(id1,id2,3);
-          $("#pollicon2").css("color","#3A9FED");
+          $("#pollicon2").css("color","#424242");
           $("#pollicon1").css("display","none");
           $("#pollnum1").css("display","none");
           $("#pollnum2").css("display","none");
@@ -1562,7 +1607,7 @@ var postFormatedDate = new Date(postDate.year,postDate.month,postDate.day,postDa
             if(window.localStorage.getItem("myVoted").indexOf(strAgree) != (-1)){
               //I agreed
               var polls = $("<div id='polls'></div>");
-              var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#3A9FED' icon='ion-thumbsup' size='35px'></ons-icon>");
+              var poll1 = $("<ons-icon id='pollicon1' onclick='haveVoted()' style='color:#424242' icon='ion-thumbsup' size='35px'></ons-icon>");
               polls.append(poll1);
               $("#main_post").append(polls);
             }

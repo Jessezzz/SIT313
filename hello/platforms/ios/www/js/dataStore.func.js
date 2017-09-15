@@ -33,7 +33,7 @@ function userExist(){
 }
 
 function addUser(userName,passWord){
-  var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":"I haven't input my signature","headpic":null,"myTopics":[],"myPosts":[]});
+  var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":"I haven't input my signature","headpic":"img/1.jpg","myTopics":[],"myPosts":[]});
 
   $.ajax({
     type: "GET",
@@ -611,46 +611,71 @@ function deleteMyPost(postauthor,topicid,postid){
 }
 
 
-  function editProfile(currentuser,nickName,signature){
-    var dataChanged;
-    var newUser={"username":currentuser.username,"password":currentuser.password,"nickname":nickName,"signature":signature,"headpic":null,"myTopics":currentuser.myTopics,"myPosts":currentuser.myPosts};
+function editProfile(currentuser,nickName,signature){
+  var dataChanged;
+  var newUser={"username":currentuser.username,"password":currentuser.password,"nickname":nickName,"signature":signature,"headpic":null,"myTopics":currentuser.myTopics,"myPosts":currentuser.myPosts};
 
-    $.ajax({
-      type: "GET",
-      url: baseUrl,
-      data: {
-        action: "load",
-        appid: baseAppid ,
-        objectid: "users",
-      },
-      dataType: "json",
-      async : false,
-      success: function(data) {
-        for(var i=0; i < data.length; i++){
-          if(data[i].username == currentuser.username){
-            data.splice(i,1);
-            data.push(newUser);
-          }
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "load",
+      appid: baseAppid ,
+      objectid: "users",
+    },
+    dataType: "json",
+    async : false,
+    success: function(data) {
+      for(var i=0; i < data.length; i++){
+        if(data[i].username == currentuser.username){
+          data.splice(i,1);
+          data.push(newUser);
         }
-        dataChanged = JSON.stringify(data);
-      },
-      fail: function(jqXHR){
-        console.log(jqXHR.status);
-      },
-    });
+      }
+      dataChanged = JSON.stringify(data);
+    },
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
 
-    $.ajax({
-      type: "GET",
-      url: baseUrl,
-      data: {
-        action: "save",
-        appid: baseAppid ,
-        objectid: "users",
-        data: dataChanged
-      },
-      dataType: "json",
-      fail: function(jqXHR){
-        console.log(jqXHR.status);
-      },
-    });
-  }
+  $.ajax({
+    type: "GET",
+    url: baseUrl,
+    data: {
+      action: "save",
+      appid: baseAppid ,
+      objectid: "users",
+      data: dataChanged
+    },
+    dataType: "json",
+    fail: function(jqXHR){
+      console.log(jqXHR.status);
+    },
+  });
+}
+
+function uploadPic(){
+  var newdata = new FormData();
+  newdata.append('files', $('input[name=files]')[0].files[0]);
+  var fileType = $('input[name=files]')[0].files[0].type;
+  fileType = fileType.replace("image/", "");
+  var randomNum = (new Date()).valueOf();
+  var fileName = randomNum+"."+fileType;
+  console.log(fileName);
+  $("#filename").html(fileName);
+
+  $.ajax({
+    url: 'http://introtoapps.com/datastore.php?appid=216036612&action=upload&objectid='+fileName,
+    method: 'POST',
+    data: newdata,
+    contentType: false,
+    processData: false,
+    cache: false,
+    success: function(data) {
+      console.log("upload successfully!");
+    },
+    error: function (data) {
+    }
+  });
+}

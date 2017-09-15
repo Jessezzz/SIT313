@@ -63,8 +63,8 @@ window.postabstract = function(posttitle,pic,topictitle,replynum,author){
   contentNode.append(posttitleNode);
 
   var picNode = $("<div/>").attr("class","pics");
-  var pic = $("<img>").attr("src",pic);
-  picNode.append(pic);
+  var pict = $("<img src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+pic+"&type=binary'/>")
+  picNode.append(pict);
   contentNode.append(picNode);
 
   var footerNode = $("<div/>").attr("class","footer");

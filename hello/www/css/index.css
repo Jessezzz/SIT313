@@ -120,6 +120,9 @@
   width:40px;
   height:40px;
 }
+#img{
+  margin-top: 5px;
+}
 #mypost_pic img{
   float: left;
   margin-left: 10px;
@@ -141,7 +144,7 @@
   line-height:20px;
 }
 #main_post a{
-  color:#3A9FED;
+  color:#424242;
 }
 
 #main_post ol li{
@@ -209,13 +212,10 @@
   font-weight: bold;
 }
 
-
-
 #user_top{
   background-color: white;
-  margin-top:10px;
   height:160px;
-
+  margin-top: 10px;
 }
 #recentView{
   width:96%;
@@ -229,6 +229,11 @@
   margin: 16px;
   line-height: 25px;
 }
+#formaup{
+  clear:both;overflow:hidden;
+  margin-left: 20px;color:#999999;
+  margin-top: 10px;
+}
 #postofmine{
   width:96%;
 }
@@ -241,6 +246,8 @@
   border:1px solid #DBDBDB;
   line-height: 70px;
 }
+
+
 #user_top_center{
   margin-top:30px;
   width:55%;
@@ -249,8 +256,8 @@
   margin-left: 10px;
 }
 #logb{
-  height:50px;line-height:50px;text-align:center;color:white;font-size:20px;font-weight:bold;
-  background-color: #3A9FED;
+  height:50px;line-height:50px;text-align:center;color:#424242;font-size:20px;font-weight:bold;
+  background-color: white;
 }
 #user_top_right{
   float:right;
@@ -265,12 +272,12 @@
   padding-top: 20px;
 }
 #changePho{
-text-align:center;font-size:17px;display:block;color:#247ABA;margin:10px auto;
+text-align:center;font-size:17px;display:block;color:#424242;margin:10px auto;
 }
 
 #savebu{
 height:50px;line-height:50px;font-size:20px;text-align:center;color:white;font-weight:bold;
-background-color: #3A9FED;margin-top: 20px;
+background-color: #424242;margin-top: 20px;
 }
 
 #user_bottom{
@@ -283,6 +290,11 @@ background-color: #3A9FED;margin-top: 20px;
   height:60px;
   line-height: 60px;
   border-bottom: 1px solid #DBDBDB;
+}
+
+#uploada{
+  font-size: 16px;
+  margin-left: 7px;
 }
 .iconarrow{
   color:#999999;
@@ -299,7 +311,7 @@ background-color: #3A9FED;margin-top: 20px;
 .iconthem{
   margin-left:25px;
   margin-right:10px;
-  color:#3A9FED;
+  color:#424242;
 }
 .text-input{
   line-height: 50px;
@@ -314,6 +326,14 @@ background-color: #3A9FED;margin-top: 20px;
   height: 25px;
   font-size: 23px;
   border: none;
+}
+
+#postTitle3{
+  margin-top:6px;width:90%;
+  height: 25px;
+  font-size: 20px;
+  border: none;
+  margin-left: 10px;
 }
 .logint1{
   margin-top:5px;
@@ -377,7 +397,7 @@ padding-top: 10px;
 }
 
 #editor a{
-    color:#3A9FED;
+    color:#424242;
 }
 
 #editor ul li{
@@ -453,7 +473,7 @@ margin:20px;
 
 #lockIcon{
   float:left;display:block;
-  color:#3A9FED;margin:10px;margin-left:10px;
+  color:#424242;margin:10px;margin-left:10px;
 }
 
 #polls{
@@ -524,11 +544,11 @@ margin:20px;
 }
 
 #ddd{
-  margin-left: -5px;
+  margin-left: -3px;
   width:200px;
 }
 #onsb{
-  background-color:#3A9FED;
+  background-color:#424242;
   margin-top: 10px;
 }
 #signnwo{
