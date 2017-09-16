@@ -1994,12 +1994,6 @@ document.addEventListener('init', function (event) {
       //connect to the internet
     } else {
       //No internet
-      $("#usermainpage").html(" ");
-      showUserpage();
-
-      document.getElementById("beforelogin").style.display = "none";
-      document.getElementById("usermainpage").style.display = "block";
-
       $("#onslist").html(" ");
       showTopicsList();
     }

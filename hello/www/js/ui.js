@@ -17,12 +17,7 @@ window.topic = function(title,pic,subnum,postsnum){
 
   var labelNode = $("<div/>").attr("class","lab");
   wordsNode.append(labelNode);
-  //subscribenum + postsnum
-
-  var subnumNode = $("<span/>");
-  subnumNode.append("<span style='font-weight:normal;'>Members</span>&nbsp;");
-  subnumNode.append(subnum + "&nbsp;&nbsp;");
-  labelNode.append(subnumNode);
+  //postsnum
 
   var postsnumNode = $("<span/>");
   postsnumNode.append("<span style='font-weight:normal;'>Posts</span>&nbsp;");

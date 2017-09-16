@@ -36,6 +36,16 @@
   margin: 10px;
   /*margin-top:37px;*/
 }
+
+#search_input{
+  background-color:#424242;color:#D6D6D6;width: 96%; margin: 50px 0 3px 6px;
+  border:1px solid #757476;
+}
+
+#search-header{
+  font-weight:normal;background-color:#D6D6D6;font-size: 16px;line-height: 30px;
+  background-color: white;
+}
 .contents{
   width:90%;
   height:25%;
