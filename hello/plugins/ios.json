@@ -23,6 +23,9 @@
         },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.example.hello"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.example.hello"
         }
     },
     "dependent_plugins": {

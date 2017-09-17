@@ -14,7 +14,7 @@ var app = {
 
   // Update DOM on a Received Event
   receivedEvent: function(id) {
-    // showPrompt();
+    showPrompt();
 
     var parentElement = document.getElementById(id);
     var listeningElement = parentElement.querySelector('.listening');
@@ -347,9 +347,13 @@ document.addEventListener('init', function (event) {
 
   function abstractsTOpost(node,topicID,postID){
     node.on("click",function(){
-      window.localStorage.RecentTopicId = ""+topicID+" "+window.localStorage.RecentTopicId+"";
-      window.localStorage.RecentPostId = ""+postID+" "+window.localStorage.RecentPostId+"";
-      myNavigator.pushPage('postpage.html',{data:{topicid:topicID,postid:postID}});
+      if(window.localStorage.getItem("Nickname") == null){
+        ons.notification.alert('Login to see more information!.');
+      }else{
+        window.localStorage.RecentTopicId = ""+topicID+" "+window.localStorage.RecentTopicId+"";
+        window.localStorage.RecentPostId = ""+postID+" "+window.localStorage.RecentPostId+"";
+        myNavigator.pushPage('postpage.html',{data:{topicid:topicID,postid:postID}});
+      }
     })
   };
 
@@ -782,6 +786,8 @@ document.addEventListener('init', function (event) {
         Hours: currentHours
       };
 
+      uploadPic();
+
       var postpic = $("#filename").html().toString();
       console.log(postpic);
 
@@ -826,7 +832,87 @@ document.addEventListener('init', function (event) {
     var addclick = $("<p id='addclick'>Change</p>");
     $("#barofEditpost").append(addclick);
 
-    $("#postTitle2").val(allTopics[topicindex].posts[postindex].postTitle);
+    var titleNode = $("<input>").attr("id","postTitle3");
+    titleNode.attr("modifier","underbar");
+    titleNode.attr("placeholder","Title");
+    $("#postmain").append(titleNode);
+
+
+    var toolbar = $("<div/>").attr("class","toolbar");
+    $("#postmain").append(toolbar);
+
+    var tool1 = $("<a/>").attr("data-command","bold");
+    var tool1i = $("<i/>").attr("class","fa fa-bold");
+    tool1.append(tool1i);
+    toolbar.append(tool1);
+    tool1.on("click",function(){
+      richText(this);
+    });
+
+    var tool2 = $("<a/>").attr("data-command","italic");
+    var tool2i = $("<i/>").attr("class","fa fa-italic");
+    tool2.append(tool2i);
+    toolbar.append(tool2);
+    tool2.on("click",function(){
+      richText(this);
+    });
+
+    var tool3 = $("<a/>").attr("data-command","underline");
+    var tool3i = $("<i/>").attr("class","fa fa-underline");
+    tool3.append(tool3i);
+    toolbar.append(tool3);
+    tool3.on("click",function(){
+      richText(this);
+    });
+
+    var tool4 = $("<a/>").attr("data-command","insertUnorderedList");
+    var tool4i = $("<i/>").attr("class","fa fa-list-ul");
+    tool4.append(tool4i);
+    toolbar.append(tool4);
+    tool4.on("click",function(){
+      richText(this);
+    });
+
+    var tool5 = $("<a/>").attr("data-command","insertOrderedList");
+    var tool5i = $("<i/>").attr("class","fa fa-list-ol");
+    tool5.append(tool5i);
+    toolbar.append(tool5);
+    tool5.on("click",function(){
+      richText(this);
+    });
+
+    var tool6 = $("<a/>").attr("data-command","createlink");
+    var tool6i = $("<i/>").attr("class","fa fa-link");
+    tool6.append(tool6i);
+    toolbar.append(tool6);
+    tool6.on("click",function(){
+      richText(this);
+    });
+
+    var tool7 = $("<a/>");
+    var tool7i = $("<ons-icon/>").attr("icon","ion-android-happy");
+    tool7i.attr("size","17px");
+    tool7.append(tool7i);
+    toolbar.append(tool7);
+    tool7.on("click",function(){
+      showEmoj(this);
+    });
+
+    var editor = $("<div/>").attr("id","editor");
+    editor.attr("contenteditable","true");
+    $("#postmain").append(editor);
+    $("#postmain").append("<br/>");
+    editor.on("focus",function(){
+      var textbox = document.getElementById('editor');
+      var sel = window.getSelection();
+      var range = document.createRange();
+      range.selectNodeContents(textbox);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    })
+
+    $("#postTitle3").val(allTopics[topicindex].posts[postindex].postTitle);
 
     if(allTopics[topicindex].posts[postindex].postkeyword.length != 0){
       var text = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText,allTopics[topicindex].posts[postindex].postkeyword,256);
@@ -835,13 +921,30 @@ document.addEventListener('init', function (event) {
       $("#editor").html(allTopics[topicindex].posts[postindex].postText);
     }
 
-
     addclick.on("click",function(){
       var postid = postID;
-      var posttitle = document.getElementById('postTitle2').value;
+      var posttitle = document.getElementById('postTitle3').value;
+      if(allTopics[topicindex].posts[postindex].postkeyword.length != 0){
       var posttext = AesCtr.encrypt($('#editor').html(),allTopics[topicindex].posts[postindex].postkeyword,256);
-      var postdate = allTopics[topicindex].posts[postindex].postDate;
-      var postpic = "";
+      }else{
+      var posttext = $('#editor').html();
+      }
+      var today=new Date();
+      var currentYear=today.getFullYear();
+      var currentMonth=today.getMonth();
+      var currentDay=today.getDate();
+      var currentHours=today.getHours();
+
+      var postdate  =
+      {
+        year : currentYear,
+        month : currentMonth,
+        day : currentDay,
+        Hours: currentHours
+      };
+
+      var postpic = allTopics[topicindex].posts[postindex].postPic;
+
       var postkeyword = allTopics[topicindex].posts[postindex].postkeyword;
       var agree = allTopics[topicindex].posts[postindex].polls.numAgree;
       var object = allTopics[topicindex].posts[postindex].polls.numObject;
@@ -897,7 +1000,20 @@ document.addEventListener('init', function (event) {
       }
       var commentid = max+1;
       var commenttext = document.getElementById('commentText').innerHTML;
-      var commentDate = "Just now"
+
+      var today=new Date();
+      var currentYear=today.getFullYear();
+      var currentMonth=today.getMonth();
+      var currentDay=today.getDate();
+      var currentHours=today.getHours();
+      var commentDate  =
+      {
+        year : currentYear,
+        month : currentMonth,
+        day : currentDay,
+        Hours: currentHours
+      };
+
       addReply(topicID,postID,commentid,commenttext,window.localStorage.getItem("Username"),commentDate);
 
       showModal();
@@ -917,6 +1033,7 @@ document.addEventListener('init', function (event) {
   This function shows all posts that are in the "topics" variable.
   */
   function showPost(topicID,postID){
+
     //GET the position of the post
     var allTopics = getTopics();
     var topicindex;
@@ -968,7 +1085,6 @@ document.addEventListener('init', function (event) {
     var responseWriter = $("<div id='response_writer'></div>");
     responsePage.append(responseWriter);
     var responsePic = $("<div id='response_pic'></div>");
-
     responsePic.append("<img src='"+currentAuthor.headpic+"'>");
 
     var responseUser = $("<div id='response_user'></div>");
@@ -994,12 +1110,15 @@ document.addEventListener('init', function (event) {
     //show post page - post + pic + text (content)
 
     if(allTopics[topicindex].posts[postindex].postkeyword.length == 0){
-      //public post
-      responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
+      // public post
+      if(allTopics[topicindex].posts[postindex].postPic != ""){
+        responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
+      }
       responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+allTopics[topicindex].posts[postindex].postText+"</div>");
       responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
 
       var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
+
       if(window.localStorage.getItem("myVoted").indexOf(str) != (-1)){
         //if i have voted
         var strAgree = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'","vote":"1"';
@@ -1029,7 +1148,10 @@ document.addEventListener('init', function (event) {
       console.log("post after decrypting: "+origText);
       if(window.localStorage.getItem("Nickname") == currentAuthor.nickname){
         //My post
-        responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'>");
+        if(allTopics[topicindex].posts[postindex].postPic != ""){
+          responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
+        }
+
         responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
         responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
 
@@ -1068,7 +1190,9 @@ document.addEventListener('init', function (event) {
           responsePost.append(lockpost);
         }else{
           //I have input the password
-          responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
+          if(allTopics[topicindex].posts[postindex].postPic != ""){
+            responsePost.append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
+          }
           responsePost.append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
           responsePost.append("<p style='font-size:16px;color:#999999;'>"+currentAuthor.signature+"</p>");
           responsePost.append(lockpost);
@@ -1104,9 +1228,14 @@ document.addEventListener('init', function (event) {
       var responseComment = $("<div id='comments'></div>");
       var commentWriter = $("<div id='response_writer'></div>");
 
+      //Get the date gap of post date to current
+      var commentDate = allTopics[topicindex].posts[postindex].commentDate;
+
+      var dateString = getDateGap(postFormatedDate);
+
       responseComment.append(commentWriter);
       var commentPic = $("<div id='response_pic'></div>");
-      commentPic.append("<img src='img/head.jpg'>");
+      commentPic.append("<img src='"+currentAuthor.headpic+"'>");
       var commentUser = $("<div id='comment_user'></div>");
       commentUser.append("<span style='font-size:17px;color:#0060AA;'>"+currentAuthor.nickname+"</span>");
       var deleteIcon = $("<ons-icon style='float:right;margin-right:15px;' size='22px' icon='ion-more' ></ons-icon><br>")
@@ -1118,7 +1247,7 @@ document.addEventListener('init', function (event) {
         commentUser.append(replyIcon);
         replyOtherComment(replyIcon,topicID,postID,index);
       }
-      commentUser.append("<span style='font-size:14px;'>"+allTopics[topicindex].posts[postindex].comments[index].commentDate+"</span>");
+      commentUser.append("<span style='font-size:14px;'>"+dateString+"</span>");
       commentWriter.append(commentPic);
       commentWriter.append(commentUser);
       responseComment.append("<p style='font-size:16px; margin-left:60px;'>"+allTopics[topicindex].posts[postindex].comments[index].commentText+"");
@@ -1154,10 +1283,10 @@ document.addEventListener('init', function (event) {
       var headpic = window.localStorage.getItem("Headpic");
 
       var userTop = $("<div id='user_top'></div>");
-      var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:100px;height:100px;' src='img/124.png'>");
+      var userTopLeft = $("<div id='user_top_left' style='float:left' ><img style='width:100px;height:100px;' src='"+headpic+"'>");
       var userTopCenter = $("<div id='user_top_center'></div>");
       userTopCenter.append("<span style='font-weight:bold;font-size:24px;'>"+nickname+"</span><br/>");
-      userTopCenter.append("<div style='display:block;margin-top:10px;font-size:16px;'>"+signature+"</div><br/>");
+      userTopCenter.append("<div style='line-height:30px;display:block;margin-top:10px;font-size:16px;'>"+signature+"</div><br/>");
       var userTopicRight = $("<div id='user_top_right'><ons-icon icon='ion-chevron-right'></ons-icon></div>");
       userTop.append(userTopLeft);
       userTop.append(userTopCenter);
@@ -1229,13 +1358,9 @@ document.addEventListener('init', function (event) {
     }
     var username = window.localStorage.getItem("Username");
 
-    var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:100px;height:100px;' src='img/124.png'></div>");
+    var head = $("<div id='user_top_left' style='margin:20px auto;' ><img style='width:100px;height:100px;' src='"+currentuser.headpic+"'></div>");
     $("#contentofp").append(head);
-    var changehead = $("<span id='changePho'>Change Profile Photo<span>");
-    $("#contentofp").append(changehead);
-    changehead.on("click",function(){
 
-    });
     var userBottom = $("<div id='user_bottom'></div>");
     var bottomList1 = $("<div class='user_bottom_lists' font-size:20px;>&nbsp;&nbsp;&nbsp;Nickname:&nbsp;&nbsp;&nbsp;<input id='proin1'  style='line-height:30px;font-size:18px;border:none;' maxlength='15' type='text' value='"+nickname+"'></input></div>");
     var bottomList2 = $("<div class='user_bottom_lists' style='height:70px;'><div style='float:left;'>&nbsp;&nbsp;&nbsp;Signature:&nbsp;&nbsp;&nbsp;&nbsp;</div><textarea id='proin2' maxlength='55' type='text' style='border:none;float:left;font-size:15px;height:60px;line-height:30px;width:60%' >"+signature+"</textarea></div>");
@@ -1252,9 +1377,10 @@ document.addEventListener('init', function (event) {
       setTimeout(function() {
         var nickName = document.getElementById('proin1').value;
         var signature = document.getElementById('proin2').value;
+        var headPic = currentuser.headpic;
         window.localStorage.setItem("Nickname",nickName);
         window.localStorage.setItem("Signature",signature);
-        editProfile(currentuser,nickName,signature);
+        editProfile(currentuser,nickName,signature,headPic);
 
         ons.notification.alert('Save successfully.');
         updatePages3(currentuser);
@@ -1419,15 +1545,21 @@ document.addEventListener('init', function (event) {
       }
     }
 
-    $("#editor").on("keydown",function(){
-      if (command == 'createlink') {
-        url = prompt('Enter the link here: ', 'http:\/\/');
-        document.execCommand(command, true, url);
-      }
-      else {
-        document.execCommand(command, true, null);
-      }
-    })
+
+
+    $("#editor").on("focus",function(){
+    if (command == 'createlink') {
+      url = prompt('Enter the link here: ', 'http:\/\/');
+      document.execCommand(command,false, url);
+    }
+  })
+
+  $("#editor").on("keydown",function(){
+    if (command != 'createlink') {
+      document.execCommand(command,false, null);
+    }
+  })
+
   }
 
 
@@ -1597,7 +1729,10 @@ document.addEventListener('init', function (event) {
           var origText = AesCtr.decrypt(allTopics[topicindex].posts[postindex].postText, allTopics[topicindex].posts[postindex].postkeyword, 256);
           console.log("post after decrypting: "+origText);
           $("#lockPost").css("display","none");
-          $("#main_post").append("<img style='  width:94%;margin:12px;' src='"+allTopics[topicindex].posts[postindex].postPic+"'>");
+
+          if(allTopics[topicindex].posts[postindex].postPic != ""){
+            $("#main_post").append("<img style='width:94%;margin:12px;' src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+allTopics[topicindex].posts[postindex].postPic+"&type=binary'/>");
+          }
           $("#main_post").append("<div style='font-size:17px;margin-left: 20px;'>"+origText+"</div>");
           $("#main_post").append("<p style='font-size:16px;color:#999999; '>"+currentAuthor.signature+"</p>");
           var str = '{"user":"'+window.localStorage.getItem("Nickname")+'","topicId":"'+topicID+'","postId":"'+postID+'"';
@@ -1798,7 +1933,7 @@ document.addEventListener('init', function (event) {
           var topicPic = findTopicPic(topicId);
           var postTitle = findPostTitle(topicId,postId);
 
-          var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
+          var hint = $("<li style='font-size:7px' onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
           $("#search-result").append(hint);
         }
       }
@@ -1844,7 +1979,7 @@ document.addEventListener('init', function (event) {
             var topicPic = findTopicPic(topicId);
             var postTitle = findPostTitle(topicId,postId);
 
-            var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
+            var hint = $("<li style='font-size:7px' onclick='searchTopost("+topicId+","+postId+")'><img style='height:40px;width:40px;' src='"+topicPic +"'><label style='height:40px;'>"+postTitle+"</label></li>");
             $("#search-result").append(hint);
           }
         }else{
@@ -1856,7 +1991,7 @@ document.addEventListener('init', function (event) {
               var postId = resultsThanTwo[index][1];
               var postTitle = findPostTitle(topicId,postId);
 
-              var hint = $("<li onclick='searchTopost("+topicId+","+postId+")'>"+postTitle+"</li>");
+              var hint = $("<li style='font-size:7px' onclick='searchTopost("+topicId+","+postId+")'>"+postTitle+"</li>");
               $("#search-result").append(hint);
             }
           }
@@ -1985,6 +2120,8 @@ document.addEventListener('init', function (event) {
     }
   }
 
+
+
   // ****************************************
   //  WEB APPLICATION LOAD
   // ****************************************
@@ -1994,12 +2131,6 @@ document.addEventListener('init', function (event) {
       //connect to the internet
     } else {
       //No internet
-      $("#usermainpage").html(" ");
-      showUserpage();
-
-      document.getElementById("beforelogin").style.display = "none";
-      document.getElementById("usermainpage").style.display = "block";
-
       $("#onslist").html(" ");
       showTopicsList();
     }

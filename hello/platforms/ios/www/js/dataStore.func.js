@@ -33,7 +33,7 @@ function userExist(){
 }
 
 function addUser(userName,passWord){
-  var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":"I haven't input my signature","headpic":"img/1.jpg","myTopics":[],"myPosts":[]});
+  var newUser=JSON.stringify({"username":userName,"password":passWord,"nickname":userName,"signature":"I haven't input my signature","headpic":"img/33.JPG","myTopics":[],"myPosts":[]});
 
   $.ajax({
     type: "GET",
@@ -355,7 +355,7 @@ function editPost(topicID,postid,posttitle,posttext,postauthor,postdate,postpic,
           for(var j=0; j < data[i].posts.length; j++){
             if(data[i].posts[j].postId == postid){
               data[i].posts.splice(j,1);
-              data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":""+postdate+"","postkeyword":""+postkeyword+"","polls":{"numAgree":agree,"numObject":object},"postPic":"img/anthony-carmelo-usnews-getty-ftr_zoj1q7021ij81uu3jw475t8tr.jpg","comments":comments});
+              data[i].posts.push({"postId":""+postid+"","postTitle":""+posttitle+"","postText":""+posttext+"","postAuthor":""+postauthor+"","postDate":postdate,"postkeyword":""+postkeyword+"","polls":{"numAgree":agree,"numObject":object},"postPic":postpic,"comments":comments});
             }
           }
         }
@@ -400,7 +400,7 @@ function addReply(topicID,postID,commentid,commenttext,commenauthor,commentDate)
         if(data[i].topicId == topicID){
           for(var j=0; j < data[i].posts.length ; j++){
             if(data[i].posts[j].postId == postID){
-              data[i].posts[j].comments.push({"commentId":""+commentid+"","commentText":""+commenttext+"","commentAuthor":""+commenauthor+"","commentDate":""+commentDate+""});
+              data[i].posts[j].comments.push({"commentId":""+commentid+"","commentText":""+commenttext+"","commentAuthor":""+commenauthor+"","commentDate":commentDate});
             }
           }
         }
@@ -611,9 +611,9 @@ function deleteMyPost(postauthor,topicid,postid){
 }
 
 
-function editProfile(currentuser,nickName,signature){
+function editProfile(currentuser,nickName,signature,headPic){
   var dataChanged;
-  var newUser={"username":currentuser.username,"password":currentuser.password,"nickname":nickName,"signature":signature,"headpic":null,"myTopics":currentuser.myTopics,"myPosts":currentuser.myPosts};
+  var newUser={"username":currentuser.username,"password":currentuser.password,"nickname":nickName,"signature":signature,"headpic":""+headPic+"","myTopics":currentuser.myTopics,"myPosts":currentuser.myPosts};
 
   $.ajax({
     type: "GET",
@@ -656,26 +656,28 @@ function editProfile(currentuser,nickName,signature){
 }
 
 function uploadPic(){
-  var newdata = new FormData();
-  newdata.append('files', $('input[name=files]')[0].files[0]);
-  var fileType = $('input[name=files]')[0].files[0].type;
-  fileType = fileType.replace("image/", "");
-  var randomNum = (new Date()).valueOf();
-  var fileName = randomNum+"."+fileType;
-  console.log(fileName);
-  $("#filename").html(fileName);
+  if($('input[name=files]')[0].files[0] != null){
+    var newdata = new FormData();
+    newdata.append('files', $('input[name=files]')[0].files[0]);
+    var fileType = $('input[name=files]')[0].files[0].type;
+    fileType = fileType.replace("image/", "");
+    var randomNum = (new Date()).valueOf();
+    var fileName = randomNum+"."+fileType;
+    console.log(fileName);
+    $("#filename").html(fileName);
 
-  $.ajax({
-    url: 'http://introtoapps.com/datastore.php?appid=216036612&action=upload&objectid='+fileName,
-    method: 'POST',
-    data: newdata,
-    contentType: false,
-    processData: false,
-    cache: false,
-    success: function(data) {
-      console.log("upload successfully!");
-    },
-    error: function (data) {
-    }
-  });
+    $.ajax({
+      url: 'http://introtoapps.com/datastore.php?appid=216036612&action=upload&objectid='+fileName,
+      method: 'POST',
+      data: newdata,
+      contentType: false,
+      processData: false,
+      cache: false,
+      success: function(data) {
+        console.log("upload successfully!");
+      },
+      error: function (data) {
+      }
+    });
+  }
 }

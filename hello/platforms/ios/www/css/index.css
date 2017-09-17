@@ -36,6 +36,16 @@
   margin: 10px;
   /*margin-top:37px;*/
 }
+
+#search_input{
+  background-color:#424242;color:#D6D6D6;width: 96%; margin: 50px 0 3px 6px;
+  border:1px solid #757476;
+}
+
+#search-header{
+  font-weight:normal;background-color:#D6D6D6;font-size: 16px;line-height: 30px;
+  background-color: white;
+}
 .contents{
   width:90%;
   height:25%;
@@ -185,8 +195,10 @@
 }
 #ban_con img{
   float:left;
-  height:63px;
-  width:63px;
+  height:70px;
+  width:70px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 #ban_words{
   float:left;
@@ -204,7 +216,7 @@
 }
 #topic{
   font-weight: bold;
-  font-size:18px;
+  font-size:20px;
 }
 .lab{
   margin-top:15px;
@@ -268,8 +280,8 @@
 
 #contentofp{
   background-color: white;
-  margin-top: -20px;
   padding-top: 20px;
+  margin-top: 20px;
 }
 #changePho{
 text-align:center;font-size:17px;display:block;color:#424242;margin:10px auto;
@@ -277,7 +289,7 @@ text-align:center;font-size:17px;display:block;color:#424242;margin:10px auto;
 
 #savebu{
 height:50px;line-height:50px;font-size:20px;text-align:center;color:white;font-weight:bold;
-background-color: #424242;margin-top: 20px;
+background-color: #424242;margin-top: 35px;
 }
 
 #user_bottom{
@@ -294,7 +306,7 @@ background-color: #424242;margin-top: 20px;
 
 #uploada{
   font-size: 16px;
-  margin-left: 7px;
+  margin-left:10px;
 }
 .iconarrow{
   color:#999999;
@@ -521,6 +533,7 @@ margin:20px;
 
 #topictitle{
   margin-top:20px;
+  font-weight: 500;
 }
 
 #onsbutton1{
@@ -545,7 +558,7 @@ margin:20px;
 
 #ddd{
   margin-left: -3px;
-  width:200px;
+  width:250px;
 }
 #onsb{
   background-color:#424242;

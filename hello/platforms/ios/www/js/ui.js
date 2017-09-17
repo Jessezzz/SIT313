@@ -17,12 +17,7 @@ window.topic = function(title,pic,subnum,postsnum){
 
   var labelNode = $("<div/>").attr("class","lab");
   wordsNode.append(labelNode);
-  //subscribenum + postsnum
-
-  var subnumNode = $("<span/>");
-  subnumNode.append("<span style='font-weight:normal;'>Members</span>&nbsp;");
-  subnumNode.append(subnum + "&nbsp;&nbsp;");
-  labelNode.append(subnumNode);
+  //postsnum
 
   var postsnumNode = $("<span/>");
   postsnumNode.append("<span style='font-weight:normal;'>Posts</span>&nbsp;");
@@ -64,8 +59,10 @@ window.postabstract = function(posttitle,pic,topictitle,replynum,author){
 
   var picNode = $("<div/>").attr("class","pics");
   var pict = $("<img src='http://introtoapps.com/datastore.php?appid=216036612&action=load&objectid="+pic+"&type=binary'/>")
-  picNode.append(pict);
-  contentNode.append(picNode);
+  if(pic!=""){
+    picNode.append(pict);
+    contentNode.append(picNode);
+  }
 
   var footerNode = $("<div/>").attr("class","footer");
   postabstractNode.append(footerNode);
