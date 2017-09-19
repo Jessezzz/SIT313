@@ -374,7 +374,12 @@ background-color: #424242;margin-top: 35px;
   color: #adb5b9;
 }
 
+.sl-custom-file{position:relative;display:inline-block;zoom:1;cursor:pointer;overflow:hidden;vertical-align:middle;}
+.sl-custom-file .ui-input-file{position:absolute;right:0;top:0;_zoom:30;font-size:300px\9;height:100%;_height:auto;opacity:0;filter:alpha(opacity=0);-ms-filter:"alpha(opacity=0)";cursor:pointer;}
+
 #editor {
+  line-height: 25px;
+/*-webkit-user-select:text;*/
 max-width: 100%;
 width: 90%;
 resize: both;
@@ -389,6 +394,40 @@ margin-left:5%;
 float: left;
 text-align: left;
 padding-top: 10px;
+}
+
+#editor p{
+  -webkit-user-select:text;
+}
+#editor ul{
+  margin-left: 20px;
+  -webkit-user-select:text;
+}
+#editor ol{
+  margin-left: 20px;
+  -webkit-user-select:text;
+}
+#editor br{
+  -webkit-user-select:text;
+}
+#editor li{
+  -webkit-user-select:text;
+}
+
+#editor a{
+  -webkit-user-select:text;
+}
+
+#editor b{
+  -webkit-user-select:text;
+}
+
+#editor u{
+  -webkit-user-select:text;
+}
+
+#editor i{
+  -webkit-user-select:text;
 }
 
 #commentText {

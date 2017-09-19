@@ -675,6 +675,7 @@ document.addEventListener('init', function (event) {
 
 
     var toolbar = $("<div/>").attr("class","toolbar");
+    toolbar.attr("id","toolbar");
     $("#postmain").append(toolbar);
 
     var tool1 = $("<a/>").attr("data-command","bold");
@@ -734,20 +735,9 @@ document.addEventListener('init', function (event) {
       showEmoj(this);
     });
 
-    var editor = $("<div/>").attr("id","editor");
-    editor.attr("contenteditable","true");
+    var editor = $("<div contenteditable='true' id='editor'><p>&nbsp;</p></div>");
     $("#postmain").append(editor);
     $("#postmain").append("<br/>");
-    editor.on("focus",function(){
-      var textbox = document.getElementById('editor');
-      var sel = window.getSelection();
-      var range = document.createRange();
-      range.selectNodeContents(textbox);
-      range.collapse(false);
-      sel.removeAllRanges();
-      sel.addRange(range);
-    })
-
 
     addclick.on("click",function(){
       //If the biggest id of post is a, and the new id is a+1
@@ -760,6 +750,9 @@ document.addEventListener('init', function (event) {
       var postid = max+1;
       var posttitle = document.getElementById('postTitle3').value;
       var posttext = document.getElementById('editor').innerHTML;
+
+      var posttext = $("#editor").html();
+      posttext = posttext.replace(/&nbsp;/g,"");
 
       console.log(posttext);
 
@@ -839,6 +832,7 @@ document.addEventListener('init', function (event) {
 
 
     var toolbar = $("<div/>").attr("class","toolbar");
+    toolbar.attr("id","toolbar");
     $("#postmain").append(toolbar);
 
     var tool1 = $("<a/>").attr("data-command","bold");
@@ -898,19 +892,23 @@ document.addEventListener('init', function (event) {
       showEmoj(this);
     });
 
-    var editor = $("<div/>").attr("id","editor");
-    editor.attr("contenteditable","true");
+    var editor = $("<div contenteditable='true' id='editor'><p>&nbsp;</p></div>");
     $("#postmain").append(editor);
     $("#postmain").append("<br/>");
-    editor.on("focus",function(){
-      var textbox = document.getElementById('editor');
-      var sel = window.getSelection();
-      var range = document.createRange();
-      range.selectNodeContents(textbox);
-      range.collapse(false);
-      sel.removeAllRanges();
-      sel.addRange(range);
-    })
+
+    // var editor = $("<div/>").attr("id","editor");
+    // editor.attr("contenteditable","true");
+    // $("#postmain").append(editor);
+    // $("#postmain").append("<br/>");
+    // editor.on("focus",function(){
+    //   var textbox = document.getElementById('editor');
+    //   var sel = window.getSelection();
+    //   var range = document.createRange();
+    //   range.selectNodeContents(textbox);
+    //   range.collapse(false);
+    //   sel.removeAllRanges();
+    //   sel.addRange(range);
+    // })
 
     $("#postTitle3").val(allTopics[topicindex].posts[postindex].postTitle);
 
@@ -1186,7 +1184,7 @@ document.addEventListener('init', function (event) {
           var lockpost = $("<div id='lockPost'></div>");
           lockpost.append("<ons-icon id='lockIcon' icon='ion-locked' size='17px'></ons-icon>");
           lockpost.append("This is a private post, you have to input the password to see all contents");
-          lockpost.append("<span style='color:#424242;' onclick='inputPostkey("+allTopics[topicindex].posts[postindex].postkeyword+","+topicID+","+postID+")'> Unlock</span>");
+          lockpost.append("<span style='color:#0865AD;' onclick='inputPostkey("+allTopics[topicindex].posts[postindex].postkeyword+","+topicID+","+postID+")'> Unlock</span>");
           responsePost.append(lockpost);
         }else{
           //I have input the password
@@ -1534,32 +1532,34 @@ document.addEventListener('init', function (event) {
   }
 
   function richText(node){
-    // $("#editor").focus();
-
     var command = node.attributes[0].value;
     if (command == 'bold' || command == 'italic'|| command == 'underline' || command == 'insertUnorderedList' || command == 'insertOrderedList') {
-      if(node.style.color == "rgb(30, 136, 229)"){
-        node.style.color = "#adb5b9";
-      }else{
+
+        $("#toolbar a").css("color","#adb5b9");
+
         node.style.color = "#1E88E5";
-      }
+
+        switch(command){
+          case 'bold':
+          $("#editor").append("<b>&nbsp;</b><br>");
+          break;
+          case 'italic':
+          $("#editor").append("<i>&nbsp;</i><br>");
+          break;
+          case 'underline':
+          $("#editor").append("<u>&nbsp;</u><br>");
+          break;
+          case 'insertUnorderedList':
+          $("#editor").append("<ul><li>&nbsp;</li></ul>");
+          break;
+          case 'insertOrderedList':
+          $("#editor").append("<ol><li>&nbsp;</li></ol>");
+          break;
+        }
+
+    }else if(command == 'createlink' ){
+      $("#editor").append("<a>&nbsp;</a><br>");
     }
-
-
-
-    $("#editor").on("focus",function(){
-    if (command == 'createlink') {
-      url = prompt('Enter the link here: ', 'http:\/\/');
-      document.execCommand(command,false, url);
-    }
-  })
-
-  $("#editor").on("keydown",function(){
-    if (command != 'createlink') {
-      document.execCommand(command,false, null);
-    }
-  })
-
   }
 
 
@@ -1577,8 +1577,8 @@ document.addEventListener('init', function (event) {
 
   function addEmoj(str){
     document.getElementById('popover').hide();
-    $('#editor').append('<img width="20px" src='+str+'>');
-    $('#commentText').append('<img width="20px" src='+str+'>');
+    $('#editor').append('<img width="20px" src='+str+'>&nbsp</img>');
+    $('#commentText').append('<img width="20px" src='+str+'>&nbsp</img>');
   }
 
   function clearEditor(){
@@ -2127,6 +2127,7 @@ document.addEventListener('init', function (event) {
   // ****************************************
   $(document).ready(function(){
     // window.localStorage.clear();
+
     if (navigator.onLine) {
       //connect to the internet
     } else {

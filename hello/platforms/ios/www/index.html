@@ -41,7 +41,7 @@
       <ons-toolbar style="background-color:#424242;color:#D6D6D6;">
         <div class="left"><ons-icon onclick="myNavigator.pushPage('search.html')" style="margin-left:10px;" size="25px" icon="ion-ios-search-strong" ></ons-icon>
         </div>
-    <div class="center" style="font-weight:bold;font-weight:bold;color:#D6D6D6;">Recommend</div>
+        <div class="center" style="font-weight:bold;font-weight:bold;color:#D6D6D6;">Recommend</div>
       </ons-toolbar>
 
 
@@ -142,11 +142,14 @@
         <div id="public" style="display:none" tappable onclick="deletePasswordKey()"><ons-icon  style="color:#424242;margin:10px;margin-left:20px;" icon="ion-locked" size="17px"></ons-icon>Set it as public (unlock)</div>
         <div id="passwordKey" style="display:none"></div>
 
-          <form enctype="multipart/form-data" id="formaup"method="post"  action="http://introtoapps.com/datastore.php?action=upload&appid=216036612">
-            <ons-icon  icon="ion-image" size="17px"></ons-icon>
-              <input id="img" name="files" type="file" />
-          </form>
-          <div id="filename" style="display:none"></div>
+        <form enctype="multipart/form-data" id="formaup"method="post"  action="http://introtoapps.com/datastore.php?action=upload&appid=216036612">
+          <ons-icon  icon="ion-image" size="17px"></ons-icon>
+          <span class="sl-custom-file">
+            <input type="button" value="Click to add picture" />            
+            <input id="img" name="files" class="ui-input-file" type="file" />
+          </span>
+        </form>
+        <div id="filename" style="display:none"></div>
 
       </div>
     </ons-page>
